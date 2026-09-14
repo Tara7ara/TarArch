@@ -1,36 +1,19 @@
 # TarArch
 
-Configuración de escritorio personal para **Arch Linux + Hyprland** en un portátil ASUS ROG (NVIDIA). Estética "Apple dark" con islas flotantes, escrita y mantenida a mano — sin ningún framework de dotfiles ni generador de plantillas, cada fichero se edita directamente.
+Mi Arch Linux con Hyprland, día a día, en un ASUS ROG con NVIDIA. Nada de framework de dotfiles ni generador de plantillas — cada fichero se edita a mano, y cada script de aquí existe porque me hizo falta de verdad, no porque quedara bien en una captura.
 
-![Hyprland](https://img.shields.io/badge/Hyprland-Wayland-58e1ff?style=flat-square)
-![Arch Linux](https://img.shields.io/badge/Arch-Linux-1793d1?style=flat-square)
-![Shell](https://img.shields.io/badge/Shell-Bash%2FZsh-89e051?style=flat-square)
-![Python](https://img.shields.io/badge/Python-GTK3-3776ab?style=flat-square)
+## Algunas cosas que costó sacar adelante
 
-## Capturas
-
-_(pendiente — añadir capturas reales aquí)_
-
-## Qué incluye
-
-- **Waybar** en islas flotantes (`config/waybar`) — workspaces, reproductor con centrado dinámico en tiempo real, estado de red/VPN, batería con salud real y ritmo de consumo calculado con media móvil, actualizaciones del sistema, temperatura, backup...
-- **Centro de Control** propio (`local/bin/control-center.py`) — panel estilo Windows 11 en GTK3 + GtkLayerShell: toggles rápidos, sliders de volumen/brillo, calendario y notificaciones.
-- **Tarjeta de música** (`local/bin/media-card.py`) — popup con ecualizador CAVA en tiempo real, portada, letras.
-- **Hyprlock** con reloj, arte del álbum en reproducción y accesos rápidos de energía sin desbloquear.
-- **Gestión de energía por modos** (`local/bin/modos`, `set-system-mode.sh`) — perfiles uni/gamer/silencioso que ajustan refresco de pantalla, ventiladores y render.
-- **Bloqueo por proximidad Bluetooth** — la sesión se bloquea sola si el móvil se aleja.
-- **Rofi** con 10+ temas propios (power menu, wifi, bluetooth, launcher, SSH...) e iconos pre-centrados a mano por bounding box real (no glifos de fuente, para evitar el descentrado típico de los iconos de Nerd Font).
-- Scripts sueltos para lo de siempre: VPN (WireGuard), Wake-on-LAN + RDP, backups con `restic`, LEDs RGB del teclado, cursor que cambia de tema según el brillo del wallpaper, gestor de cuentas de Codex CLI...
+- **Los tooltips/popups se pintaban invisibles** en cualquier superficie layer-shell (Waybar, Centro de Control) en cuanto llevaban `rgba()` con alpha < 1 — bug real de la mezcla de capas NVIDIA+Wayland, no de mi CSS. Con opacidad completa (`rgb()`, alpha=1) pinta bien; por debajo de 1, nada. Sigue documentado por si reaparece en otro sitio.
+- **Los iconos de rofi nunca quedaban centrados de verdad** por mucho que ajustara el tamaño de fuente — pango centra la *caja lógica* del glifo, no la tinta, y los iconos de Nerd Font tienen side-bearings asimétricos. Solución real: `make-rofi-icon.py` renderiza cada icono como PNG, mide el bounding box de tinta de verdad con PIL y lo centra a mano en un canvas cuadrado — cero dependencia de que pango decida centrar bien.
+- **`asusd` competía con `rogauracore`** por el LED RGB del teclado (el color hacía pop-up y se revertía en un segundo) — `asusd` reaplicaba su propio estado guardado en cada evento USB del teclado. Y `systemctl disable` no bastaba: una regla udev del propio paquete lo reactivaba en cada boot vía `SYSTEMD_WANTS`, ignorando el disable. Hace falta `mask`, no `disable`.
+- **El cursor cambia de tema solo** según el brillo medio del wallpaper activo (blanco sobre fondos oscuros, negro sobre claros) — y sincronizado en 5 capas a la vez (compositor, gsettings, `~/.icons/default`, GTK3/GTK4, kitty) porque cualquiera de ellas por separado se queda desincronizada tarde o temprano.
+- **Centro de Control** propio en vez de usar algo ya hecho — GTK3 + GtkLayerShell, estilo Windows 11, porque quería toggles/sliders/calendario en un panel que se sintiera parte del mismo sistema, no otra app suelta con su propio estilo.
+- La tarjeta de música (`media-card.py`) mete un ecualizador CAVA en tiempo real en el popup, con portada y letras.
 
 ## Stack
 
-Hyprland · Waybar · Rofi · Kitty · GTK3/GtkLayerShell (Python) · Bash · hyprlock/hypridle · systemd (user + system units)
-
-## Requisitos
-
-No es un instalador de un clic — son mis configs reales, pensadas para copiarse y adaptarse, no para ejecutarse tal cual. Necesitarás como mínimo:
-
-`hyprland` `waybar` `rofi` `kitty` `hyprlock` `hypridle` `python-gobject` `gtk-layer-shell` `playerctl` `upower` `networkmanager` `cava` (para la tarjeta de música)
+Hyprland · Waybar · Rofi · Kitty · GTK3/GtkLayerShell (Python) · Bash · hyprlock/hypridle · systemd
 
 ## Estructura
 
@@ -44,15 +27,17 @@ pacman-hooks/ → hooks de pacman
 .zshrc, .zprofile
 ```
 
-## Antes de usar nada de esto
+## Requisitos
 
-Estas configs son **mías**, para mi red y mi hardware — antes de copiar un script, revisa que no tenga IPs/rutas que solo tienen sentido en mi casa:
+No es un instalador de un clic, son mis configs reales para copiar y adaptar. Como mínimo:
 
-- IPs de ejemplo (`192.168.1.10/20/30`) → sustitúyelas por las tuyas.
+`hyprland` `waybar` `rofi` `kitty` `hyprlock` `hypridle` `python-gobject` `gtk-layer-shell` `playerctl` `upower` `networkmanager` `cava`
+
+## Antes de copiar nada de esto
+
+Son mis configs, para mi red y mi hardware — revisa esto antes de usarlas tal cual:
+
+- IPs de ejemplo (`192.168.1.10/20/30`) → las tuyas.
 - MACs de ejemplo (`AA:BB:CC:DD:EE:01/02`) → las tuyas, para Wake-on-LAN / proximidad Bluetooth.
-- `local/bin/codex-acc`/`codex-auth`/`codex-switch` llevan cuentas de ejemplo — son 3 copias del mismo gestor de cuentas de Codex CLI bajo nombres distintos, edítalas con las tuyas.
-- Nombres de interfaz de red (`eno2`), alias SSH (`servidor`, `nas`) y nombre de conexión VPN (`Portatil`) son los míos, ajústalos a los tuyos.
-
-## Licencia
-
-MIT — usa lo que te sirva, adapta el resto.
+- `local/bin/codex-acc`/`codex-auth`/`codex-switch` llevan cuentas de ejemplo — edítalas con las tuyas.
+- Nombres de interfaz de red (`eno2`), alias SSH (`servidor`, `nas`) y nombre de conexión VPN (`Portatil`) son los míos.
