@@ -1,0 +1,34 @@
+/* =============================================================
+   PALETA TARARCH — Warm Dark
+   Fuente de verdad: ~/TaraNAS/Apuntes/Cosas_de_casa/Tararch/Paleta.md
+   NOTA: rofi 2.0.0 no soporta @import ni @define-color
+   ============================================================= */
+
+/* --- Fondos --- */
+/* bg            #0f0f0f    fondo principal            */
+/* bg-alpha      #0f0f0feb  fondo con transparencia    */
+/* bg-dark       #0a0a0a    inputbar / paneles         */
+
+/* --- Texto --- */
+/* fg            #c9c9c9    texto normal               */
+/* fg-bright     #ffffff    texto activo               */
+/* subtle        #6e6e6e    prompt / placeholder       */
+
+/* --- Bordes --- */
+/* border        #2d2d2d    borde ventana              */
+
+/* --- Normales --- */
+/* orange        #ff9e64    acento / selección         */
+/* red           #f7768e    error / VPN off            */
+/* green         #9ece6a    éxito / VPN on             */
+/* yellow        #e0af68    advertencia                */
+/* magenta       #bb9af7    decoración                 */
+/* gray          #6e6e6e    neutro                     */
+
+/* --- Brillantes --- */
+/* bright-orange  #ffb88c   naranja melocotón          */
+/* bright-red     #ff7a93   coral                      */
+/* bright-green   #b9f27c   lima                       */
+/* bright-yellow  #ffc777   amarillo yema              */
+/* bright-magenta #c099ff   lila pastel                */
+/* bright-gray    #a9b1d6   gris plateado              */

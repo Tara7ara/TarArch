@@ -1,0 +1,10 @@
+[Unit]
+Description=Timer diario para restic-backup.service
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+RandomizedDelaySec=10min
+
+[Install]
+WantedBy=timers.target

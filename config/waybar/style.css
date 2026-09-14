@@ -1,0 +1,247 @@
+/* =============================================================================
+   PALETA TARARCH WARM DARK — FLOATING ISLANDS / CAPSULES (MULTI-BAR NATIVE)
+   ============================================================================= */
+
+@define-color bg-dark          #0a0a0a;
+@define-color bg-base          #0f0f0f;
+@define-color fg-main          #c9c9c9;
+@define-color fg-bright        #ffffff;
+@define-color fg-muted         rgba(255, 255, 255, 0.40);
+
+/* Acentos Warm Dark */
+@define-color accent-orange    #ff9e64;
+@define-color accent-purple    #bb9af7;
+@define-color status-green     #9ece6a;
+@define-color status-yellow    #e0af68;
+@define-color status-red       #f7768e;
+@define-color status-gray      #787c99;
+
+/* UI & Islas (Alta legibilidad y contraste tanto en fondos claros como oscuros) */
+@define-color island-bg        rgba(15, 15, 15, 0.88);
+@define-color island-border    rgba(255, 255, 255, 0.12);
+@define-color item-hover       rgba(255, 255, 255, 0.12);
+@define-color item-active      rgba(255, 158, 100, 0.22);
+
+* {
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+}
+
+/* Base transparente para la barra unificada */
+window#waybar {
+    background: transparent;
+    color: @fg-bright;
+}
+
+/* =============================================================================
+   CENTRADO SIMÉTRICO EXACTO DE LA ISLA CENTRAL
+   ============================================================================= */
+.modules-left,
+.modules-right {
+    min-width: 480px;
+}
+
+.modules-left {
+    padding: 0;
+}
+
+.modules-right {
+    padding: 0;
+}
+
+/* =============================================================================
+   ESTRUCTURA DE ISLAS FLOTANTES (CAPSULES)
+   ============================================================================= */
+
+#workspaces,
+#custom-media,
+#connectivity,
+#system {
+    /* alpha < 1 en esta superficie da un fallo de mezcla (fondo casi
+       invisible, se ve el wallpaper de fondo) - probado 2026-08-23: rojo
+       solido (alpha=1) se pinta perfecto, rgba(...,0.90) no. Opacidad
+       completa como workaround - visualmente casi igual, ya era muy oscuro. */
+    background-color: rgb(15, 15, 15);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 3px 8px;
+    margin: 0 4px;
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+#workspaces:hover,
+#custom-media:hover,
+#connectivity:hover,
+#system:hover {
+    border-color: rgba(255, 255, 255, 0.20);
+}
+
+/* =============================================================================
+   ISLA 1: WORKSPACES (IZQUIERDA)
+   ============================================================================= */
+
+#workspaces {
+    padding: 2px 4px;
+    margin-left: 0;
+}
+
+#workspaces button {
+    color: @fg-muted;
+    background: transparent;
+    padding: 0 8px;
+    margin: 2px 2px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-weight: 600;
+}
+
+#workspaces button:hover {
+    background: @item-hover;
+    color: @fg-bright;
+}
+
+#workspaces button.active {
+    color: @accent-orange;
+    background: @item-active;
+    border: 1px solid rgba(255, 158, 100, 0.3);
+    font-weight: 700;
+}
+
+#workspaces button.urgent {
+    color: @status-red;
+    background: rgba(247, 118, 142, 0.2);
+}
+
+/* =============================================================================
+   ISLA 2: MEDIA PLAYER (CÁPSULA MINIMALISTA CENTRADA)
+   ============================================================================= */
+
+#custom-media {
+    color: @fg-bright;
+    font-style: italic;
+    padding: 2px 14px;
+    margin: 0;
+}
+
+#custom-media:hover {
+    color: @accent-orange;
+    border-color: rgba(255, 158, 100, 0.4);
+}
+
+/* Si no hay música, ocultar la isla de forma limpia */
+#custom-prev.hidden,
+#custom-next.hidden {
+    padding: 0;
+    margin: 0;
+    font-size: 0;
+}
+
+/* =============================================================================
+   MÓDULOS INTERNOS DE LAS ISLAS DERECHAS
+   ============================================================================= */
+
+#custom-updates,
+#custom-vpn,
+#custom-lanmouse,
+#custom-localip,
+#custom-battery-info,
+#custom-backup,
+#pulseaudio,
+#clock,
+#custom-power {
+    padding: 0 8px;
+    margin: 1px 1px;
+    color: @fg-bright;
+    background: transparent;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+#custom-updates:hover,
+#custom-vpn:hover,
+#custom-lanmouse:hover,
+#custom-localip:hover,
+#custom-battery-info:hover,
+#custom-backup:hover,
+#pulseaudio:hover,
+#clock:hover,
+#custom-power:hover {
+    background: @item-hover;
+}
+
+/* =============================================================================
+   ESTADOS Y COLORES SEMÁNTICOS
+   ============================================================================= */
+
+/* Updates */
+#custom-updates {
+    color: @status-yellow;
+    font-weight: 600;
+}
+
+/* VPN */
+#custom-vpn.vpn-on {
+    color: @status-green;
+    font-weight: 700;
+}
+
+#custom-vpn.vpn-off {
+    color: #a9b1d6;
+    font-weight: 500;
+}
+
+/* Lan-mouse (KVM) */
+#custom-lanmouse.kvm-on {
+    color: @status-green;
+    font-weight: 700;
+}
+
+#custom-lanmouse.kvm-off {
+    color: #a9b1d6;
+    font-weight: 500;
+}
+
+/* Batería */
+#custom-battery-info.warning {
+    color: @status-yellow;
+}
+
+#custom-battery-info.critical {
+    color: @status-red;
+    font-weight: 700;
+}
+
+/* Backup (Restic) */
+#custom-backup.missing { color: @status-red; }
+#custom-backup.running { color: @accent-orange; }
+#custom-backup.done    { color: @status-green; }
+#custom-backup.error   { color: @status-red; }
+
+/* Botón de apagado */
+#custom-power {
+    color: @fg-bright;
+    padding: 0 8px;
+    font-size: 13px;
+}
+
+#custom-power:hover {
+    color: @status-red;
+    background: rgba(247, 118, 142, 0.15);
+}
+
+/* Tooltips */
+tooltip {
+    background: @bg-base;
+    border: 1px solid @island-border;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+}
+
+tooltip label {
+    color: @fg-bright;
+    padding: 4px 8px;
+}

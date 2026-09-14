@@ -1,0 +1,15 @@
+#!/bin/bash
+# Toggle: mientras esté activo, el ordenador no se bloquea ni se suspende por inactividad
+
+MARCADOR="nobloqueo-marcador"
+
+if pgrep -f "$MARCADOR" > /dev/null; then
+    pkill -f "$MARCADOR"
+    notify-send "Bloqueo automático" "Reactivado" 2>/dev/null
+    echo "Bloqueo automático: ACTIVADO (el ordenador volverá a bloquearse/suspenderse con normalidad)"
+else
+    setsid systemd-inhibit --what=idle:sleep --who="nobloqueo" --why="$MARCADOR" --mode=block sleep infinity &
+    disown
+    notify-send "Bloqueo automático" "Desactivado" 2>/dev/null
+    echo "Bloqueo automático: DESACTIVADO (el ordenador no se bloqueará ni se suspenderá)"
+fi

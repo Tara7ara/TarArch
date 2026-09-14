@@ -1,0 +1,187 @@
+/* Swappy theme — paleta TarArch warm */
+
+/* Ventana principal */
+window,
+window:backdrop,
+.background,
+.background:backdrop {
+  background-color: #0f0f0f;
+  color: #c9c9c9;
+}
+
+/* Headerbar / toolbar */
+headerbar,
+headerbar:backdrop,
+.titlebar,
+.titlebar:backdrop {
+  background-color: #1a1a1a;
+  border-bottom: 1px solid #2d2d2d;
+  color: #c9c9c9;
+  box-shadow: none;
+  background-image: none;
+}
+
+headerbar .title,
+headerbar:backdrop .title {
+  color: #c9c9c9;
+  font-weight: 600;
+}
+
+/* Botones — resetear gradientes de Adwaita */
+button,
+button:backdrop {
+  background-color: #2d2d2d;
+  background-image: none;
+  border: 1px solid #4e5173;
+  border-radius: 4px;
+  color: #c9c9c9;
+  box-shadow: none;
+  text-shadow: none;
+  -gtk-icon-shadow: none;
+}
+
+button:hover {
+  background-color: #3a3a3a;
+  background-image: none;
+  border-color: #ff9e64;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+button:active,
+button:checked {
+  background-color: #ff9e64;
+  background-image: none;
+  border-color: #ff9e64;
+  color: #0f0f0f;
+  box-shadow: none;
+}
+
+/* Botones de icono en headerbar */
+headerbar button,
+headerbar button:backdrop,
+.titlebar button,
+.titlebar button:backdrop {
+  background-color: #2d2d2d;
+  background-image: none;
+  border: 1px solid #4e5173;
+  color: #c9c9c9;
+  box-shadow: none;
+  -gtk-icon-shadow: none;
+}
+
+headerbar button:hover,
+.titlebar button:hover {
+  background-color: #3a3a3a;
+  background-image: none;
+  border-color: #ff9e64;
+  color: #ffffff;
+}
+
+headerbar button:active,
+headerbar button:checked,
+.titlebar button:active,
+.titlebar button:checked {
+  background-color: #ff9e64;
+  background-image: none;
+  border-color: #ff9e64;
+  color: #0f0f0f;
+}
+
+/* Toolbar interna de swappy */
+toolbar button,
+.toolbar button {
+  background-color: transparent;
+  background-image: none;
+  border: 1px solid transparent;
+  color: #c9c9c9;
+  box-shadow: none;
+}
+
+toolbar button:hover,
+.toolbar button:hover {
+  background-color: #2d2d2d;
+  background-image: none;
+  border-color: #787c99;
+}
+
+toolbar button:checked,
+.toolbar button:checked {
+  background-color: #ff9e64;
+  background-image: none;
+  border-color: #ff9e64;
+  color: #0f0f0f;
+}
+
+/* Entradas de texto */
+entry {
+  background-color: #1a1a1a;
+  border: 1px solid #4e5173;
+  border-radius: 4px;
+  color: #c9c9c9;
+  caret-color: #ff9e64;
+}
+
+entry:focus {
+  border-color: #ff9e64;
+  box-shadow: 0 0 0 1px #ff9e64;
+}
+
+/* Spinbutton (tamaño de pincel/texto) */
+spinbutton {
+  background-color: #1a1a1a;
+  border: 1px solid #4e5173;
+  color: #c9c9c9;
+}
+
+/* Separadores */
+separator {
+  background-color: #2d2d2d;
+  min-height: 1px;
+  min-width: 1px;
+}
+
+/* Scrollbars */
+scrollbar {
+  background-color: #1a1a1a;
+}
+
+scrollbar slider {
+  background-color: #4e5173;
+  border-radius: 4px;
+  min-width: 6px;
+  min-height: 6px;
+}
+
+scrollbar slider:hover {
+  background-color: #787c99;
+}
+
+/* Menús desplegables */
+menu,
+.menu {
+  background-color: #1a1a1a;
+  border: 1px solid #2d2d2d;
+  color: #c9c9c9;
+}
+
+menuitem:hover {
+  background-color: #ff9e64;
+  color: #0f0f0f;
+}
+
+/* Popover (selector de color, opciones) */
+popover,
+.popover {
+  background-color: #1a1a1a;
+  border: 1px solid #2d2d2d;
+  border-radius: 6px;
+  color: #c9c9c9;
+}
+
+/* Combobox */
+combobox button {
+  background-color: #1a1a1a;
+  border: 1px solid #4e5173;
+  color: #c9c9c9;
+}

@@ -1,0 +1,10 @@
+[[clients]]
+hostname = "192.168.1.20"
+ips = []
+position = "top"
+activate_on_startup = true
+
+[authorized_fingerprints]
+# Fingerprint único por instalación — se genera solo la primera vez que conectas
+# el otro PC, cópialo del log/prompt de lan-mouse y sustitúyelo aquí.
+"TU_FINGERPRINT_AQUI" = "PC-Windows"

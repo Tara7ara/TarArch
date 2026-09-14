@@ -1,0 +1,63 @@
+/* Power Menu — 4 Iconos gigantes con colores y fondo Warm Dark */
+
+* {
+    font:             "JetBrainsMono Nerd Font 48";
+    background-color: transparent;
+    text-color:       #c9c9c9;
+}
+
+window {
+    background-color: #0f0f0feb;
+    border:           1px;
+    border-color:     #2d2d2d;
+    border-radius:    20px;
+    width:            580px;
+    padding:          16px;
+    location:         center;
+    anchor:           center;
+}
+
+mainbox {
+    background-color: transparent;
+    children:         [listview];
+}
+
+inputbar {
+    enabled: false;
+}
+
+listview {
+    background-color: transparent;
+    columns:          4;
+    lines:            1;
+    scrollbar:        false;
+    spacing:          12px;
+    fixed-height:     true;
+}
+
+element {
+    background-color: transparent;
+    border-radius:    16px;
+    padding:          18px 0px;
+    cursor:           pointer;
+    orientation:      vertical;
+}
+
+element-text {
+    background-color: transparent;
+    text-color:       inherit;
+    horizontal-align: 0.5;
+    vertical-align:   0.5;
+    expand:           true;
+}
+
+element normal normal {
+    text-color: #c9c9c9;
+}
+
+element selected normal {
+    background-color: #00000059;
+    border:           1px;
+    border-color:     #ff9e64;
+    text-color:       #ffffff;
+}

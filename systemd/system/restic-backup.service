@@ -1,0 +1,11 @@
+[Unit]
+Description=Restic backup diario
+After=home-tara-TaraNAS.automount network-online.target
+Requires=home-tara-TaraNAS.automount
+Wants=network-online.target
+
+[Service]
+Environment=HOME=/root
+Type=oneshot
+TimeoutStartSec=60
+ExecStart=/usr/local/bin/restic-backup.sh

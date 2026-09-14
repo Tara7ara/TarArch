@@ -1,0 +1,1 @@
+SUBSYSTEM=="sound", KERNEL=="hwC0D0", TAG+="systemd", ENV{SYSTEMD_WANTS}="alc294-speaker-fix.service"

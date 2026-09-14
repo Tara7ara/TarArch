@@ -1,0 +1,12 @@
+[Unit]
+Description=LAN Mouse daemon (solo en eno2 192.168.1.30)
+After=network.target
+
+[Service]
+ExecStartPre=/bin/sh -c 'ip addr show eno2 2>/dev/null | grep -q 192.168.1.30'
+ExecStart=lan-mouse daemon
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target

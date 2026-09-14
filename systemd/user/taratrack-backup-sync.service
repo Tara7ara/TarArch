@@ -1,0 +1,6 @@
+[Unit]
+Description=Copia el backup diario de TaraTrack al NAS
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/taratrack-backup-sync.sh

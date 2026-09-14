@@ -1,0 +1,13 @@
+[Unit]
+Description=Bloqueo automático si el iPhone se aleja (Bluetooth)
+After=graphical-session.target bluetooth.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/home/tara/.local/bin/bt-proximity-lock.sh
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=graphical-session.target

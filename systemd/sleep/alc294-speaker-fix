@@ -1,0 +1,10 @@
+#!/bin/sh
+# Reactiva el ampli del altavoz interno ALC294 al despertar de suspensión.
+# El coeficiente que pone fix-alc294-speaker.sh no sobrevive a systemctl suspend.
+
+case "$1" in
+    post)
+        sleep 1
+        /home/tara/.local/bin/fix-alc294-speaker.sh
+        ;;
+esac

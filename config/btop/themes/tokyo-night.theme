@@ -1,0 +1,58 @@
+# Theme: tokyo-night
+# Basado estrictamente en: /home/tara/TaraNAS/Apuntes/Cosas_de_casa/Tararch/Tokyo Night.md
+
+# Colores principales (Fondo, Texto y Selección)
+theme[main_bg]="#1a1b26"
+theme[main_fg]="#a9b1d6"
+theme[title]="#c0caf5"
+theme[hi_fg]="#89ddff"
+theme[selected_bg]="#33467c"
+theme[selected_fg]="#c0caf5"
+theme[inactive_fg]="#565f89"
+
+# Bordes de las cajas y divisiones (usamos el color de Selección para que resalte elegante)
+theme[cpu_box]="#33467c"
+theme[mem_box]="#33467c"
+theme[net_box]="#33467c"
+theme[proc_box]="#33467c"
+theme[div_line]="#33467c"
+
+# Detalles misceláneos de procesos (Morado)
+theme[proc_misc]="#bb9af7"
+
+# Gráficos térmicos (Verde -> Amarillo -> Rojo)
+theme[temp_start]="#9ece6a"
+theme[temp_mid]="#e0af68"
+theme[temp_end]="#f7768e"
+
+# Gráficos de uso de CPU (Verde -> Amarillo -> Rojo)
+theme[cpu_start]="#9ece6a"
+theme[cpu_mid]="#e0af68"
+theme[cpu_end]="#f7768e"
+
+# Medidores de RAM y Almacenamiento (Disponibles / Usados)
+theme[free_start]="#9ece6a"
+theme[free_mid]="#e0af68"
+theme[free_end]="#f7768e"
+
+theme[cached_start]="#7aa2f7"
+theme[cached_mid]="#bb9af7"
+theme[cached_end]="#f7768e"
+
+theme[available_start]="#9ece6a"
+theme[available_mid]="#e0af68"
+theme[available_end]="#f7768e"
+
+theme[used_start]="#9ece6a"
+theme[used_mid]="#ff9e64"
+theme[used_end]="#f7768e"
+
+# Gráficos de velocidad de Red (Descarga: Turquesa -> Azul -> Morado)
+theme[download_start]="#73daca"
+theme[download_mid]="#7aa2f7"
+theme[download_end]="#bb9af7"
+
+# Gráficos de velocidad de Red (Subida: Naranja -> Amarillo -> Rojo)
+theme[upload_start]="#ff9e64"
+theme[upload_mid]="#e0af68"
+theme[upload_end]="#f7768e"

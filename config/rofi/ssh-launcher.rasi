@@ -1,0 +1,63 @@
+/* SSH launcher — mismo estilo que power-menu, dimensionado para texto */
+
+* {
+    font:             "JetBrainsMono Nerd Font 20";
+    background-color: transparent;
+    text-color:       #c9c9c9;
+}
+
+window {
+    background-color: #0f0f0feb;
+    border:           1px;
+    border-color:     #2d2d2d;
+    border-radius:    20px;
+    width:            260px;
+    padding:          16px;
+    location:         center;
+    anchor:           center;
+}
+
+mainbox {
+    background-color: transparent;
+    children:         [listview];
+}
+
+inputbar {
+    enabled: false;
+}
+
+listview {
+    background-color: transparent;
+    columns:          1;
+    lines:            2;
+    scrollbar:        false;
+    spacing:          10px;
+    fixed-height:     true;
+}
+
+element {
+    background-color: transparent;
+    border-radius:    14px;
+    padding:          14px 16px;
+    cursor:           pointer;
+    orientation:      horizontal;
+}
+
+element-text {
+    background-color: transparent;
+    text-color:       inherit;
+    horizontal-align: 0;
+    vertical-align:   0.5;
+    expand:           true;
+}
+
+element normal normal {
+    text-color: #c9c9c9;
+}
+
+element selected normal {
+    background-color: #00000059;
+    border:           1px;
+    border-color:     #ff9e64;
+    text-color:       #ffffff;
+}

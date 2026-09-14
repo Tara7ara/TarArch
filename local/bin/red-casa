@@ -1,0 +1,11 @@
+#!/bin/bash
+# Cambia el perfil de red por cable a Casa (IP por DHCP — reserva fija en el router,
+# DNS forzado a 192.168.1.10 porque el router no puede repartirlo por DHCP, tema WAF)
+
+if ! nmcli con show "Casa Cable" >/dev/null 2>&1; then
+    sudo nmcli con add type ethernet con-name "Casa Cable" ifname eno2 ipv4.method auto ipv4.dns "192.168.1.10,192.168.1.1" ipv4.ignore-auto-dns yes
+else
+    sudo nmcli con mod "Casa Cable" ipv4.method auto ipv4.addresses "" ipv4.gateway "" ipv4.dns "192.168.1.10,192.168.1.1" ipv4.ignore-auto-dns yes
+fi
+
+sudo nmcli con up "Casa Cable" && notify-send "Red" "Perfil CASA activado (IP por DHCP, DNS 192.168.1.10)" -i network-transmit-receive

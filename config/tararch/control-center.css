@@ -1,0 +1,318 @@
+window { 
+    background-color: transparent; 
+}
+
+/* Eliminar el fondo opaco por defecto de GTK3 (Adwaita background-image) */
+button {
+    background-image: none;
+    text-shadow: none;
+    outline: none;
+    box-shadow: none;
+}
+
+/* --- PANEL PRINCIPAL --- */
+.main-panel {
+    background-color: rgba(15, 15, 18, 0.72);
+    border: 1px solid rgba(255, 158, 100, 0.15);
+    border-radius: 12px;
+    padding: 16px;
+    min-width: 390px;
+}
+
+.header-title {
+    color: #ffffff;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.header-subtitle {
+    color: #ff9e64;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.btn-close {
+    background-image: none;
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    color: #c9c9c9;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 10px;
+}
+
+.btn-close:hover {
+    background-image: none;
+    background-color: rgba(247, 118, 142, 0.12);
+    border-color: #f7768e;
+    color: #f7768e;
+}
+
+/* --- TARJETAS QUICK TOGGLE (8 BOTONES) TRANSPARENTES --- */
+.btn-toggle {
+    background-image: none;
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 14px;
+    padding: 11px 0;
+    color: #9a9a9a;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 21px;
+    min-height: 48px;
+}
+
+.btn-toggle:hover {
+    background-image: none;
+    background-color: rgba(255, 158, 100, 0.08);
+    border-color: rgba(255, 158, 100, 0.3);
+    color: #ff9e64;
+}
+
+/* Activo Naranja (LanMouse, Cafeína, Red, Bluetooth) */
+.btn-toggle-active {
+    background-image: none;
+    background-color: rgba(255, 158, 100, 0.10);
+    border: 1px solid rgba(255, 158, 100, 0.5);
+    color: #ff9e64;
+}
+.btn-toggle-active:hover {
+    background-image: none;
+    background-color: rgba(255, 158, 100, 0.18);
+    border-color: rgba(255, 169, 122, 0.65);
+    color: #ffffff;
+}
+
+/* Activo Verde (Modo Uni / Lápiz) */
+.btn-toggle-active-green {
+    background-image: none;
+    background-color: rgba(158, 206, 106, 0.10);
+    border: 1px solid rgba(158, 206, 106, 0.5);
+    color: #9ece6a;
+}
+.btn-toggle-active-green:hover {
+    background-image: none;
+    background-color: rgba(158, 206, 106, 0.18);
+    border-color: rgba(168, 212, 119, 0.65);
+    color: #ffffff;
+}
+
+/* Activo Rojo (Modo Gamer / Gamepad) */
+.btn-toggle-active-red {
+    background-image: none;
+    background-color: rgba(247, 118, 142, 0.10);
+    border: 1px solid rgba(247, 118, 142, 0.5);
+    color: #f7768e;
+}
+.btn-toggle-active-red:hover {
+    background-image: none;
+    background-color: rgba(247, 118, 142, 0.18);
+    border-color: rgba(250, 139, 159, 0.65);
+    color: #ffffff;
+}
+
+/* --- BOTONES DE ACCIÓN (2 CALENDARIO + NOTIFICACIONES) --- */
+.btn-action-icon {
+    background-image: none;
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    color: #9a9a9a;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 13px;
+    padding: 5px 9px;
+}
+.btn-action-icon:hover {
+    background-image: none;
+    background-color: rgba(255, 158, 100, 0.10);
+    border-color: rgba(255, 158, 100, 0.5);
+    color: #ff9e64;
+}
+
+/* --- SECCIONES Y SLIDERS --- */
+.section-box {
+    background-color: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 12px 14px;
+}
+
+.slider-icon {
+    color: #ff9e64;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 16px;
+    min-width: 20px;
+}
+
+.slider-val-label {
+    color: #c9c9c9;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    min-width: 38px;
+}
+
+scale.horizontal,
+scale {
+    padding: 3px 0;
+    margin: 0;
+}
+
+scale.horizontal trough,
+scale trough {
+    background-image: none;
+    background-color: rgba(255, 255, 255, 0.08);
+    border: none;
+    border-radius: 9999px;
+    min-height: 12px;
+}
+
+scale.horizontal highlight,
+scale highlight {
+    background-image: none;
+    background-color: #ff9e64;
+    border: none;
+    border-radius: 9999px;
+    min-height: 12px;
+}
+
+scale.horizontal slider,
+scale slider {
+    background-image: none;
+    background-color: #ffffff;
+    border: 2px solid #ff9e64;
+    border-radius: 9999px;
+    min-width: 16px;
+    min-height: 16px;
+    margin: -2px 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    transition: all 0.15s ease;
+}
+
+scale.horizontal slider:hover,
+scale slider:hover {
+    background-image: none;
+    background-color: #ff9e64;
+    border-color: #ffffff;
+    min-width: 18px;
+    min-height: 18px;
+    margin: -3px 0;
+}
+
+/* --- TABS (2 BOTONES CALENDARIO / NOTIFICACIONES) --- */
+.btn-tab {
+    background-image: none;
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    color: #7a7a7a;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    padding: 7px 0;
+}
+.btn-tab:hover {
+    background-image: none;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+}
+.btn-tab-active {
+    background-image: none;
+    background-color: rgba(255, 158, 100, 0.12);
+    border: 1px solid rgba(255, 158, 100, 0.5);
+    color: #ff9e64;
+    font-weight: 700;
+}
+
+/* --- CALENDARIO --- */
+calendar {
+    background-color: transparent;
+    color: #ffffff;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 12px;
+    border: none;
+    border-radius: 14px;
+    padding: 4px;
+}
+
+calendar.header {
+    color: #ff9e64;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+calendar.button { color: #bb9af7; background: transparent; background-image: none; }
+calendar.button:hover { color: #ffffff; background: rgba(255, 255, 255, 0.08); background-image: none; }
+calendar:selected {
+    background-color: #ff9e64;
+    color: #0f0f0f;
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+.cal-header-label {
+    color: #bb9af7;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.event-item-text {
+    color: #ffffff;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* --- NOTIFICACIONES --- */
+.noti-card {
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 10px 12px;
+    margin-bottom: 5px;
+}
+
+.noti-card:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 158, 100, 0.30);
+}
+
+.noti-card-header {
+    font-size: 11px;
+    font-weight: bold;
+    color: #ff9e64;
+}
+
+.noti-card-time {
+    font-size: 10px;
+    color: #7a7a7a;
+}
+
+.noti-card-title {
+    font-size: 12px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.noti-card-body {
+    font-size: 11px;
+    color: #c9c9c9;
+}
+
+.noti-btn-del {
+    background: transparent;
+    background-image: none;
+    border: none;
+    color: #7a7a7a;
+    font-size: 12px;
+    padding: 0 4px;
+}
+
+.noti-btn-del:hover {
+    color: #ff5370;
+}

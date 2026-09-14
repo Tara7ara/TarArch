@@ -1,0 +1,10 @@
+#!/bin/bash
+# Cambia el perfil de red por cable a Fuera (DNS Automática / DHCP)
+
+sudo nmcli con mod "Conexión cableada 1" connection.id "Fuera" ipv4.dns "" ipv4.ignore-auto-dns no 2>/dev/null || true
+
+if nmcli con show "Fuera" >/dev/null 2>&1; then
+    sudo nmcli con up "Fuera" && notify-send "Red" "Perfil FUERA activado (DNS Automática / DHCP)" -i network-transmit-receive
+else
+    sudo nmcli con up "Conexión cableada 1" && notify-send "Red" "Perfil FUERA activado (DNS Automática / DHCP)" -i network-transmit-receive
+fi

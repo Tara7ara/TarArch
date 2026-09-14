@@ -1,0 +1,162 @@
+// -*- mode: jsonc -*-
+{
+    "layer": "top",
+    "position": "top",
+    "height": 36,
+    "margin-top": 8,
+    "margin-left": 12,
+    "margin-right": 12,
+    "spacing": 0,
+    "exclusive": true,
+    "passthrough": false,
+
+    "modules-left": [
+        "hyprland/workspaces"
+    ],
+    "modules-center": [
+        "custom/media"
+    ],
+    "modules-right": [
+        "group/connectivity",
+        "group/system"
+    ],
+
+    // ==========================================
+    // GRUPOS (ISLAS FLOTANTES)
+    // ==========================================
+    "group/connectivity": {
+        "orientation": "horizontal",
+        "modules": [
+            "custom/updates",
+            "custom/vpn",
+            "custom/localip"
+        ]
+    },
+
+    "group/system": {
+        "orientation": "horizontal",
+        "modules": [
+            "custom/battery-info",
+            "custom/backup",
+            "pulseaudio",
+            "clock",
+            "custom/power"
+        ]
+    },
+
+    // ==========================================
+    // MÓDULOS INDIVIDUALES
+    // ==========================================
+    "hyprland/workspaces": {
+        "format": "{id}",
+        "on-click": "activate",
+        "active-only": false,
+        "all-outputs": true
+    },
+
+    "custom/media": {
+        "exec": "/home/tara/.local/bin/mediaplayer.sh",
+        "format": "{}",
+        "on-click": "/home/tara/.local/bin/media-card.py",
+        "on-click-right": "playerctl play-pause",
+        "on-click-middle": "playerctl next",
+        "tooltip": true,
+        "tooltip-format": "Clic: Abrir tarjeta multimedia\nClic derecho: Play / Pausa\nClic rueda: Siguiente"
+    },
+
+    "custom/updates": {
+        "exec": "total=$(checkupdates 2>/dev/null | wc -l); aur=$(yay -Qu --aur 2>/dev/null | wc -l); n=$((total+aur)); [ $n -gt 0 ] && echo \"↑ $n\" || echo \"\"",
+        "interval": 3600,
+        "on-click": "kitty -e bash -c 'yay -Syu --sudoloop; echo; read -p \"Pulsa Enter para cerrar...\"'",
+        "tooltip": true,
+        "tooltip-format": "{} actualizaciones pendientes\nClic para actualizar"
+    },
+
+    "custom/vpn": {
+        "exec": "if ip link show Portatil 2>/dev/null | grep -q 'UP'; then IP=$(ip addr show Portatil | grep 'inet ' | awk '{print $2}' | cut -d'/' -f1); echo '{\"text\": \"󰌾 VPN · '\"$IP\"'\", \"class\": \"vpn-on\"}'; else echo '{\"text\": \"󰌿 VPN\", \"class\": \"vpn-off\"}'; fi",
+        "return-type": "json",
+        "interval": 5,
+        "on-click": "/usr/local/bin/toggle-vpn.sh",
+        "tooltip": false
+    },
+
+    "custom/lanmouse": {
+        "exec": "/home/tara/.local/bin/lanmouse-status.sh",
+        "interval": 3,
+        "return-type": "json",
+        "format": "{}",
+        "tooltip": true,
+        "on-click": "/home/tara/.local/bin/toggle-lanmouse.sh"
+    },
+
+    "custom/localip": {
+        "exec": "/home/tara/.local/bin/localip.sh",
+        "interval": 2,
+        "return-type": "json",
+        "format": "{}",
+        "tooltip": true,
+        "on-click": "/home/tara/.local/bin/wifi-menu.sh"
+    },
+
+    "custom/battery-info": {
+        "exec": "/home/tara/.local/bin/battery-tooltip.sh",
+        "on-click": "/usr/local/bin/toggle-firewall.sh",
+        "interval": 10,
+        "return-type": "json",
+        "format": "{}"
+    },
+
+    "custom/backup": {
+        "exec": "/home/tara/.local/bin/backup-status.sh",
+        "on-click": "/home/tara/.local/bin/manual-backup.sh",
+        "interval": 10,
+        "return-type": "json",
+        "format": "{}",
+        "tooltip": true
+    },
+
+    "pulseaudio": {
+        "format": "{icon} {volume}%",
+        "format-muted": "󰝟 Muted",
+        "format-icons": {
+            "default": ["󰕿", "󰖀", "󰕾"]
+        },
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+        "on-click-right": "/home/tara/.local/bin/audio-output-menu.sh",
+        "on-scroll-up": "wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+",
+        "on-scroll-down": "wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%-",
+        "tooltip": true,
+        "tooltip-format": "Volumen: {volume}% · Clic derecho: elegir salida"
+    },
+
+    "clock": {
+        "format": "󰥔 {:%H:%M   %a %d %b}",
+        "on-click": "/home/tara/.local/bin/control-center.py",
+        "on-click-right": "/home/tara/.local/bin/calendario.sh",
+        "tooltip": true,
+        "tooltip-format": "<tt><small>{calendar}</small></tt>",
+        "calendar": {
+            "mode": "month",
+            "mode-mon-col": 3,
+            "weeks-pos": "right",
+            "on-scroll": 1,
+            "format": {
+                "months": "<span color='#ff9e64'><b>{}</b></span>",
+                "days": "<span color='#c9c9c9'><b>{}</b></span>",
+                "weeks": "<span color='#787c99'><b>W{}</b></span>",
+                "weekdays": "<span color='#bb9af7'><b>{}</b></span>",
+                "today": "<span color='#ff9e64'><b><u>{}</u></b></span>"
+            }
+        },
+        "actions": {
+            "on-scroll-up": "shift_up",
+            "on-scroll-down": "shift_down"
+        }
+    },
+
+    "custom/power": {
+        "format": "⏻",
+        "on-click": "/home/tara/.local/bin/power-menu.sh",
+        "tooltip": false
+    }
+}

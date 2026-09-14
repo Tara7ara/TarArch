@@ -1,0 +1,87 @@
+/* =============================================================================
+   ROFI SSH LAUNCHER — PALETA TARARCH WARM DARK
+   ============================================================================= */
+
+* {
+    font:             "JetBrainsMono Nerd Font 13";
+    background-color: transparent;
+    text-color:       #c9c9c9;
+}
+
+window {
+    background-color: #0f0f0feb;
+    border:           1px;
+    border-color:     rgba(255, 255, 255, 0.10);
+    border-radius:    20px;
+    width:            500px;
+    padding:          16px;
+    location:         center;
+    anchor:           center;
+}
+
+mainbox {
+    background-color: transparent;
+    children:         [inputbar, listview];
+    spacing:          12px;
+}
+
+inputbar {
+    background-color: rgba(255, 255, 255, 0.05);
+    border:           1px;
+    border-color:     rgba(255, 255, 255, 0.08);
+    border-radius:    14px;
+    padding:          10px 14px;
+    spacing:          10px;
+    children:         [prompt, entry];
+}
+
+prompt {
+    background-color: transparent;
+    text-color:       #ff9e64;
+    font:             "JetBrainsMono Nerd Font 14";
+    vertical-align:   0.5;
+}
+
+entry {
+    background-color: transparent;
+    text-color:       #ffffff;
+    placeholder:      "Elegir conexión SSH...";
+    placeholder-color: rgba(255, 255, 255, 0.25);
+    vertical-align:   0.5;
+}
+
+listview {
+    background-color: transparent;
+    columns:          1;
+    lines:            2;
+    scrollbar:        false;
+    spacing:          8px;
+    fixed-height:     true;
+}
+
+element {
+    background-color: rgba(255, 255, 255, 0.04);
+    border:           1px;
+    border-color:     rgba(255, 255, 255, 0.06);
+    border-radius:    12px;
+    padding:          12px 16px;
+    cursor:           pointer;
+}
+
+element-text {
+    background-color: transparent;
+    text-color:       inherit;
+    vertical-align:   0.5;
+    cursor:           inherit;
+}
+
+element normal normal {
+    text-color: #c9c9c9;
+}
+
+element selected normal {
+    background-color: rgba(255, 158, 100, 0.18);
+    border:           1px;
+    border-color:     #ff9e64;
+    text-color:       #ffffff;
+}

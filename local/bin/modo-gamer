@@ -1,0 +1,8 @@
+#!/bin/bash
+# Wrapper de compatibilidad hacia set-system-mode.sh
+CURRENT=$(/home/tara/.local/bin/set-system-mode.sh status)
+if [ "$CURRENT" = "gamer" ]; then
+    /home/tara/.local/bin/set-system-mode.sh normal
+else
+    /home/tara/.local/bin/set-system-mode.sh gamer
+fi

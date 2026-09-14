@@ -1,0 +1,21 @@
+#!/bin/bash
+ARTIST=$(playerctl -p spotify metadata artist 2>/dev/null)
+TITLE=$(playerctl -p spotify metadata title 2>/dev/null)
+
+if [[ -z "$ARTIST" || -z "$TITLE" ]]; then
+    echo "No hay ninguna canción reproduciéndose."
+    exit 1
+fi
+
+echo "♪ $ARTIST — $TITLE"
+echo ""
+
+LYRICS=$(curl -s "https://lrclib.net/api/get?artist_name=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$ARTIST")&track_name=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$TITLE")" \
+    | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('plainLyrics') or 'No encontrado')" 2>/dev/null)
+
+if [[ -z "$LYRICS" || "$LYRICS" == "No encontrado" ]]; then
+    echo "No se encontraron letras."
+    exit 1
+fi
+
+echo "$LYRICS" | bat --style=plain --paging=always

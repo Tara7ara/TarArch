@@ -1,0 +1,106 @@
+/**
+ * PALETA TARARCH WARM DARK — SELECTOR VISUAL DE WALLPAPERS (ROFI)
+ **/
+
+configuration {
+    show-icons: true;
+    drun-display-format: "{name}";
+}
+
+* {
+    font:             "JetBrainsMono Nerd Font 11";
+    background-color: transparent;
+    text-color:       #ffffff;
+    accent:           #ff9e64;
+    text-muted:       #787c99;
+}
+
+window {
+    background-color: #0f0f0fef;
+    border:           2px;
+    border-color:     rgba(255, 158, 100, 0.40);
+    border-radius:    20px;
+    width:            820px;
+    padding:          20px;
+    location:         center;
+    anchor:           center;
+}
+
+mainbox {
+    background-color: transparent;
+    spacing:          16px;
+    children:         [ inputbar, listview ];
+}
+
+inputbar {
+    background-color: rgba(255, 255, 255, 0.05);
+    border:           1px;
+    border-color:     rgba(255, 255, 255, 0.08);
+    border-radius:    14px;
+    padding:          12px 16px;
+    children:         [ prompt, entry ];
+    spacing:          12px;
+}
+
+prompt {
+    background-color: transparent;
+    text-color:       @accent;
+    font:             "JetBrainsMono Nerd Font Bold 12";
+}
+
+entry {
+    background-color: transparent;
+    text-color:       #ffffff;
+    placeholder:      "Buscar fondo de pantalla...";
+    placeholder-color:@text-muted;
+}
+
+listview {
+    background-color: transparent;
+    columns:          3;
+    lines:            4;
+    spacing:          12px;
+    cycle:            true;
+    dynamic:          true;
+    layout:           vertical;
+}
+
+element {
+    background-color: rgba(255, 255, 255, 0.04);
+    border:           1px;
+    border-color:     rgba(255, 255, 255, 0.06);
+    border-radius:    14px;
+    padding:          12px;
+    orientation:      vertical;
+    alignment:        center;
+    spacing:          8px;
+    cursor:           pointer;
+}
+
+element selected {
+    background-color: rgba(255, 158, 100, 0.22);
+    border:           1px;
+    border-color:     @accent;
+}
+
+element-icon {
+    size:             96px;
+    horizontal-align: 0.5;
+    vertical-align:   0.5;
+    background-color: transparent;
+    cursor:           pointer;
+}
+
+element-text {
+    background-color: transparent;
+    text-color:       #ffffff;
+    horizontal-align: 0.5;
+    vertical-align:   0.5;
+    font:             "JetBrainsMono Nerd Font 10";
+    cursor:           pointer;
+}
+
+element-text selected {
+    text-color:       @accent;
+    font:             "JetBrainsMono Nerd Font Bold 10";
+}

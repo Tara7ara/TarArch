@@ -1,0 +1,11 @@
+[Unit]
+Description=Aplicar el ultimo color/brillo guardados del teclado ASUS ROG/TUF
+After=multi-user.target suspend.target hibernate.target hybrid-sleep.target suspend-then-hibernate.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/home/tara/.local/bin/apply-kbd-led-state.sh
+
+[Install]
+WantedBy=multi-user.target suspend.target hibernate.target hybrid-sleep.target suspend-then-hibernate.target

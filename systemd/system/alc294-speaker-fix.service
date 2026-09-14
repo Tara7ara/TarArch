@@ -1,0 +1,6 @@
+[Unit]
+Description=Habilita el ampli del altavoz interno ALC294 (ASUS ROG Strix G512LU)
+
+[Service]
+Type=oneshot
+ExecStart=/home/tara/.local/bin/fix-alc294-speaker.sh

@@ -1,0 +1,90 @@
+/* =============================================================================
+   PALETA TARARCH WARM DARK — WLOGOUT VECTOR ICONS
+   ============================================================================= */
+
+* {
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    background-image: none;
+    box-shadow: none;
+}
+
+window {
+    background-color: rgba(15, 15, 15, 0.70);
+}
+
+box {
+    background-color: transparent;
+}
+
+button {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    color: #c9c9c9;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 16px;
+    padding: 0;
+    min-width: 140px;
+    min-height: 140px;
+    background-repeat: no-repeat;
+    background-position: center 30%;
+    background-size: 48px;
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+button:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+button:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* =============================================================================
+   ICONOS VECTORIALES SVG Y COLORES HOVER
+   ============================================================================= */
+
+#lock {
+    background-image: image(url("/usr/share/wlogout/assets/lock.svg"));
+}
+
+#lock:hover {
+    background-color: rgba(187, 154, 247, 0.18);
+    border-color: #bb9af7;
+    color: #bb9af7;
+}
+
+#suspend {
+    background-image: image(url("/usr/share/wlogout/assets/suspend.svg"));
+}
+
+#suspend:hover {
+    background-color: rgba(122, 162, 247, 0.18);
+    border-color: #7aa2f7;
+    color: #7aa2f7;
+}
+
+#reboot {
+    background-image: image(url("/usr/share/wlogout/assets/reboot.svg"));
+}
+
+#reboot:hover {
+    background-color: rgba(255, 158, 100, 0.18);
+    border-color: #ff9e64;
+    color: #ff9e64;
+}
+
+#shutdown {
+    background-image: image(url("/usr/share/wlogout/assets/shutdown.svg"));
+}
+
+#shutdown:hover {
+    background-color: rgba(247, 118, 142, 0.22);
+    border-color: #f7768e;
+    color: #f7768e;
+}

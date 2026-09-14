@@ -1,0 +1,103 @@
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/master/doc/json_schema.json",
+  "logo": {
+    "color": {
+      "1": "#ff9e64",
+      "2": "yellow"
+    },
+    "padding": {
+      "top": 1,
+      "right": 3
+    }
+  },
+  "display": {
+    "separator": " 󰄾 ",
+    "color": {
+      "keys": "#ff9e64",
+      "output": "white"
+    }
+  },
+  "modules": [
+    "title",
+    { "type": "separator", "string": "─", "outputColor": "#ff9e64", "times": 40 },
+    {
+      "type": "os",
+      "key": "   OS",
+      "keyColor": "#ff9e64"
+    },
+    {
+      "type": "kernel",
+      "key": "   Kernel",
+      "keyColor": "#ff9e64"
+    },
+    {
+      "type": "uptime",
+      "key": "   Uptime",
+      "keyColor": "#ff9e64"
+    },
+    {
+      "type": "packages",
+      "key": "  󰏖 Packages",
+      "keyColor": "#ff9e64"
+    },
+    {
+      "type": "shell",
+      "key": "   Shell",
+      "keyColor": "#ff9e64"
+    },
+    {
+      "type": "wm",
+      "key": "  󰨇 WM",
+      "keyColor": "#ff9e64"
+    },
+    {
+      "type": "terminal",
+      "key": "   Terminal",
+      "keyColor": "#ff9e64"
+    },
+    { "type": "separator", "string": "─", "outputColor": "#e0af68", "times": 40 },
+    {
+      "type": "cpu",
+      "key": "   CPU",
+      "keyColor": "yellow"
+    },
+    {
+      "type": "gpu",
+      "key": "  󰢮 GPU",
+      "keyColor": "yellow"
+    },
+    {
+      "type": "memory",
+      "percent": { "type": 3 },
+      "key": "   Memory",
+      "keyColor": "yellow"
+    },
+    {
+      "type": "disk",
+      "percent": { "type": 3 },
+      "key": "  󰍛 Disk",
+      "keyColor": "yellow"
+    },
+    {
+      "type": "battery",
+      "percent": { "type": 3 },
+      "key": "  󰁹 Battery",
+      "keyColor": "yellow"
+    },
+    {
+      "type": "custom",
+      "key": "  󰚩 Agentes",
+      "keyColor": "yellow",
+      "format": "claude / codex / agy"
+    },
+    { "type": "separator", "string": "─", "outputColor": "#6e6e6e", "times": 40 },
+    {
+      "type": "colors",
+      "block": { "range": [0, 7], "width": 3 }
+    },
+    {
+      "type": "colors",
+      "block": { "range": [8, 15], "width": 3 }
+    }
+  ]
+}

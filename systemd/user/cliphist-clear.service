@@ -1,0 +1,12 @@
+[Unit]
+Description=Limpiar historial del portapapeles al apagar
+DefaultDependencies=no
+Before=shutdown.target reboot.target halt.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStop=sh -c 'pkill -x wl-paste; rm -f "${XDG_CACHE_HOME:-$HOME/.cache}/cliphist/db"'
+
+[Install]
+WantedBy=default.target

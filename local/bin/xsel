@@ -1,0 +1,16 @@
+#!/bin/bash
+# Wrapper transparente xclip -> wl-clipboard para Wayland/Hyprland
+
+is_output=false
+for arg in "$@"; do
+    if [[ "$arg" == "-o" ]] || [[ "$arg" == "-out" ]]; then
+        is_output=true
+        break
+    fi
+done
+
+if [ "$is_output" = true ]; then
+    exec wl-paste --no-newline 2>/dev/null
+else
+    exec wl-copy 2>/dev/null
+fi

@@ -1,0 +1,11 @@
+[Trigger]
+Operation = Upgrade
+Operation = Install
+Type = Package
+Target = linux
+Target = cryptsetup
+
+[Action]
+Description = Backup de la cabecera LUKS a la NAS...
+When = PostTransaction
+Exec = /usr/local/bin/luks-header-backup.sh
