@@ -35,7 +35,7 @@ LIST=(
 "taratrack / series            Abrir plataforma de series y rankings ELO (tara.series)"
 "modos / bateria / gamer       Cambiar modo de energía (Uni 60Hz, Normal 144Hz, Gamer Turbo)"
 "raton / cursor                 Cambiar tema de cursor de ratón (Ice, Classic, Amber)"
-"codex-acc / codex-auth        Gestor multicuenta OpenAI Codex CLI (1-4 / rotar límites)"
+"codex-acc / codex-auth        Gestor multicuenta OpenAI Codex CLI (1-3 / rotar límites)"
 "limpiar                        Mantenimiento: purga capturas >14d, pacman/yay, huérfanos y logs"
 "wifi                           Abrir selector Spotlight de redes WiFi"
 "bluetooth                      Abrir gestor de dispositivos Bluetooth"

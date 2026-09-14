@@ -1,6 +1,6 @@
 # TarArch
 
-Mi Arch Linux con Hyprland, día a día, en un ASUS ROG con NVIDIA. Nada de framework de dotfiles ni generador de plantillas — cada fichero se edita a mano, y cada script de aquí existe porque me hizo falta de verdad, no porque quedara bien en una captura.
+Mi Arch Linux con Hyprland, día a día, en un ASUS ROG con NVIDIA. Sin framework de dotfiles ni generador de plantillas.
 
 ## Algunas cosas que costó sacar adelante
 
@@ -39,5 +39,5 @@ Son mis configs, para mi red y mi hardware — revisa esto antes de usarlas tal 
 
 - IPs de ejemplo (`192.168.1.10/20/30`) → las tuyas.
 - MACs de ejemplo (`AA:BB:CC:DD:EE:01/02`) → las tuyas, para Wake-on-LAN / proximidad Bluetooth.
-- `local/bin/codex-acc`/`codex-auth`/`codex-switch` llevan cuentas de ejemplo — edítalas con las tuyas.
+- `local/bin/codex-acc` lleva cuentas de ejemplo — edítalas con las tuyas.
 - Nombres de interfaz de red (`eno2`), alias SSH (`servidor`, `nas`) y nombre de conexión VPN (`Portatil`) son los míos.
