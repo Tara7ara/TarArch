@@ -1,6 +1,6 @@
 # TarArch
 
-Mi Arch Linux con Hyprland, día a día, en un ASUS ROG con NVIDIA. Sin framework de dotfiles ni generador de plantillas.
+Mi Arch Linux con Hyprland, día a día, en un ASUS ROG con NVIDIA. Sin framework de dotfiles ni generador de plantillas. El primer proyecto que publico este verano — el segundo es [TaraTrack](https://github.com/Tara7ara/TaraTrack), mi tracker de series.
 
 ## Capturas
 
