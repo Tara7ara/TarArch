@@ -2,6 +2,11 @@
 
 Mi Arch Linux con Hyprland, día a día, en un ASUS ROG con NVIDIA. Sin framework de dotfiles ni generador de plantillas.
 
+## Capturas
+
+![Escritorio](screenshots/desktop.png)
+![Centro de Control](screenshots/control-center.png)
+
 ## Algunas cosas que costó sacar adelante
 
 - **Los tooltips/popups se pintaban invisibles** en cualquier superficie layer-shell (Waybar, Centro de Control) en cuanto llevaban `rgba()` con alpha < 1 — bug real de la mezcla de capas NVIDIA+Wayland, no de mi CSS. Con opacidad completa (`rgb()`, alpha=1) pinta bien; por debajo de 1, nada. Sigue documentado por si reaparece en otro sitio.
