@@ -2,7 +2,7 @@ window {
     background-color: transparent; 
 }
 
-/* Eliminar el fondo opaco por defecto de GTK3 (Adwaita background-image) */
+/* Quitar el fondo de Adwaita */
 button {
     background-image: none;
     text-shadow: none;
@@ -53,7 +53,7 @@ button {
     color: #f7768e;
 }
 
-/* --- TARJETAS QUICK TOGGLE (8 BOTONES) TRANSPARENTES --- */
+/* --- TOGGLES --- */
 .btn-toggle {
     background-image: none;
     background-color: transparent;
@@ -115,7 +115,7 @@ button {
     color: #ffffff;
 }
 
-/* --- BOTONES DE ACCIÓN (2 CALENDARIO + NOTIFICACIONES) --- */
+/* --- BOTONES --- */
 .btn-action-icon {
     background-image: none;
     background-color: transparent;
@@ -203,7 +203,7 @@ scale slider:hover {
     margin: -3px 0;
 }
 
-/* --- TABS (2 BOTONES CALENDARIO / NOTIFICACIONES) --- */
+/* --- TABS --- */
 .btn-tab {
     background-image: none;
     background-color: transparent;

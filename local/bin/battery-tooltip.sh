@@ -15,7 +15,7 @@ TECH=$(echo "$INFO" | grep 'technology:' | awk '{print $2}')
 
 case "$STATE" in
     "fully-charged") STATE_ES="Totalmente cargada"; icon="󰂄" ;;
-    "charging")      STATE_ES="Cargando"; icon="󱐌" ;;  # Usar rayo de Nerd Fonts en vez de emoji
+    "charging")      STATE_ES="Cargando"; icon="󱐌" ;;
     "discharging")   STATE_ES="Descargando"; icon="󰁹" ;;
     "empty")         STATE_ES="Vacía"; icon="󰂎" ;;
     *)               STATE_ES="$STATE"; icon="󰁹" ;;
@@ -24,13 +24,10 @@ esac
 [ -z "$TIME" ] && TIME="N/D (Cargada o calculando)"
 [ -z "$HEALTH" ] && HEALTH="N/D"
 
-# Media móvil de consumo real (upower solo da el ritmo instantáneo, que
-# infla la estimación si el momento de la muestra es de poca carga).
-# Guardamos energía+timestamp en cada pasada mientras se descarga y
-# calculamos el ritmo real con la ventana de los últimos 15 min.
+# Media de consumo de los últimos 15 min, upower solo da el instantáneo
 SAMPLES_FILE="/tmp/battery-rate-samples.log"
 WINDOW=900   # 15 min de ventana
-MIN_SPAN=120 # no fiarse hasta tener al menos 2 min de historial real
+MIN_SPAN=120 # mínimo 2 min de historial
 
 if [ "$STATE" = "discharging" ]; then
     ENERGY=$(echo "$INFO" | grep 'energy:' | awk '{print $2}' | tr ',' '.')
@@ -87,7 +84,7 @@ else
     FW_ES="Inactivo"
 fi
 
-# Construir el cuerpo del tooltip en texto plano (sin emojis)
+# Cuerpo del tooltip
 RAW_TOOLTIP="Detalles de Batería:\nEstado: $STATE_ES\nRestante: $TIME\nSalud: $HEALTH\nTecnología: $TECH\n\nFirewall: $FW_ES"
 
 # Escapar para Pango
@@ -95,7 +92,7 @@ TOOLTIP_SAFE="${RAW_TOOLTIP//&/&amp;}"
 TOOLTIP_SAFE="${TOOLTIP_SAFE//</&lt;}"
 TOOLTIP_SAFE="${TOOLTIP_SAFE//>/&gt;}"
 
-# Convertir saltos de línea físicos a \n por seguridad
+# Saltos de línea a \n
 TOOLTIP_JSON=$(echo "$TOOLTIP_SAFE" | sed ':a;N;$!ba;s/\n/\\n/g')
 
 echo "{\"text\": \"$PERCENT\", \"tooltip\": \"$TOOLTIP_JSON\", \"class\": \"$class\"}"

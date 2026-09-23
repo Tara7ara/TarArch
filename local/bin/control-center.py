@@ -26,7 +26,7 @@ class ControlCenterWindow(Gtk.Window):
     def __init__(self):
         super().__init__(type=Gtk.WindowType.TOPLEVEL)
 
-        # Cargar eventos inmediatamente desde el índice en disco (0ms)
+        # Eventos del índice en disco
         self.all_events = backend.get_cached_events()
         self.selected_date = datetime.date.today()
 
@@ -93,7 +93,7 @@ class ControlCenterWindow(Gtk.Window):
         btn_close.connect("clicked", lambda w: self.close())
         header_box.pack_start(btn_close, False, False, 0)
 
-        # 2. Grid de Botones Rápidos Icon-Only (4 Columnas x 2 Filas, Iconos 21px)
+        # 2. Botones rápidos (4x2)
         grid = Gtk.Grid()
         grid.set_column_spacing(8)
         grid.set_row_spacing(8)
@@ -158,7 +158,7 @@ class ControlCenterWindow(Gtk.Window):
         self.btn_limpiar.connect("clicked", lambda w: self.run_action("kitty -e /home/tara/.local/bin/limpieza-tararch.sh", close_panel=True))
         grid.attach(self.btn_limpiar, 3, 1, 1, 1)
 
-        # 3. Deslizadores (Sliders) Modernos de Volumen y Brillo con % en tiempo real
+        # 3. Sliders de volumen y brillo
         slider_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         slider_box.get_style_context().add_class("section-box")
         main_box.pack_start(slider_box, False, False, 0)
@@ -201,7 +201,7 @@ class ControlCenterWindow(Gtk.Window):
         self.lbl_bri_pct.get_style_context().add_class("slider-val-label")
         bri_row.pack_start(self.lbl_bri_pct, False, False, 0)
 
-        # 4. PESTAÑAS (TABS): [ 󰸗 CALENDARIO ] Y [ 󰂚 NOTIFICACIONES ]
+        # 4. Pestañas: calendario y notificaciones
         tab_header = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
         main_box.pack_start(tab_header, False, False, 0)
 
@@ -226,7 +226,7 @@ class ControlCenterWindow(Gtk.Window):
         self.stack.set_transition_duration(150)
         main_box.pack_start(self.stack, True, True, 0)
 
-        # VISTA A: CALENDARIO INTERACTIVO CON EVENTOS
+        # Calendario
         cal_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         cal_box.get_style_context().add_class("section-box")
 
@@ -278,7 +278,7 @@ class ControlCenterWindow(Gtk.Window):
 
         self.stack.add_named(cal_box, "cal")
 
-        # VISTA B: NOTIFICACIONES REALES
+        # Notificaciones
         noti_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         noti_box.get_style_context().add_class("section-box")
 
@@ -316,7 +316,7 @@ class ControlCenterWindow(Gtk.Window):
         self.connect("key-press-event", self.on_key_press)
         self.connect("destroy", self.on_destroy)
 
-        # Aplicar eventos en caché de inmediato (0ms) y lanzar sync en segundo plano
+        # Eventos en caché y sync en segundo plano
         self.apply_synced_events(self.all_events)
         self.start_bg_sync()
 

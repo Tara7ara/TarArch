@@ -10,8 +10,7 @@ if ip link show "$WG_INTERFACE" &>/dev/null && ip link show "$WG_INTERFACE" | gr
         notify-send "VPN" "Error al desconectar - revisa journalctl/nmcli" --icon=dialog-error -u critical
     fi
 else
-    # DNS de AdGuard a través del túnel — el router no puede repartirlo por DHCP
-    # (tema WAF), así que se fuerza aquí cada vez que se activa la VPN.
+    # DNS de AdGuard por el túnel
     nmcli connection modify "$WG_INTERFACE" ipv4.dns "192.168.1.10" ipv4.dns-priority -10
 
     if nmcli connection up "$WG_INTERFACE"; then

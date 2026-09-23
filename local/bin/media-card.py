@@ -90,7 +90,7 @@ integral = 75
     def smooth_tick(self):
         if not self.running:
             return False
-        # Interpolacion suave
+        # Interpolación
         for i in range(self.num_bars):
             self.bar_values[i] += (self.target_values[i] - self.bar_values[i]) * 0.35
         self.queue_draw()

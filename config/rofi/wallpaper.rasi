@@ -1,6 +1,4 @@
-/**
- * PALETA TARARCH WARM DARK — SELECTOR VISUAL DE WALLPAPERS (ROFI)
- **/
+/* Selector de wallpapers */
 
 configuration {
     show-icons: true;

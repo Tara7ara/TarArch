@@ -1,6 +1,4 @@
-# =============================================================================
-# BTOP THEME: TARARCH WARM DARK
-# =============================================================================
+# Warm dark
 
 # Main background, empty for terminal default, need to be also set in btop.conf
 theme[main_bg]="#0f0f0f"

@@ -106,5 +106,5 @@ run_playerctl_loop() {
 run_playerctl_loop &
 LOOP_PID=$!
 
-# Bloquear la ejecución en wait para recibir señales de forma asíncrona e instantánea
+# Esperar con wait para poder recibir señales
 wait "$LOOP_PID"

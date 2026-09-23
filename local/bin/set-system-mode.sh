@@ -1,11 +1,8 @@
 #!/bin/bash
-# =============================================================================
-# GESTOR CENTRALIZADO DE MODOS DE SISTEMA — TARARCH
-# Modos:
+# Modos del sistema:
 #   uni    -> 60Hz · Ventiladores Silenciosos · CPU Eco · LEDs Off
 #   normal -> 144Hz · Equilibrado · Efectos Blur y Animaciones · LEDs On
 #   gamer  -> 144Hz · CPU Turbo 100% · Sin Blur/Sombras · Máxima Respuesta
-# =============================================================================
 
 CACHE_FILE="$HOME/.cache/current_system_mode"
 ROFI_THEME="$HOME/.config/rofi/cursor-menu.rasi"

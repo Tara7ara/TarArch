@@ -5,8 +5,7 @@ LOG="/var/log/restic-backup.log"
 PROGRESS_FILE="/tmp/restic-backup-progress"
 LOCKFILE="/tmp/restic-backup.flock"
 
-# Evita que el timer diario y el botón de backup manual corran a la vez
-# (causa más probable de los locks huérfanos vistos desde el 2026-08-11)
+# Que el timer y el backup manual no corran a la vez
 exec 9>"$LOCKFILE"
 if ! flock -n 9; then
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Otra copia ya está en marcha, saliendo." >> "$LOG"
@@ -60,9 +59,7 @@ except Exception:
     done
 BACKUP_STATUS=${PIPESTATUS[0]}
 
-# NOTA (2026-09-14): el forget/prune ya NO se hace aquí, se movió al servidor
-# (siempre en la LAN junto al NAS, sin el salto de latencia+VPN de cuando
-# el portátil está fuera de casa, que era lo que dejaba el prune colgado).
+# El forget/prune lo hace el servidor
 
 if [ "$BACKUP_STATUS" -eq 0 ]; then
     echo "done:$(date +%s)" > "$PROGRESS_FILE"

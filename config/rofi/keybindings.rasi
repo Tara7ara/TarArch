@@ -1,6 +1,4 @@
-/* =============================================================================
-   ROFI KEYBINDINGS CHEATSHEET — PALETA TARARCH WARM DARK
-   ============================================================================= */
+/* Chuleta de atajos */
 
 configuration {
     modi:                "dmenu";

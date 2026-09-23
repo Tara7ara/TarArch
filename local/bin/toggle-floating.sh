@@ -1,7 +1,5 @@
 #!/bin/bash
-# =============================================================================
-# Alternar modo flotante compacto y centrado — TarArch (Super + G)
-# =============================================================================
+# Alterna la ventana entre flotante compacta centrada y fija (Super + G)
 
 IS_FLOATING=$(hyprctl activewindow -j | jq -r '.floating')
 

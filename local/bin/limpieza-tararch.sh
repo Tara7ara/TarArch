@@ -1,16 +1,11 @@
 #!/bin/bash
-# =============================================================================
-# MANTENIMIENTO Y LIMPIEZA INTELIGENTE DEL SISTEMA — TARARCH
-# Limpieza de capturas, cache de paquetes, logs y temporales
-# =============================================================================
+# Limpieza: capturas, caché de pacman/yay, huérfanos, logs y temporales
 
 echo -e "\033[1;33m[TarArch] Iniciando rutina de limpieza y mantenimiento...\033[0m\n"
 
 INITIAL_AVAIL=$(df -k / | awk 'NR==2 {print $4}')
 
-# -----------------------------------------------------------------------------
-# 1. GESTIÓN Y LIMPIEZA DE CAPTURAS DE PANTALLA
-# -----------------------------------------------------------------------------
+# Gestión y limpieza de capturas de pantalla
 SCREENSHOT_DIR="$HOME/img/screenshots"
 mkdir -p "$SCREENSHOT_DIR"
 
@@ -46,9 +41,7 @@ fi
 rm -f /tmp/screenshot_*.png /tmp/tararch_media_card_* 2>/dev/null
 echo ""
 
-# -----------------------------------------------------------------------------
-# 2. LIMPIEZA DE CACHÉ DE PACMAN Y YAY
-# -----------------------------------------------------------------------------
+# Limpieza de caché de pacman y yay
 echo -e "\033[1;36m:: Limpiando paquetes descargados en caché (Pacman / Yay)...\033[0m"
 if command -v paccache &>/dev/null; then
     sudo paccache -rk1 -q 2>/dev/null || true
@@ -56,9 +49,7 @@ fi
 yay -Sc --noconfirm 2>/dev/null || true
 echo -e "   \033[32m✔ Caché de paquetes optimizada.\033[0m\n"
 
-# -----------------------------------------------------------------------------
-# 3. PAQUETES HUÉRFANOS
-# -----------------------------------------------------------------------------
+# Paquetes huérfanos
 echo -e "\033[1;36m:: Comprobando paquetes huérfanos sin dependencias...\033[0m"
 ORPHANS=$(pacman -Qtdq 2>/dev/null)
 if [ -n "$ORPHANS" ]; then
@@ -68,23 +59,17 @@ else
     echo -e "   \033[32m✔ No hay paquetes huérfanos residuales.\033[0m\n"
 fi
 
-# -----------------------------------------------------------------------------
-# 4. REGISTROS DE SYSTEMD (JOURNALCTL)
-# -----------------------------------------------------------------------------
+# Registros de systemd (journalctl)
 echo -e "\033[1;36m:: Reduciendo logs de Systemd a un máximo de 50MB...\033[0m"
 sudo journalctl --vacuum-size=50M >/dev/null 2>&1 || true
 echo -e "   \033[32m✔ Logs del sistema purgados.\033[0m\n"
 
-# -----------------------------------------------------------------------------
-# 5. CACHÉ DE MINIATURAS ROTAS DE USUARIO
-# -----------------------------------------------------------------------------
+# Caché de miniaturas rotas de usuario
 echo -e "\033[1;36m:: Limpiando miniaturas obsoletas (~/.cache/thumbnails)...\033[0m"
 rm -rf "$HOME/.cache/thumbnails/"* 2>/dev/null || true
 echo -e "   \033[32m✔ Miniaturas residuales eliminadas.\033[0m\n"
 
-# -----------------------------------------------------------------------------
-# REPORTE FINAL
-# -----------------------------------------------------------------------------
+# Reporte final
 FINAL_AVAIL=$(df -k / | awk 'NR==2 {print $4}')
 FREED_KB=$((FINAL_AVAIL - INITIAL_AVAIL))
 

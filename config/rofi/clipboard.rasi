@@ -1,6 +1,4 @@
-/* =============================================================================
-   ROFI CLIPBOARD MANAGER (CLIPHIST) — PALETA TARARCH WARM DARK
-   ============================================================================= */
+/* Portapapeles (cliphist) */
 
 configuration {
     modi:                "dmenu";

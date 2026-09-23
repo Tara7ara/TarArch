@@ -1,5 +1,4 @@
 # Theme: tokyo-night
-# Basado estrictamente en: /home/tara/.mounts/TaraNAS/Apuntes/Cosas_de_casa/Tararch/Tokyo Night.md
 
 # Colores principales (Fondo, Texto y Selección)
 theme[main_bg]="#1a1b26"
@@ -10,7 +9,7 @@ theme[selected_bg]="#33467c"
 theme[selected_fg]="#c0caf5"
 theme[inactive_fg]="#565f89"
 
-# Bordes de las cajas y divisiones (usamos el color de Selección para que resalte elegante)
+# Bordes de las cajas
 theme[cpu_box]="#33467c"
 theme[mem_box]="#33467c"
 theme[net_box]="#33467c"

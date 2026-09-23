@@ -1,6 +1,4 @@
-/* =============================================================================
-   ROFI CURSOR THEME SELECTOR — PALETA TARARCH WARM DARK
-   ============================================================================= */
+/* Selector de cursor */
 
 * {
     font:             "JetBrainsMono Nerd Font 13";

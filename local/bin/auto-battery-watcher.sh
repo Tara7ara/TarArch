@@ -1,8 +1,5 @@
 #!/bin/bash
-# =============================================================================
-# AUTO BATTERY WATCHER — TARARCH
-# Cambia inteligentemente entre 60Hz (Batería) y 144Hz (Enchufado)
-# =============================================================================
+# Cambia a 60 Hz con batería y a 144 Hz enchufado
 
 AC_FILE="/sys/class/power_supply/AC0/online"
 [ ! -f "$AC_FILE" ] && exit 1

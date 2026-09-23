@@ -1,4 +1,4 @@
-/* SSH launcher — mismo estilo que power-menu, dimensionado para texto */
+/* SSH, mismo estilo que power-menu */
 
 * {
     font:             "JetBrainsMono Nerd Font 20";

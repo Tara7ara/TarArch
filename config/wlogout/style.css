@@ -1,6 +1,4 @@
-/* =============================================================================
-   PALETA TARARCH WARM DARK — WLOGOUT VECTOR ICONS
-   ============================================================================= */
+/* Wlogout */
 
 * {
     font-family: "JetBrainsMono Nerd Font", sans-serif;
@@ -45,9 +43,7 @@ button:focus {
     box-shadow: none;
 }
 
-/* =============================================================================
-   ICONOS VECTORIALES SVG Y COLORES HOVER
-   ============================================================================= */
+/* Iconos y hover */
 
 #lock {
     background-image: image(url("/usr/share/wlogout/assets/lock.svg"));

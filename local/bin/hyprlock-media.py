@@ -60,7 +60,7 @@ def main():
         if len(title) > 36:
             title = title[:33] + "..."
 
-        # Barra de progreso fina y elegante
+        # Barra de progreso
         width = 18
         if dur_s > 0:
             frac = min(1.0, max(0.0, pos_s / dur_s))

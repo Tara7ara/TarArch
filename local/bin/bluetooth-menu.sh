@@ -1,8 +1,5 @@
 #!/bin/bash
-# =============================================================================
-# GESTOR RÁPIDO DE BLUETOOTH EN ROFI — TARARCH
-# Conexión / desconexión instantánea de auriculares, mandos y móviles
-# =============================================================================
+# Menú de Bluetooth en rofi: conectar/desconectar dispositivos emparejados
 
 # Comprobar estado de encendido
 IS_POWERED=$(bluetoothctl show | grep "Powered: yes")

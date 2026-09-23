@@ -1,11 +1,7 @@
 #!/bin/bash
-# =============================================================================
-# GESTOR RÁPIDO DE REDES WIFI EN ROFI — TARARCH
-# Escaneo de redes, nivel de señal, seguridad y conexión instantánea
-# =============================================================================
+# Menú de WiFi en rofi
 
-# Comprobar estado de WiFi (nmcli radio wifi da siempre "enabled"/"disabled" en inglés,
-# a diferencia de "nmcli g" que se localiza a "activado"/"desactivado" en este sistema)
+# Estado del WiFi (nmcli radio wifi no se traduce, nmcli g sí)
 WIFI_STATE=$(nmcli radio wifi)
 
 if [[ "$WIFI_STATE" == "disabled" ]]; then
@@ -19,7 +15,7 @@ if [[ "$WIFI_STATE" == "disabled" ]]; then
     exit 0
 fi
 
-# Notificación sutil de escaneo
+# Aviso de escaneo
 notify-send "WiFi" "Escaneando redes cercanas..." -i network-wireless -u low -t 1500 &
 
 # Obtener redes WiFi

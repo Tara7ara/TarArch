@@ -1,7 +1,5 @@
 #!/bin/bash
-# =============================================================================
-# SELECTOR Y GESTOR DE TEMAS DE CURSOR (TARARCH)
-# Soporta: ice (Blanco - Default), classic (Negro), amber (Ámbar)
+# Cambia el tema del cursor: ice (blanco, por defecto), classic (negro), amber
 # Uso:
 #   change-cursor.sh           -> Abre menú interactivo en Rofi
 #   change-cursor.sh ice       -> Aplica Bibata-Modern-Ice (Blanco)
@@ -9,7 +7,6 @@
 #   change-cursor.sh amber     -> Aplica Bibata-Modern-Amber (Ámbar)
 #   change-cursor.sh toggle    -> Alterna entre Ice -> Classic -> Amber
 #   change-cursor.sh apply     -> Aplica el cursor guardado en caché
-# =============================================================================
 
 CACHE_FILE="$HOME/.cache/current_cursor_theme"
 CURSOR_SIZE=24

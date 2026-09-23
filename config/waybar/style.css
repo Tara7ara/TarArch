@@ -1,6 +1,4 @@
-/* =============================================================================
-   PALETA TARARCH WARM DARK — FLOATING ISLANDS / CAPSULES (MULTI-BAR NATIVE)
-   ============================================================================= */
+/* Paleta */
 
 @define-color bg-dark          #0a0a0a;
 @define-color bg-base          #0f0f0f;
@@ -16,7 +14,7 @@
 @define-color status-red       #f7768e;
 @define-color status-gray      #787c99;
 
-/* UI & Islas (Alta legibilidad y contraste tanto en fondos claros como oscuros) */
+/* Islas */
 @define-color island-bg        rgba(15, 15, 15, 0.88);
 @define-color island-border    rgba(255, 255, 255, 0.12);
 @define-color item-hover       rgba(255, 255, 255, 0.12);
@@ -37,9 +35,7 @@ window#waybar {
     color: @fg-bright;
 }
 
-/* =============================================================================
-   CENTRADO SIMÉTRICO EXACTO DE LA ISLA CENTRAL
-   ============================================================================= */
+/* Centrado de la isla central */
 .modules-left,
 .modules-right {
     min-width: 480px;
@@ -53,18 +49,13 @@ window#waybar {
     padding: 0;
 }
 
-/* =============================================================================
-   ESTRUCTURA DE ISLAS FLOTANTES (CAPSULES)
-   ============================================================================= */
+/* Islas */
 
 #workspaces,
 #custom-media,
 #connectivity,
 #system {
-    /* alpha < 1 en esta superficie da un fallo de mezcla (fondo casi
-       invisible, se ve el wallpaper de fondo) - probado 2026-08-23: rojo
-       solido (alpha=1) se pinta perfecto, rgba(...,0.90) no. Opacidad
-       completa como workaround - visualmente casi igual, ya era muy oscuro. */
+    /* Con alpha < 1 aquí el fondo sale casi invisible (NVIDIA), por eso rgb */
     background-color: rgb(15, 15, 15);
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 12px;
@@ -80,9 +71,7 @@ window#waybar {
     border-color: rgba(255, 255, 255, 0.20);
 }
 
-/* =============================================================================
-   ISLA 1: WORKSPACES (IZQUIERDA)
-   ============================================================================= */
+/* Workspaces */
 
 #workspaces {
     padding: 2px 4px;
@@ -116,9 +105,7 @@ window#waybar {
     background: rgba(247, 118, 142, 0.2);
 }
 
-/* =============================================================================
-   ISLA 2: MEDIA PLAYER (CÁPSULA MINIMALISTA CENTRADA)
-   ============================================================================= */
+/* Música */
 
 #custom-media {
     color: @fg-bright;
@@ -132,7 +119,7 @@ window#waybar {
     border-color: rgba(255, 158, 100, 0.4);
 }
 
-/* Si no hay música, ocultar la isla de forma limpia */
+/* Sin música se ocultan los botones */
 #custom-prev.hidden,
 #custom-next.hidden {
     padding: 0;
@@ -140,9 +127,7 @@ window#waybar {
     font-size: 0;
 }
 
-/* =============================================================================
-   MÓDULOS INTERNOS DE LAS ISLAS DERECHAS
-   ============================================================================= */
+/* Módulos de la derecha */
 
 #custom-updates,
 #custom-vpn,
@@ -173,9 +158,7 @@ window#waybar {
     background: @item-hover;
 }
 
-/* =============================================================================
-   ESTADOS Y COLORES SEMÁNTICOS
-   ============================================================================= */
+/* Estados */
 
 /* Updates */
 #custom-updates {

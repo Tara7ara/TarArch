@@ -1,8 +1,4 @@
-/* =============================================================
-   PALETA TARARCH — Warm Dark
-   Fuente de verdad: ~/.mounts/TaraNAS/Apuntes/Cosas_de_casa/Tararch/Paleta.md
-   NOTA: rofi 2.0.0 no soporta @import ni @define-color
-   ============================================================= */
+/* Paleta warm dark (rofi 2.0.0 no soporta @import ni @define-color) */
 
 /* --- Fondos --- */
 /* bg            #0f0f0f    fondo principal            */

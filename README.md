@@ -1,6 +1,6 @@
 # TarArch
 
-Mi Arch Linux con Hyprland, día a día, en un ASUS ROG con NVIDIA. Sin framework de dotfiles ni generador de plantillas. El primer proyecto que publico este verano — el segundo es [TaraTrack](https://github.com/Tara7ara/TaraTrack), mi tracker de series.
+Mi Arch Linux con Hyprland, día a día, en un ASUS ROG con NVIDIA. Sin framework de dotfiles ni generador de plantillas. Es el primer proyecto que publico este verano; el segundo es [TaraTrack](https://github.com/Tara7ara/TaraTrack), mi tracker de series.
 
 ## Capturas
 
@@ -9,12 +9,12 @@ Mi Arch Linux con Hyprland, día a día, en un ASUS ROG con NVIDIA. Sin framewor
 
 ## Algunas cosas que costó sacar adelante
 
-- **Los tooltips/popups se pintaban invisibles** en cualquier superficie layer-shell (Waybar, Centro de Control) en cuanto llevaban `rgba()` con alpha < 1 — bug real de la mezcla de capas NVIDIA+Wayland, no de mi CSS. Con opacidad completa (`rgb()`, alpha=1) pinta bien; por debajo de 1, nada. Sigue documentado por si reaparece en otro sitio.
-- **Los iconos de rofi nunca quedaban centrados de verdad** por mucho que ajustara el tamaño de fuente — pango centra la *caja lógica* del glifo, no la tinta, y los iconos de Nerd Font tienen side-bearings asimétricos. Solución real: `make-rofi-icon.py` renderiza cada icono como PNG, mide el bounding box de tinta de verdad con PIL y lo centra a mano en un canvas cuadrado — cero dependencia de que pango decida centrar bien.
-- **`asusd` competía con `rogauracore`** por el LED RGB del teclado (el color hacía pop-up y se revertía en un segundo) — `asusd` reaplicaba su propio estado guardado en cada evento USB del teclado. Y `systemctl disable` no bastaba: una regla udev del propio paquete lo reactivaba en cada boot vía `SYSTEMD_WANTS`, ignorando el disable. Hace falta `mask`, no `disable`.
-- **Cursor con 3 variantes** (`change-cursor.sh`, `Super+Alt+C`) sincronizado en varias capas a la vez (compositor, `hyprctl setenv`, GTK) para que el cambio se note en todo, no solo en la ventana con foco — la primera versión lo cambiaba automático según el brillo del wallpaper, pero no quedó lo bastante pulido y se quedó en manual.
-- **Centro de Control** propio en vez de usar algo ya hecho — GTK3 + GtkLayerShell, estilo Windows 11, porque quería toggles/sliders/calendario en un panel que se sintiera parte del mismo sistema, no otra app suelta con su propio estilo.
-- La tarjeta de música (`media-card.py`) mete un ecualizador CAVA en tiempo real en el popup, con portada y letras.
+- **Los tooltips y popups salían invisibles** en Waybar y en el Centro de Control cuando el fondo llevaba `rgba()` con alpha < 1. Es un fallo de la mezcla de capas con NVIDIA en Wayland, no del CSS: con `rgb()` se ven bien, con cualquier transparencia no.
+- **Los iconos de rofi nunca quedaban centrados.** Pango centra la caja lógica del glifo, no el dibujo, y los iconos de Nerd Font no son simétricos. Al final `make-rofi-icon.py` pasa cada icono a PNG, mide dónde está el dibujo con PIL y lo centra en un lienzo cuadrado.
+- **`asusd` se peleaba con `rogauracore`** por el LED del teclado: ponías un color y al segundo volvía al anterior. Con `systemctl disable` no bastaba porque una regla udev del propio paquete lo volvía a arrancar en cada boot. Hace falta `mask`.
+- **Cursor con 3 variantes** (`change-cursor.sh`, `Super+Alt+C`) que se aplica a la vez en Hyprland, en las variables de entorno y en GTK, para que cambie en todas las ventanas y no solo en la que tiene el foco.
+- **Centro de Control propio** en GTK3 + GtkLayerShell, al estilo de Windows 11, con toggles, sliders y calendario. Quería que pareciera parte del sistema y no otra app suelta.
+- La tarjeta de música (`media-card.py`) lleva un visualizador de CAVA dentro del popup, con la portada y las letras.
 
 ## Stack
 
@@ -35,15 +35,6 @@ sysctl.d/     → /etc/sysctl.d/*
 
 ## Requisitos
 
-No es un instalador de un clic, son mis configs reales para copiar y adaptar. Como mínimo:
+No es un instalador de un clic, son mis configs para copiar y adaptar. Como mínimo:
 
 `hyprland` `waybar` `rofi` `kitty` `hyprlock` `hypridle` `python-gobject` `gtk-layer-shell` `playerctl` `upower` `networkmanager` `cava`
-
-## Antes de copiar nada de esto
-
-Son mis configs, para mi red y mi hardware — revisa esto antes de usarlas tal cual:
-
-- IPs de ejemplo (`192.168.1.10/20/30`) → las tuyas.
-- MACs de ejemplo (`AA:BB:CC:DD:EE:01/02`) → las tuyas, para Wake-on-LAN / proximidad Bluetooth.
-- `local/bin/codex-acc` lleva cuentas de ejemplo — edítalas con las tuyas.
-- Nombres de interfaz de red (`eno2`), alias SSH (`servidor`, `nas`) y nombre de conexión VPN (`Portatil`) son los míos.

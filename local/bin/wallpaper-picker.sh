@@ -1,7 +1,5 @@
 #!/bin/bash
-# =============================================================================
-# SELECTOR VISUAL DE WALLPAPERS (TARARCH)
-# =============================================================================
+# Selector de wallpapers con miniaturas
 
 WALLPAPER_DIR="$HOME/img/wallpapers"
 CACHE_FILE="$HOME/.cache/current_wallpaper"

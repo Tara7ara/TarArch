@@ -1,7 +1,5 @@
 #!/bin/bash
-# =============================================================================
-# LANZADOR DE TARATRACK (SEGUIMIENTO DE SERIES & ELO)
-# =============================================================================
+# Abre TaraTrack
 
 URL="https://tara.series"
 firefox --new-window "$URL" &

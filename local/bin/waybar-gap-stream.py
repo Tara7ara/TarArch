@@ -12,8 +12,8 @@ import threading
 import time
 
 BAR_WIDTH = 1896
-RIGHT_BASE = 847  # Medido con exactitud en píxeles reales de la barra
-CHAR_WIDTH = 9.18  # Ancho real de cada espacio en JetBrainsMono 13px en GTK (28 espacios = 257px)
+RIGHT_BASE = 847  # px medidos en la barra
+CHAR_WIDTH = 9.18  # ancho de un espacio en JetBrainsMono 13px
 
 has_updates = False
 emit_event = threading.Event()

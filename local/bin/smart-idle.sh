@@ -1,5 +1,5 @@
 #!/bin/bash
-# Suspensión inteligente: bloquea siempre, suspende solo si el sistema está ocioso.
+# Bloquea siempre y suspende solo si el sistema está ocioso.
 LOAD=$(LC_ALL=C awk '{print $1}' /proc/loadavg)
 BUSY_PROCS="claude|python3|python|node|cargo|make|ffmpeg|aria2c|rsync|restic|wget|yay|pacman|agy"
 

@@ -20,7 +20,7 @@ if ! ip link show "$WG_INTERFACE" 2>/dev/null | grep -q "UP"; then
     sleep 2
 fi
 
-# Wake-on-LAN: solo si el PC no responde a ping (nunca se manda el magic packet si ya está encendido).
+# Wake-on-LAN solo si el PC no responde a ping
 echo "Comprobando si PC Windows esta encendido..."
 if ! ping -c 1 -W 1 "$W11_IP" &>/dev/null; then
     echo "PC Windows no responde. Enviando Wake-on-LAN via servidor..."
@@ -52,7 +52,7 @@ fi
 
 echo "Lanzando RDP con Portapapeles Bidireccional y Wallpaper activado..."
 
-# Parámetros optimizados para calidad LAN, Wallpaper Engine (DWM Aero), 32-bit y Portapapeles
+# Calidad LAN, 32 bits y portapapeles
 RDP_ARGS=(
     /v:"$W11_IP"
     /u:"$W11_USER"

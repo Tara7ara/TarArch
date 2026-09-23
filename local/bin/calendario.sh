@@ -1,8 +1,5 @@
 #!/bin/bash
-# =============================================================================
-# LANZADOR DE CALENDARIO NATIVO — TARARCH
-# Abre GNOME Calendar conectado a tu servidor CalDAV privado (Radicale)
-# =============================================================================
+# Abre GNOME Calendar con el CalDAV (Radicale)
 
 if command -v gnome-calendar &>/dev/null; then
     gnome-calendar &

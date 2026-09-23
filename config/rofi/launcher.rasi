@@ -1,6 +1,4 @@
-/* =============================================================================
-   ROFI SPOTLIGHT / RAYCAST LAUNCHER — PALETA TARARCH WARM DARK
-   ============================================================================= */
+/* Lanzador */
 
 configuration {
     modi:                "drun,run";

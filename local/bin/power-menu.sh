@@ -1,5 +1,5 @@
 #!/bin/bash
-# Power Menu con 4 iconos gigantes coloreados nativos
+# Menú de apagado
 CHOICE=$(printf '<span color="#bb9af7">\U000f033e</span>\n<span color="#e0af68">\U000f0904</span>\n<span color="#ff9e64">\U000f0709</span>\n<span color="#ff6e6e">\U000f0425</span>' | \
     rofi -dmenu \
          -theme ~/.config/rofi/power-menu.rasi \

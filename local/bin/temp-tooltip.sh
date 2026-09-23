@@ -31,5 +31,5 @@ if [ $TEMP_C -ge 80 ]; then
     class="critical"
 fi
 
-# Output JSON sin emojis (usa Nerd Font 󰔏)
+# Salida JSON
 echo "{\"text\": \"󰔏 ${TEMP_C}°C\", \"tooltip\": \"Temperaturas:\\n$CORES_JSON\", \"class\": \"$class\"}"

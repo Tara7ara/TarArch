@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script de arranque inteligente para lan-mouse
+# Arranca lan-mouse solo en casa y con el PC de Windows encendido
 
 # 1. Comprobar si tenemos la IP de casa en la interfaz ethernet
 if ip addr show eno2 2>/dev/null | grep -q '192.168.1.30'; then

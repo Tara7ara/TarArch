@@ -10,7 +10,6 @@ ACCOUNTS_DIR = os.path.join(CODEX_DIR, "accounts")
 AUTH_FILE = os.path.join(CODEX_DIR, "auth.json")
 ACTIVE_FILE = os.path.join(ACCOUNTS_DIR, "active_account")
 
-# Ejemplo con 3 cuentas genericas -- edita esto con tus propias cuentas/alias.
 ACCOUNTS = {
     "1": {"id": "1", "key": "principal", "email": "cuenta1@example.com", "name": "Cuenta Principal"},
     "2": {"id": "2", "key": "secundaria", "email": "cuenta2@example.com", "name": "Cuenta Secundaria"},

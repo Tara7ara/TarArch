@@ -1,8 +1,5 @@
 #!/bin/bash
-# =============================================================================
-# CAPTURA DE PANTALLA INSTANTÁNEA — TARARCH
-# Guarda el archivo y copia la RUTA exacta al portapapeles para pegar en Claude/chat
-# =============================================================================
+# Captura de región, guarda el archivo y copia la ruta al portapapeles
 
 SAVE_DIR="$HOME/img/screenshots"
 mkdir -p "$SAVE_DIR"
@@ -11,7 +8,7 @@ TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 FILE="$SAVE_DIR/screenshot_${TIMESTAMP}.png"
 TEMP_FILE="/tmp/screenshot_latest.png"
 
-# 1. Selección visual de región (rectángulo con borde naranja)
+# 1. Seleccionar región
 GEOM=$(slurp -b 00000088 -c ff9e64ff -d -w 2 2>/dev/null)
 [ -z "$GEOM" ] && exit 0
 
