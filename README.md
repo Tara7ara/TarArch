@@ -29,6 +29,7 @@ usr-local-bin/→ /usr/local/bin/*  (scripts que necesitan vivir fuera del home)
 systemd/      → unidades de systemd (system, user, sleep hooks)
 udev-rules/   → reglas udev
 pacman-hooks/ → hooks de pacman
+sysctl.d/     → /etc/sysctl.d/*
 .zshrc, .zprofile
 ```
 

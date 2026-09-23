@@ -15,6 +15,18 @@ STAMP=$(date +%F)
 # despues de iniciar sesion, antes de que el automount responda) fallaba con "mkdir:
 # No existe el fichero o el directorio" - confirmado en los dos unicos fallos reales
 # del servicio hasta ahora (13 y 14 de agosto de 2026), los dos justo tras un arranque.
+#
+# Antes de nada, esperar a network-online.target: si se toca la ruta antes, el automount
+# se queda colgado esperandolo (x-systemd.requires en fstab) y bloquea a cualquier
+# servicio con ProtectHome=yes (polkit, upower...) hasta que monta - el 23/09 eso
+# retraso polkit 60s en el arranque, el agente xfce-polkit dio timeout y Waybar tardo
+# en salir. Ojo: nm-online no vale, vuelve en cuanto hay cable aunque el target siga
+# esperando al WiFi.
+for _ in $(seq 100); do
+    systemctl is-active -q network-online.target && break
+    sleep 3
+done
+systemctl is-active -q network-online.target || { echo "sin red tras 5 min, se omite" >&2; exit 0; }
 for _ in 1 2 3 4 5; do
     mkdir -p "$DEST" 2>/dev/null && break
     sleep 3
