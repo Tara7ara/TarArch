@@ -124,3 +124,4 @@ bindkey '^W' backward-kill-word
 bindkey '^[[3;5~' kill-word
 bindkey '^[[1;5D' backward-word
 bindkey '^[[1;5C' forward-word
+
