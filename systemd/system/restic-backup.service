@@ -1,7 +1,7 @@
 [Unit]
 Description=Restic backup diario
-After=home-tara-TaraNAS.automount network-online.target
-Requires=home-tara-TaraNAS.automount
+After=home-tara-.mounts-TaraNAS.automount network-online.target
+Requires=home-tara-.mounts-TaraNAS.automount
 Wants=network-online.target
 
 [Service]

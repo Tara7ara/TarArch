@@ -1,5 +1,5 @@
 #!/bin/bash
-REPO="/home/tara/TaraNAS/TarArch_OS/restic-repo"
+REPO="/home/tara/.mounts/TaraNAS/TarArch_OS/restic-repo"
 PASS_FILE="/etc/restic-password"
 LOG="/var/log/restic-backup.log"
 PROGRESS_FILE="/tmp/restic-backup-progress"
@@ -39,7 +39,7 @@ restic --no-cache -r "$REPO" --password-file "$PASS_FILE" backup / /home \
     --exclude=/run \
     --exclude=/tmp \
     --exclude=/mnt \
-    --exclude=/home/tara/TaraNAS \
+    --exclude=/home/tara/.mounts/TaraNAS \
     --exclude=/home/tara/.cache \
     --exclude=/home/tara/.local/share/Steam \
     --one-file-system \

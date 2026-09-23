@@ -4,7 +4,7 @@
 # No incluye ~/.claude ni ~/.gemini (cambian constantemente con el uso normal,
 # darían ruido) ni contraseñas/claves privadas (nunca viven en Dotfiles).
 
-DOT="$HOME/TaraNAS/Recuperacion_parcial_arch/Dotfiles"
+DOT="$HOME/.mounts/TaraNAS/Recuperacion_parcial_arch/Dotfiles"
 
 if [ ! -d "$DOT" ]; then
     echo "No encuentro Dotfiles en $DOT (¿NAS montado?)"
@@ -89,5 +89,5 @@ if [ "$changed" -eq 0 ] && [ "$missing_in_dot" -eq 0 ]; then
 else
     echo "$changed ruta(s) con cambios + $missing_in_dot ruta(s) nueva(s) sin copia, de $checked comprobadas."
     echo "Ejecuta sync.sh cuando quieras respaldarlo:"
-    echo "  bash \"$HOME/TaraNAS/Recuperacion_parcial_arch/Instalacion/sync.sh\""
+    echo "  bash \"$HOME/.mounts/TaraNAS/Recuperacion_parcial_arch/Instalacion/sync.sh\""
 fi

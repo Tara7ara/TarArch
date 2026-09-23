@@ -2,10 +2,10 @@
 # Copia el backup diario de TaraTrack (creado por scripts/backup.sh en el servidor,
 # cron a las 4:00) al NAS, y mantiene solo los 7 mas recientes (una semana). El
 # servidor no tiene el NAS montado, asi que se tira de aqui (este PC) via scp -
-# ya hay ssh de sobra al servidor y el NAS ya esta montado en /home/tara/TaraNAS.
+# ya hay ssh de sobra al servidor y el NAS ya esta montado en /home/tara/.mounts/TaraNAS.
 set -euo pipefail
 
-DEST="/home/tara/TaraNAS/Taratara/TaraTrack/Backup"
+DEST="/home/tara/.mounts/TaraNAS/Taratara/TaraTrack/Backup"
 KEEP=7
 STAMP=$(date +%F)
 

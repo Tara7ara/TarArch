@@ -3,7 +3,7 @@
 set -u
 
 DEVICE="/dev/nvme0n1p2"
-DEST_DIR="/home/tara/TaraNAS/TarArch_OS"
+DEST_DIR="/home/tara/.mounts/TaraNAS/TarArch_OS"
 LOG="/var/log/luks-header-backup.log"
 DATE="$(date +%Y-%m-%d)"
 OUT="$DEST_DIR/luks-header-tararch-$DATE.img"
