@@ -60,20 +60,15 @@ except Exception:
     done
 BACKUP_STATUS=${PIPESTATUS[0]}
 
-# Limpia locks huérfanos de nuevo antes de forget (backup pudo dejar uno si se interrumpió)
-restic --no-cache -r "$REPO" --password-file "$PASS_FILE" unlock >> "$LOG" 2>&1
+# NOTA (2026-09-14): el forget/prune ya NO se hace aquí, se movió al servidor
+# (siempre en la LAN junto al NAS, sin el salto de latencia+VPN de cuando
+# el portátil está fuera de casa, que era lo que dejaba el prune colgado).
 
-restic --no-cache -r "$REPO" --password-file "$PASS_FILE" forget --keep-last 3 --prune --quiet >> "$LOG" 2>&1
-FORGET_STATUS=$?
-
-if [ "$BACKUP_STATUS" -eq 0 ] && [ "$FORGET_STATUS" -eq 0 ]; then
+if [ "$BACKUP_STATUS" -eq 0 ]; then
     echo "done:$(date +%s)" > "$PROGRESS_FILE"
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Copia finalizada correctamente (backup OK, prune OK)." >> "$LOG"
-elif [ "$BACKUP_STATUS" -ne 0 ]; then
-    echo "error:$(date +%s)" > "$PROGRESS_FILE"
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: el backup falló (código $BACKUP_STATUS). Revisar log arriba." >> "$LOG"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Copia finalizada correctamente (backup OK; forget/prune lo hace el servidor)." >> "$LOG"
 else
     echo "error:$(date +%s)" > "$PROGRESS_FILE"
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] AVISO: backup OK pero forget/prune falló (código $FORGET_STATUS) — snapshots viejos sin limpiar, revisar log arriba." >> "$LOG"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: el backup falló (código $BACKUP_STATUS). Revisar log arriba." >> "$LOG"
 fi
 chmod 644 "$PROGRESS_FILE"

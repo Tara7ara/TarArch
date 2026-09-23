@@ -7,5 +7,4 @@ Wants=network-online.target
 [Service]
 Environment=HOME=/root
 Type=oneshot
-TimeoutStartSec=60
 ExecStart=/usr/local/bin/restic-backup.sh
