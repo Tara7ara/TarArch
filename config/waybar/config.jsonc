@@ -21,9 +21,7 @@
         "group/system"
     ],
 
-    // ==========================================
-    // GRUPOS (ISLAS FLOTANTES)
-    // ==========================================
+    // Grupos
     "group/connectivity": {
         "orientation": "horizontal",
         "modules": [
@@ -44,14 +42,14 @@
         ]
     },
 
-    // ==========================================
-    // MÓDULOS INDIVIDUALES
-    // ==========================================
+    // Módulos
     "hyprland/workspaces": {
         "format": "{id}",
         "on-click": "activate",
         "active-only": false,
-        "all-outputs": true
+        "all-outputs": true,
+        "on-scroll-up": "hyprctl dispatch \"hl.dsp.focus({workspace = 'e+1'})\"",
+        "on-scroll-down": "hyprctl dispatch \"hl.dsp.focus({workspace = 'e-1'})\""
     },
 
     "custom/media": {
@@ -100,10 +98,10 @@
 
     "custom/battery-info": {
         "exec": "/home/tara/.local/bin/battery-tooltip.sh",
-        "on-click": "/usr/local/bin/toggle-firewall.sh",
         "interval": 10,
         "return-type": "json",
-        "format": "{}"
+        "format": "{}",
+        "tooltip": true
     },
 
     "custom/backup": {
@@ -130,7 +128,7 @@
     },
 
     "clock": {
-        "format": "󰥔 {:%H:%M   %a %d %b}",
+        "format": "{:%H:%M   %a %d %b}",
         "on-click": "/home/tara/.local/bin/control-center.py",
         "on-click-right": "/home/tara/.local/bin/calendario.sh",
         "tooltip": true,

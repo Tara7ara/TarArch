@@ -1,8 +1,5 @@
 #!/bin/bash
-# Compara los configs/scripts en uso contra la última copia en Dotfiles/ del NAS
-# (la que deja sync.sh) para saber si hay cambios locales sin respaldar.
-# No incluye ~/.claude ni ~/.gemini (cambian constantemente con el uso normal,
-# darían ruido) ni contraseñas/claves privadas (nunca viven en Dotfiles).
+# Compara lo que uso con la última copia de Dotfiles/ en el NAS (la de sync.sh)
 
 DOT="$HOME/.mounts/TaraNAS/Recuperacion_parcial_arch/Dotfiles"
 
@@ -31,14 +28,12 @@ PAIRS=(
     "$HOME/.config/keepassxc/keepassxc.ini:$DOT/config/keepassxc/keepassxc.ini"
     "$HOME/.config/systemd/user/cliphist-clear.service:$DOT/systemd-user/cliphist-clear.service"
     "$HOME/.config/systemd/user/lan-mouse.service:$DOT/systemd-user/lan-mouse.service"
-    "$HOME/.config/systemd/user/bt-proximity-lock.service:$DOT/systemd-user/bt-proximity-lock.service"
     "$HOME/.zshrc:$DOT/.zshrc"
     "$HOME/.zprofile:$DOT/.zprofile"
     "$HOME/.local/bin:$DOT/local/bin"
     "/usr/local/bin/toggle-vpn.sh:$DOT/usr-local-bin/toggle-vpn.sh"
     "/usr/local/bin/toggle-vpn-rdp.sh:$DOT/usr-local-bin/toggle-vpn-rdp.sh"
     "/usr/local/bin/toggle-network.sh:$DOT/usr-local-bin/toggle-network.sh"
-    "/usr/local/bin/toggle-firewall.sh:$DOT/usr-local-bin/toggle-firewall.sh"
     "/usr/local/bin/restic-backup.sh:$DOT/usr-local-bin/restic-backup.sh"
     "/usr/local/bin/luks-header-backup.sh:$DOT/usr-local-bin/luks-header-backup.sh"
     "/usr/local/bin/rogauracore:$DOT/usr-local-bin/rogauracore"

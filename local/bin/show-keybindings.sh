@@ -1,9 +1,5 @@
 #!/bin/bash
-# =============================================================================
-# VISOR Y LANZADOR DE ATAJOS Y COMANDOS — TARARCH (SUPER + A)
-# Guía interactiva completa sincronizada con la documentación de Obsidian.
-# Ejecuta directamente la acción seleccionada al pulsar Enter en Rofi.
-# =============================================================================
+# Chuleta de atajos y comandos (Super + A), Enter ejecuta lo seleccionado
 
 LIST=(
 "=== APLICACIONES Y HERRAMIENTAS PRINCIPALES ==="
@@ -41,7 +37,6 @@ LIST=(
 "bluetooth                      Abrir gestor de dispositivos Bluetooth"
 "fondos / wallpaper            Abrir galería visual de wallpapers con miniaturas"
 "nobloqueo                      Inhibir bloqueo automático y suspensión (Modo Cafeína)"
-"bloqueo-proximidad            Activar / desactivar bloqueo automático por iPhone"
 "modo-gamer                    Activar modo juego (CPU 100%, sin blur/sombras)"
 "red-casa                       Perfil de red LAN Casa (DHCP + DNS AdGuard 192.168.1.10)"
 "red-fuera                      Perfil de red LAN Fuera (DHCP y DNS automáticos)"
@@ -139,7 +134,6 @@ case "$SELECTED" in
     *"Mantenimiento"*|*"limpiar"*)  kitty -e /home/tara/.local/bin/limpieza-tararch.sh & ;;
     *"Abrir selector Spotlight de redes"*|*"wifi"*) /home/tara/.local/bin/wifi-menu.sh ;;
     *"nobloqueo"*)                  /home/tara/.local/bin/nobloqueo ;;
-    *"bloqueo-proximidad"*)         /home/tara/.local/bin/bloqueo-proximidad ;;
     *"modo-gamer"*)                 /home/tara/.local/bin/modo-gamer ;;
     *"red-casa"*)                   /home/tara/.local/bin/red-casa ;;
     *"red-fuera"*)                  /home/tara/.local/bin/red-fuera ;;
