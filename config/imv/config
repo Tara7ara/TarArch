@@ -1,0 +1,59 @@
+# Configuración de imv — TARARCH
+
+[options]
+suppress_default_binds = true
+
+[aliases]
+
+[binds]
+# Salir
+q = quit
+
+# Navegación entre imágenes
+<Left> = prev
+<bracketleft> = prev
+<Right> = next
+<bracketright> = next
+gg = goto 1
+<Shift+G> = goto -1
+
+# Desplazamiento (Pan)
+j = pan 0 -50
+k = pan 0 50
+h = pan 50 0
+l = pan -50 0
+
+# Zoom
+<Up> = zoom 1
+<Shift+plus> = zoom 1
+i = zoom 1
+<Down> = zoom -1
+<minus> = zoom -1
+o = zoom -1
+
+# Rotar 90 grados en sentido horario
+<Ctrl+r> = rotate by 90
+
+# Recargar directorio manualmente (F5 o Mayús+R)
+<F5> = exec /home/tara/.local/bin/imv-reload
+<Shift+R> = exec /home/tara/.local/bin/imv-reload
+
+# Otros comandos
+x = close
+f = fullscreen
+d = overlay
+# Copiar la ruta de la imagen actual al portapapeles
+p = exec wl-copy -- "$imv_current_file"
+c = center
+s = scaling next
+<Shift+S> = upscaling next
+a = zoom actual
+r = reset
+
+# Reproducción de GIF
+<period> = next_frame
+<space> = toggle_playing
+
+# Presentación (Slideshow)
+t = slideshow +1
+<Shift+T> = slideshow -1

@@ -1,10 +1,46 @@
 #!/bin/bash
-# Perfil de red por cable para fuera de casa (DHCP y DNS automáticos)
+# =============================================================================
+# PERFIL DE RED: FUERA (DNS Automático / DHCP)
+# Restaura DNS automático por DHCP en la conexión activa (Ethernet o WiFi)
+# =============================================================================
 
-sudo nmcli con mod "Conexión cableada 1" connection.id "Fuera" ipv4.dns "" ipv4.ignore-auto-dns no 2>/dev/null || true
+CACHE_FILE="$HOME/.cache/current_network_profile"
+ETH_IFACE="eno2"
+WLAN_IFACE="wlan0"
 
-if nmcli con show "Fuera" >/dev/null 2>&1; then
-    sudo nmcli con up "Fuera" && notify-send "Red" "Perfil FUERA activado (DNS Automática / DHCP)" -i network-transmit-receive
+# 1. Configurar Ethernet si está disponible
+if ! nmcli con show "Fuera" >/dev/null 2>&1; then
+    nmcli con add type ethernet con-name "Fuera" ifname "$ETH_IFACE" ipv4.method auto ipv4.dns "" ipv4.ignore-auto-dns no 2>/dev/null || true
 else
-    sudo nmcli con up "Conexión cableada 1" && notify-send "Red" "Perfil FUERA activado (DNS Automática / DHCP)" -i network-transmit-receive
+    nmcli con mod "Fuera" ipv4.method auto ipv4.addresses "" ipv4.gateway "" ipv4.dns "" ipv4.ignore-auto-dns no 2>/dev/null || true
 fi
+
+ETH_STATE=$(nmcli -g GENERAL.STATE dev show "$ETH_IFACE" 2>/dev/null | cut -d' ' -f1)
+if [ "$ETH_STATE" != "20" ] && [ -n "$ETH_STATE" ]; then
+    nmcli con up "Fuera" >/dev/null 2>&1 || true
+fi
+
+# 2. Configurar WiFi activo a DNS automático
+WIFI_CON=$(nmcli -g GENERAL.CONNECTION dev show "$WLAN_IFACE" 2>/dev/null | head -n1)
+if [ -n "$WIFI_CON" ] && [ "$WIFI_CON" != "--" ]; then
+    nmcli con mod "$WIFI_CON" ipv4.dns "" ipv4.ignore-auto-dns no 2>/dev/null || true
+    nmcli dev reapply "$WLAN_IFACE" >/dev/null 2>&1 || true
+fi
+
+# 3. Quitar DNS forzado de WireGuard para que no bloquee DNS fuera de casa
+if nmcli con show "Portatil" >/dev/null 2>&1; then
+    nmcli con mod "Portatil" ipv4.dns "" ipv4.dns-priority 100 2>/dev/null || true
+    nmcli dev reapply "Portatil" >/dev/null 2>&1 || true
+fi
+
+# 4. Guardar estado y notificar
+# Lanzado a mano (no por auto-network-watcher.sh): este perfil manda hasta red-auto
+MANUAL_FLAG="/run/user/$(id -u)/network-profile-manual"
+if [ -z "$RED_AUTO" ]; then
+    touch "$MANUAL_FLAG"
+    MODO="fijado a mano, red-auto para volver"
+else
+    MODO="automático"
+fi
+echo "fuera" > "$CACHE_FILE"
+notify-send "Perfil de Red" "󰢖 Perfil FUERA activado (DNS Automático / DHCP) · $MODO" -i network-wireless -u low

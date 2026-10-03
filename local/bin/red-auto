@@ -1,0 +1,10 @@
+#!/bin/bash
+# =============================================================================
+# PERFIL DE RED: AUTOMÁTICO
+# Quita el perfil fijado a mano y deja que auto-network-watcher.sh decida
+# (casa / fuera) según el router al que estés conectada.
+# =============================================================================
+
+rm -f "/run/user/$(id -u)/network-profile-manual"
+touch "/run/user/$(id -u)/network-profile-recheck"
+notify-send "Perfil de Red" "󰑓 Perfil AUTOMÁTICO (según la red)" -i network-transmit-receive -u low

@@ -1,0 +1,41 @@
+#!/bin/bash
+set -euo pipefail
+
+# Ejecutar de fondo de forma independiente para que imv nunca congele su hilo principal ni la interfaz
+(
+    pid="${imv_pid:-}"
+    current="${imv_current_file:-}"
+
+    [ -n "$pid" ] || exit 0
+    [ -n "$current" ] || exit 0
+
+    target_dir="$(dirname "$current")"
+    [ -d "$target_dir" ] || exit 0
+    # imv pasa la ruta de "open" por wordexp(): entre comillas simples no expande nada,
+    # y una ruta con ' o \ no se puede pasar sin riesgo de que ejecute algo.
+    case "$target_dir" in *"'"*|*\\*|*$'\n'*) exit 0 ;; esac
+
+    # Margen breve para que imv procese la tecla y regrese a su bucle de eventos
+    sleep 0.05
+
+    # Recargar directorio sin congelar
+    imv-msg "$pid" close all
+    imv-msg "$pid" open "'$target_dir'"
+
+    # Mantener seleccionada la imagen que se estaba visualizando
+    if [ -f "$current" ]; then
+        idx=1
+        for f in "$target_dir"/*; do
+            [ -f "$f" ] || continue
+            case "${f,,}" in
+                *.jpg|*.jpeg|*.jpe|*.pjpeg|*.png|*.gif|*.webp|*.bmp|*.svg|*.svgz|*.avif|*.heic|*.heif|*.jxl|*.qoi|*.ico|*.tiff|*.tif|*.farbfeld|*.ff|*.pam|*.pbm|*.pgm|*.ppm)
+                    if [ "$f" = "$current" ]; then
+                        imv-msg "$pid" goto "$idx" 2>/dev/null || true
+                        break
+                    fi
+                    idx=$((idx + 1))
+                    ;;
+            esac
+        done
+    fi
+) </dev/null >/dev/null 2>&1 &

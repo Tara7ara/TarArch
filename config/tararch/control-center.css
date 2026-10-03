@@ -1,8 +1,10 @@
-window { 
-    background-color: transparent; 
+@import url("/home/tara/.config/tararch/colors.css");
+
+window {
+    background-color: transparent;
 }
 
-/* Quitar el fondo de Adwaita */
+/* Eliminar el fondo opaco por defecto de GTK3 (Adwaita background-image) */
 button {
     background-image: none;
     text-shadow: none;
@@ -12,24 +14,24 @@ button {
 
 /* --- PANEL PRINCIPAL --- */
 .main-panel {
-    background-color: rgba(15, 15, 18, 0.72);
+    background-color: rgba(15, 15, 18, 0.80);
     border: 1px solid rgba(255, 158, 100, 0.15);
-    border-radius: 12px;
+    border-radius: 16px;
     padding: 16px;
     min-width: 390px;
 }
 
 .header-title {
-    color: #ffffff;
-    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    color: @fg-bright;
+    font-family: "Inter", "Adwaita Sans", sans-serif;
     font-size: 22px;
     font-weight: 800;
     letter-spacing: -0.5px;
 }
 
 .header-subtitle {
-    color: #ff9e64;
-    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    color: @accent-orange;
+    font-family: "Inter", "Adwaita Sans", sans-serif;
     font-size: 13px;
     font-weight: 600;
 }
@@ -38,8 +40,8 @@ button {
     background-image: none;
     background-color: transparent;
     border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    color: #c9c9c9;
+    border-radius: 8px;
+    color: @fg-main;
     font-family: "JetBrainsMono Nerd Font", sans-serif;
     font-size: 12px;
     font-weight: 700;
@@ -49,16 +51,16 @@ button {
 .btn-close:hover {
     background-image: none;
     background-color: rgba(247, 118, 142, 0.12);
-    border-color: #f7768e;
-    color: #f7768e;
+    border-color: @status-red;
+    color: @status-red;
 }
 
-/* --- TOGGLES --- */
+/* --- TARJETAS QUICK TOGGLE (8 BOTONES) TRANSPARENTES --- */
 .btn-toggle {
     background-image: none;
     background-color: transparent;
     border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 14px;
+    border-radius: 12px;
     padding: 11px 0;
     color: #9a9a9a;
     font-family: "JetBrainsMono Nerd Font", sans-serif;
@@ -70,7 +72,7 @@ button {
     background-image: none;
     background-color: rgba(255, 158, 100, 0.08);
     border-color: rgba(255, 158, 100, 0.3);
-    color: #ff9e64;
+    color: @accent-orange;
 }
 
 /* Activo Naranja (LanMouse, Cafeína, Red, Bluetooth) */
@@ -78,13 +80,13 @@ button {
     background-image: none;
     background-color: rgba(255, 158, 100, 0.10);
     border: 1px solid rgba(255, 158, 100, 0.5);
-    color: #ff9e64;
+    color: @accent-orange;
 }
 .btn-toggle-active:hover {
     background-image: none;
     background-color: rgba(255, 158, 100, 0.18);
     border-color: rgba(255, 169, 122, 0.65);
-    color: #ffffff;
+    color: @fg-bright;
 }
 
 /* Activo Verde (Modo Uni / Lápiz) */
@@ -92,13 +94,13 @@ button {
     background-image: none;
     background-color: rgba(158, 206, 106, 0.10);
     border: 1px solid rgba(158, 206, 106, 0.5);
-    color: #9ece6a;
+    color: @status-green;
 }
 .btn-toggle-active-green:hover {
     background-image: none;
     background-color: rgba(158, 206, 106, 0.18);
     border-color: rgba(168, 212, 119, 0.65);
-    color: #ffffff;
+    color: @fg-bright;
 }
 
 /* Activo Rojo (Modo Gamer / Gamepad) */
@@ -106,21 +108,21 @@ button {
     background-image: none;
     background-color: rgba(247, 118, 142, 0.10);
     border: 1px solid rgba(247, 118, 142, 0.5);
-    color: #f7768e;
+    color: @status-red;
 }
 .btn-toggle-active-red:hover {
     background-image: none;
     background-color: rgba(247, 118, 142, 0.18);
     border-color: rgba(250, 139, 159, 0.65);
-    color: #ffffff;
+    color: @fg-bright;
 }
 
-/* --- BOTONES --- */
+/* --- BOTONES DE ACCIÓN (2 CALENDARIO + NOTIFICACIONES) --- */
 .btn-action-icon {
     background-image: none;
     background-color: transparent;
     border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
+    border-radius: 8px;
     color: #9a9a9a;
     font-family: "JetBrainsMono Nerd Font", sans-serif;
     font-size: 13px;
@@ -130,26 +132,26 @@ button {
     background-image: none;
     background-color: rgba(255, 158, 100, 0.10);
     border-color: rgba(255, 158, 100, 0.5);
-    color: #ff9e64;
+    color: @accent-orange;
 }
 
 /* --- SECCIONES Y SLIDERS --- */
 .section-box {
     background-color: rgba(255, 255, 255, 0.025);
     border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
+    border-radius: 12px;
     padding: 12px 14px;
 }
 
 .slider-icon {
-    color: #ff9e64;
+    color: @accent-orange;
     font-family: "JetBrainsMono Nerd Font", sans-serif;
     font-size: 16px;
     min-width: 20px;
 }
 
 .slider-val-label {
-    color: #c9c9c9;
+    color: @fg-main;
     font-family: "JetBrainsMono Nerd Font", sans-serif;
     font-size: 11px;
     font-weight: 600;
@@ -174,7 +176,7 @@ scale trough {
 scale.horizontal highlight,
 scale highlight {
     background-image: none;
-    background-color: #ff9e64;
+    background-color: @accent-orange;
     border: none;
     border-radius: 9999px;
     min-height: 12px;
@@ -183,8 +185,8 @@ scale highlight {
 scale.horizontal slider,
 scale slider {
     background-image: none;
-    background-color: #ffffff;
-    border: 2px solid #ff9e64;
+    background-color: @fg-bright;
+    border: 2px solid @accent-orange;
     border-radius: 9999px;
     min-width: 16px;
     min-height: 16px;
@@ -196,14 +198,14 @@ scale slider {
 scale.horizontal slider:hover,
 scale slider:hover {
     background-image: none;
-    background-color: #ff9e64;
-    border-color: #ffffff;
+    background-color: @accent-orange;
+    border-color: @fg-bright;
     min-width: 18px;
     min-height: 18px;
     margin: -3px 0;
 }
 
-/* --- TABS --- */
+/* --- TABS (2 BOTONES CALENDARIO / NOTIFICACIONES) --- */
 .btn-tab {
     background-image: none;
     background-color: transparent;
@@ -218,52 +220,57 @@ scale slider:hover {
 .btn-tab:hover {
     background-image: none;
     background-color: rgba(255, 255, 255, 0.05);
-    color: #ffffff;
+    color: @fg-bright;
 }
 .btn-tab-active {
     background-image: none;
     background-color: rgba(255, 158, 100, 0.12);
     border: 1px solid rgba(255, 158, 100, 0.5);
-    color: #ff9e64;
+    color: @accent-orange;
     font-weight: 700;
 }
 
 /* --- CALENDARIO --- */
 calendar {
     background-color: transparent;
-    color: #ffffff;
+    color: @fg-bright;
     font-family: "JetBrainsMono Nerd Font", sans-serif;
     font-size: 12px;
     border: none;
-    border-radius: 14px;
+    border-radius: 12px;
     padding: 4px;
 }
 
 calendar.header {
-    color: #ff9e64;
+    color: @accent-orange;
     font-weight: 700;
     font-size: 13px;
 }
 
-calendar.button { color: #bb9af7; background: transparent; background-image: none; }
-calendar.button:hover { color: #ffffff; background: rgba(255, 255, 255, 0.08); background-image: none; }
-calendar:selected {
-    background-color: #ff9e64;
+calendar.button { color: @accent-purple; background: transparent; background-image: none; }
+calendar.button:hover { color: @fg-bright; background: rgba(255, 255, 255, 0.08); background-image: none; }
+/* Días con eventos (mark_day) */
+calendar:active {
+    color: @accent-orange;
+}
+calendar:selected,
+calendar:selected:active {
+    background-color: @accent-orange;
     color: #0f0f0f;
     border-radius: 8px;
     font-weight: 700;
 }
 
 .cal-header-label {
-    color: #bb9af7;
-    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    color: @accent-purple;
+    font-family: "Inter", "Adwaita Sans", sans-serif;
     font-size: 13px;
     font-weight: 700;
 }
 
 .event-item-text {
-    color: #ffffff;
-    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    color: @fg-bright;
+    font-family: "Inter", "Adwaita Sans", sans-serif;
     font-size: 12px;
     font-weight: 600;
 }
@@ -272,7 +279,7 @@ calendar:selected {
 .noti-card {
     background-color: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 14px;
+    border-radius: 12px;
     padding: 10px 12px;
     margin-bottom: 5px;
 }
@@ -283,25 +290,29 @@ calendar:selected {
 }
 
 .noti-card-header {
+    font-family: "Inter", "Adwaita Sans", sans-serif;
     font-size: 11px;
     font-weight: bold;
-    color: #ff9e64;
+    color: @accent-orange;
 }
 
 .noti-card-time {
+    font-family: "Inter", "Adwaita Sans", sans-serif;
     font-size: 10px;
     color: #7a7a7a;
 }
 
 .noti-card-title {
+    font-family: "Inter", "Adwaita Sans", sans-serif;
     font-size: 12px;
     font-weight: bold;
-    color: #ffffff;
+    color: @fg-bright;
 }
 
 .noti-card-body {
+    font-family: "Inter", "Adwaita Sans", sans-serif;
     font-size: 11px;
-    color: #c9c9c9;
+    color: @fg-main;
 }
 
 .noti-btn-del {

@@ -26,7 +26,7 @@ class ControlCenterWindow(Gtk.Window):
     def __init__(self):
         super().__init__(type=Gtk.WindowType.TOPLEVEL)
 
-        # Eventos del índice en disco
+        # Cargar eventos inmediatamente desde el índice en disco (0ms)
         self.all_events = backend.get_cached_events()
         self.selected_date = datetime.date.today()
 
@@ -93,7 +93,7 @@ class ControlCenterWindow(Gtk.Window):
         btn_close.connect("clicked", lambda w: self.close())
         header_box.pack_start(btn_close, False, False, 0)
 
-        # 2. Botones rápidos (4x2)
+        # 2. Grid de Botones Rápidos Icon-Only (4 Columnas x 2 Filas, Iconos 21px)
         grid = Gtk.Grid()
         grid.set_column_spacing(8)
         grid.set_row_spacing(8)
@@ -129,13 +129,13 @@ class ControlCenterWindow(Gtk.Window):
         self.btn_lanmouse.connect("clicked", lambda w: self.on_toggle_lanmouse())
         grid.attach(self.btn_lanmouse, 3, 0, 1, 1)
 
-        # Fila 1: TaraTrack, Modos, Bloqueo/Cafeína, Limpiar
-        self.btn_taratrack = Gtk.Button(label="󰿎")
-        self.btn_taratrack.get_style_context().add_class("flat")
-        self.btn_taratrack.get_style_context().add_class("btn-toggle")
-        self.btn_taratrack.set_tooltip_text("TaraTrack (Series & Rankings ELO)")
-        self.btn_taratrack.connect("clicked", lambda w: self.run_action("/home/tara/.local/bin/taratrack-app.sh", close_panel=True))
-        grid.attach(self.btn_taratrack, 0, 1, 1, 1)
+        # Fila 1: Casa / Fuera, Modos, Bloqueo/Cafeína, Limpiar
+        self.btn_casa = Gtk.Button(label="󰋜")
+        self.btn_casa.get_style_context().add_class("flat")
+        self.btn_casa.get_style_context().add_class("btn-toggle")
+        self.btn_casa.set_tooltip_text("Perfil de Red: Casa / Fuera")
+        self.btn_casa.connect("clicked", lambda w: self.on_toggle_casa())
+        grid.attach(self.btn_casa, 0, 1, 1, 1)
 
         self.btn_modos = Gtk.Button(label="󰓅")
         self.btn_modos.get_style_context().add_class("flat")
@@ -158,7 +158,7 @@ class ControlCenterWindow(Gtk.Window):
         self.btn_limpiar.connect("clicked", lambda w: self.run_action("kitty -e /home/tara/.local/bin/limpieza-tararch.sh", close_panel=True))
         grid.attach(self.btn_limpiar, 3, 1, 1, 1)
 
-        # 3. Sliders de volumen y brillo
+        # 3. Deslizadores (Sliders) Modernos de Volumen y Brillo con % en tiempo real
         slider_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         slider_box.get_style_context().add_class("section-box")
         main_box.pack_start(slider_box, False, False, 0)
@@ -201,7 +201,7 @@ class ControlCenterWindow(Gtk.Window):
         self.lbl_bri_pct.get_style_context().add_class("slider-val-label")
         bri_row.pack_start(self.lbl_bri_pct, False, False, 0)
 
-        # 4. Pestañas: calendario y notificaciones
+        # 4. PESTAÑAS (TABS): [ 󰸗 CALENDARIO ] Y [ 󰂚 NOTIFICACIONES ]
         tab_header = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
         main_box.pack_start(tab_header, False, False, 0)
 
@@ -226,29 +226,29 @@ class ControlCenterWindow(Gtk.Window):
         self.stack.set_transition_duration(150)
         main_box.pack_start(self.stack, True, True, 0)
 
-        # Calendario
+        # VISTA A: CALENDARIO INTERACTIVO CON EVENTOS
         cal_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         cal_box.get_style_context().add_class("section-box")
 
         cal_top = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         cal_box.pack_start(cal_top, False, False, 0)
 
-        cal_lbl = Gtk.Label(label="󰸗 Agenda Sincronizada", xalign=0)
-        cal_lbl.get_style_context().add_class("cal-header-label")
-        cal_top.pack_start(cal_lbl, True, True, 0)
+        self.cal_lbl = Gtk.Label(label="󰸗 Agenda", xalign=0)
+        self.cal_lbl.get_style_context().add_class("cal-header-label")
+        cal_top.pack_start(self.cal_lbl, True, True, 0)
 
-        btn_sync = Gtk.Button(label="󰑐")
-        btn_sync.get_style_context().add_class("flat")
-        btn_sync.get_style_context().add_class("btn-action-icon")
-        btn_sync.set_tooltip_text("Sincronizar CalDAV")
-        btn_sync.connect("clicked", lambda w: self.start_bg_sync())
-        cal_top.pack_start(btn_sync, False, False, 0)
+        self.btn_sync = Gtk.Button(label="󰑐")
+        self.btn_sync.get_style_context().add_class("flat")
+        self.btn_sync.get_style_context().add_class("btn-action-icon")
+        self.btn_sync.set_tooltip_text("Sincronizar")
+        self.btn_sync.connect("clicked", lambda w: self.start_bg_sync())
+        cal_top.pack_start(self.btn_sync, False, False, 0)
 
         btn_open_full = Gtk.Button(label="󰌷")
         btn_open_full.get_style_context().add_class("flat")
         btn_open_full.get_style_context().add_class("btn-action-icon")
         btn_open_full.set_tooltip_text("Abrir Aplicación de Calendario")
-        btn_open_full.connect("clicked", lambda w: self.run_action("/home/tara/.local/bin/calendario.sh"))
+        btn_open_full.connect("clicked", lambda w: self.run_action("/home/tara/.local/bin/calendario.sh", close_panel=True))
         cal_top.pack_start(btn_open_full, False, False, 0)
 
         self.calendar = Gtk.Calendar()
@@ -276,9 +276,38 @@ class ControlCenterWindow(Gtk.Window):
         self.lbl_event_item.get_style_context().add_class("event-item-text")
         self.events_box.pack_start(self.lbl_event_item, False, False, 0)
 
-        self.stack.add_named(cal_box, "cal")
+        # --- TARJETA: ACTIVIDAD DE GITHUB (heatmap) debajo del calendario ---
+        gh_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        gh_card.get_style_context().add_class("section-box")
 
-        # Notificaciones
+        gh_top = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        gh_card.pack_start(gh_top, False, False, 0)
+
+        gh_lbl = Gtk.Label(label=" Actividad GitHub", xalign=0)
+        gh_lbl.get_style_context().add_class("cal-header-label")
+        gh_top.pack_start(gh_lbl, True, True, 0)
+
+        self.lbl_gh_count = Gtk.Label(xalign=1)
+        self.lbl_gh_count.set_use_markup(True)
+        self.lbl_gh_count.set_markup("<span foreground='#7a7a7a'>cargando…</span>")
+        self.lbl_gh_count.get_style_context().add_class("noti-card-time")
+        gh_top.pack_start(self.lbl_gh_count, False, False, 0)
+
+        self.gh_data = None
+        self.gh_area = Gtk.DrawingArea()
+        self.gh_area.set_size_request(-1, 130)
+        self.gh_area.connect("draw", self.draw_github)
+        gh_card.pack_start(self.gh_area, False, False, 0)
+
+        # Página del calendario = calendario existente + heatmap debajo
+        cal_page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+        cal_page.pack_start(cal_box, False, False, 0)
+        cal_page.pack_start(gh_card, False, False, 0)
+        self.stack.add_named(cal_page, "cal")
+
+        self._load_github()
+
+        # VISTA B: NOTIFICACIONES REALES
         noti_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         noti_box.get_style_context().add_class("section-box")
 
@@ -316,7 +345,7 @@ class ControlCenterWindow(Gtk.Window):
         self.connect("key-press-event", self.on_key_press)
         self.connect("destroy", self.on_destroy)
 
-        # Eventos en caché y sync en segundo plano
+        # Aplicar eventos en caché de inmediato (0ms) y lanzar sync en segundo plano
         self.apply_synced_events(self.all_events)
         self.start_bg_sync()
 
@@ -324,10 +353,23 @@ class ControlCenterWindow(Gtk.Window):
         GLib.timeout_add(1000, self.update_data)
 
     def start_bg_sync(self):
+        if not self.btn_sync.get_sensitive():
+            return
+        self.btn_sync.set_sensitive(False)
+        self.cal_lbl.set_text("󰸗 Agenda · sincronizando…")
+
         def worker():
             evs = backend.fetch_all_events()
-            GLib.idle_add(self.apply_synced_events, evs)
+            GLib.idle_add(self.on_sync_done, evs)
         threading.Thread(target=worker, daemon=True).start()
+
+    def on_sync_done(self, events):
+        self.btn_sync.set_sensitive(True)
+        if events:
+            self.cal_lbl.set_text("󰸗 Agenda · " + datetime.datetime.now().strftime("%H:%M"))
+        else:
+            self.cal_lbl.set_text("󰸗 Agenda · sin conexión")
+        self.apply_synced_events(events)
 
     def apply_synced_events(self, events):
         if not events:
@@ -353,6 +395,147 @@ class ControlCenterWindow(Gtk.Window):
     def on_month_changed(self, cal):
         self.apply_synced_events(self.all_events)
 
+    # --- Heatmap de actividad de GitHub ---
+    def _load_github(self):
+        def work():
+            try:
+                data = backend.get_github_activity()
+            except Exception:
+                data = {"days": [], "total": 0, "error": True}
+            GLib.idle_add(self._on_github_loaded, data)
+        threading.Thread(target=work, daemon=True).start()
+
+    def _on_github_loaded(self, data):
+        self.gh_data = data
+        if data.get("error"):
+            self.lbl_gh_count.set_markup("<span foreground='#7a7a7a'>sin conexión</span>")
+        else:
+            total = data.get("total", 0)
+            self.lbl_gh_count.set_markup(
+                f"<span foreground='#7a7a7a'>{total} contrib. · 6 meses</span>"
+            )
+        self.gh_area.queue_draw()
+        return False
+
+    def draw_github(self, area, cr):
+        alloc = area.get_allocation()
+        W = alloc.width
+
+        def rgb(h):
+            return (int(h[1:3], 16) / 255, int(h[3:5], 16) / 255, int(h[5:7], 16) / 255)
+
+        muted = (0.55, 0.55, 0.55)
+        cr.select_font_face("JetBrainsMono Nerd Font")
+
+        data = self.gh_data
+        if data is None:
+            cr.set_source_rgb(*muted)
+            cr.set_font_size(11)
+            cr.move_to(2, 18)
+            cr.show_text("Cargando actividad…")
+            return
+
+        days = data.get("days") or []
+        if not days:
+            cr.set_source_rgb(*muted)
+            cr.set_font_size(11)
+            cr.move_to(2, 18)
+            cr.show_text("Sin conexión con GitHub")
+            return
+
+        colors = {
+            0: rgb("#1e1e1e"), 1: rgb("#5c3a22"), 2: rgb("#955a30"),
+            3: rgb("#cc7c46"), 4: rgb("#ff9e64"),
+        }
+
+        # Construir dict date→level
+        day_map = {}
+        for d in days:
+            y, m, dd = d["date"].split("-")
+            day_map[datetime.date(int(y), int(m), int(dd))] = d["level"]
+
+        # Ventana: últimos 3 meses (mes actual + 2 anteriores)
+        today = datetime.date.today()
+        y3 = today.year if today.month > 5 else today.year - 1
+        m3 = today.month - 5 if today.month > 5 else today.month + 7
+        cutoff = datetime.date(y3, m3, 1)
+
+        # Grid empieza en el LUNES de la semana que contiene cutoff
+        grid_start = cutoff - datetime.timedelta(days=cutoff.weekday())
+        cols = (today - grid_start).days // 7 + 1
+
+        # Layout: celdas fijas 9px, gap 3px
+        cell = 9
+        gap  = 3
+        step = cell + gap
+        label_w = 14
+        top = 14
+
+        grid_w = cols * step - gap
+        offset_x = label_w + max(0, (W - label_w - grid_w) // 2)
+
+        meses_abr = ["Ene", "Feb", "Mar", "Abr", "May", "Jun",
+                     "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
+
+        # --- Etiquetas de mes ---
+        cr.set_source_rgb(*muted)
+        cr.set_font_size(8)
+        last_month = -1
+        last_label_x = -999
+        for col in range(cols):
+            d = grid_start + datetime.timedelta(weeks=col)
+            if d.month != last_month:
+                x = offset_x + col * step
+                if x - last_label_x >= 24:
+                    cr.move_to(x, top - 3)
+                    cr.show_text(meses_abr[d.month - 1])
+                    last_label_x = x
+                    last_month = d.month
+
+        # --- Etiquetas de día ---
+        cr.set_source_rgb(*muted)
+        cr.set_font_size(8)
+        for row, lab in ((0, "L"), (2, "X"), (4, "V")):
+            cr.move_to(0, top + row * step + cell)
+            cr.show_text(lab)
+
+        # --- Celdas con bordes redondeados ---
+        def rrect(cx, cy, s, r):
+            cr.new_sub_path()
+            cr.arc(cx + s - r, cy + r,     r, -1.5708, 0)
+            cr.arc(cx + s - r, cy + s - r, r, 0,       1.5708)
+            cr.arc(cx + r,     cy + s - r, r, 1.5708,  3.1416)
+            cr.arc(cx + r,     cy + r,     r, 3.1416,  4.7124)
+            cr.close_path()
+
+        cur = grid_start
+        for col in range(cols):
+            for row in range(7):
+                d = cur + datetime.timedelta(days=row)
+                if d > today:
+                    break
+                lvl = day_map.get(d, 0)
+                cr.set_source_rgb(*colors.get(lvl, colors[0]))
+                rrect(offset_x + col * step, top + row * step, cell, 2.0)
+                cr.fill()
+            cur += datetime.timedelta(weeks=1)
+
+        # --- Leyenda ---
+        ly = top + 7 * step + 4
+        cr.set_source_rgb(*muted)
+        cr.set_font_size(8)
+        cr.move_to(offset_x, ly + 8)
+        cr.show_text("menos")
+        lx = offset_x + 36
+        for lv in range(5):
+            cr.set_source_rgb(*colors[lv])
+            rrect(lx, ly + 1, 8, 2.0)
+            cr.fill()
+            lx += 11
+        cr.set_source_rgb(*muted)
+        cr.move_to(lx + 2, ly + 8)
+        cr.show_text("más")
+
     def update_events_ui(self):
         d = self.selected_date
         self.lbl_selected_header.set_text(f"📌 {d.day}/{d.month}/{d.year}:")
@@ -362,31 +545,31 @@ class ControlCenterWindow(Gtk.Window):
             if (ev["date"].month == d.month and ev["date"].day == d.day and (ev["date"].year == d.year or ev.get("yearly")))
         ]
 
+        lines = []
         if matched:
-            lines = []
             for m in matched:
                 time_part = f"<span color='#ff9e64'>[{m['time']}]</span> " if m["time"] else ""
-                lines.append(f"• {time_part}<b>{m['summary']}</b>")
-            self.lbl_event_item.set_markup("\n".join(lines))
+                lines.append(f"• {time_part}<b>{GLib.markup_escape_text(m['summary'])}</b>")
         else:
-            today = datetime.date.today()
-            upcoming = []
-            for ev in self.all_events:
-                ev_d = ev["date"]
-                if ev.get("yearly"):
-                    ev_d = datetime.date(today.year if today.month <= ev_d.month else today.year + 1, ev_d.month, ev_d.day)
-                if ev_d >= today:
-                    upcoming.append({"summary": ev["summary"], "time": ev["time"], "date": ev_d})
+            lines.append("<i>Sin eventos este día.</i>")
 
-            upcoming.sort(key=lambda x: x["date"])
-            if upcoming:
-                lines = ["<i>Sin eventos este día. Próximas citas:</i>"]
-                for u in upcoming[:4]:
-                    time_p = f" ({u['time']})" if u['time'] else ""
-                    lines.append(f"• <span color='#ff9e64'>{u['date'].day}/{u['date'].month}</span>: {u['summary']}{time_p}")
-                self.lbl_event_item.set_markup("\n".join(lines))
-            else:
-                self.lbl_event_item.set_markup("<i>Sin eventos programados</i>")
+        today = datetime.date.today()
+        upcoming = []
+        for ev in self.all_events:
+            ev_d = ev["date"]
+            if ev.get("yearly"):
+                ev_d = datetime.date(today.year if today.month <= ev_d.month else today.year + 1, ev_d.month, ev_d.day)
+            if ev_d >= today and ev_d != d:
+                upcoming.append({"summary": ev["summary"], "time": ev["time"], "date": ev_d})
+
+        upcoming.sort(key=lambda x: (x["date"], x["time"]))
+        if upcoming:
+            lines.append("")
+            lines.append("<i>Próximas citas:</i>")
+            for u in upcoming[:4]:
+                time_p = f" ({u['time']})" if u['time'] else ""
+                lines.append(f"• <span color='#ff9e64'>{u['date'].day}/{u['date'].month}</span>: {GLib.markup_escape_text(u['summary'])}{time_p}")
+        self.lbl_event_item.set_markup("\n".join(lines))
 
     def switch_tab(self, tab_name):
         self.stack.set_visible_child_name(tab_name)
@@ -485,6 +668,11 @@ class ControlCenterWindow(Gtk.Window):
         GLib.timeout_add(300, self.update_toggles_state)
         GLib.timeout_add(800, self.update_toggles_state)
 
+    def on_toggle_casa(self):
+        backend.toggle_casa_profile()
+        GLib.timeout_add(500, self.update_toggles_state)
+        GLib.timeout_add(1500, self.update_toggles_state)
+
     def on_toggle_bloqueo(self):
         self.run_action("/home/tara/.local/bin/nobloqueo")
         GLib.timeout_add(350, self.update_toggles_state)
@@ -542,9 +730,12 @@ class ControlCenterWindow(Gtk.Window):
         except Exception:
             pass
 
-        # 5. TaraTrack
+        # 5. Perfil Casa / Fuera (󰋜 Activo / 󰢖 Fuera)
         try:
-            self.set_btn_state(self.btn_taratrack, "󰿎", False)
+            is_casa = backend.is_casa_active()
+            icon = "󰋜" if is_casa else "󰢖"
+            self.set_btn_state(self.btn_casa, icon, False)
+            self.btn_casa.set_tooltip_text(f"Perfil de Red: {'Casa (DNS Local 192.168.1.10)' if is_casa else 'Fuera (DNS Automático DHCP)'} — Clic para alternar")
         except Exception:
             pass
 
@@ -553,10 +744,13 @@ class ControlCenterWindow(Gtk.Window):
             mode = backend.get_system_mode()
             if mode == "uni":
                 self.set_btn_state(self.btn_modos, "󰏫", True, "green")
+                self.btn_modos.set_tooltip_text("Modo Sistema: Uni / Ahorro (60Hz · Eco)")
             elif mode == "gamer":
                 self.set_btn_state(self.btn_modos, "󰊴", True, "red")
+                self.btn_modos.set_tooltip_text("Modo Sistema: Gamer (144Hz · Turbo)")
             else:
                 self.set_btn_state(self.btn_modos, "󰓅", False)
+                self.btn_modos.set_tooltip_text("Modo Sistema: Normal (144Hz · Balance)")
         except Exception:
             pass
 
@@ -603,6 +797,7 @@ class ControlCenterWindow(Gtk.Window):
                 os.remove(backend.PID_FILE)
             except Exception:
                 pass
+        Gtk.main_quit()
 
 
 def main():

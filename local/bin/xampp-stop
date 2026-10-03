@@ -1,0 +1,19 @@
+#!/bin/bash
+# =============================================================================
+# XAMPP CONTROL - STOP
+# =============================================================================
+
+if [ -t 0 ]; then
+    sudo /opt/lampp/lampp stop
+    if [ $? -eq 0 ]; then
+        notify-send "XAMPP" "Servicios detenidos" -u normal 2>/dev/null
+    fi
+else
+    if command -v pkexec >/dev/null 2>&1; then
+        if pkexec /opt/lampp/lampp stop; then
+            notify-send "XAMPP" "Servicios detenidos" -u normal 2>/dev/null
+        fi
+    else
+        kitty --title "XAMPP Stop" -e bash -c "sudo /opt/lampp/lampp stop; sleep 1"
+    fi
+fi

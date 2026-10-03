@@ -55,4 +55,32 @@ format_speed() {
 DOWN=$(format_speed $RX_SPEED)
 UP=$(format_speed $TX_SPEED)
 
-echo "{\"text\": \"IP: $IP\", \"tooltip\": \"󰈀 Interfaz: $INTERFACE\n󰛴 Bajada: $DOWN\n󰛶 Subida: $UP\"}"
+# Con objetivo fijado (set-target) el bloque alterna: 5 s tu IP y 10 s el objetivo,
+# con "IP" en rojo. En un lab tu IP útil es la de tun0 (LHOST), así que manda sobre la LAN.
+TARGET=$(cat "$HOME/.local/state/target" 2>/dev/null)
+SHOWN_FILE="${XDG_RUNTIME_DIR:-/tmp}/localip-shown"
+LABEL="IP"
+SHOWN="$IP"
+
+if [ -n "$TARGET" ]; then
+    TUN_IP=$(ip -4 addr show tun0 2>/dev/null | grep -oP 'inet \K[0-9.]+')
+    OWN="${TUN_IP:-$IP}"
+    if (( $(date +%s) % 15 < 5 )); then
+        SHOWN="$OWN"
+    else
+        SHOWN="$TARGET"
+        LABEL="<span color='#f7768e'>IP</span>"
+    fi
+    # Fuente monoespaciada: rellenar hasta la más larga de las dos evita que la isla cambie de ancho.
+    # El relleno se reparte a ambos lados para que la más corta quede centrada.
+    WIDTH=$(( ${#OWN} > ${#TARGET} ? ${#OWN} : ${#TARGET} ))
+    PAD=$(( WIDTH - ${#SHOWN} ))
+    PAD_L=$(printf "%$(( PAD / 2 ))s" "")
+    PAD_R=$(printf "%$(( PAD - PAD / 2 ))s" "")
+else
+    PAD_L=""
+    PAD_R=""
+fi
+
+echo "$SHOWN" > "$SHOWN_FILE"
+echo "{\"text\": \"$PAD_L$LABEL: $SHOWN$PAD_R\", \"tooltip\": \"󰈀 Interfaz: $INTERFACE\n󰛴 Bajada: $DOWN\n󰛶 Subida: $UP\"}"

@@ -1,0 +1,17 @@
+#!/bin/bash
+# =============================================================================
+# XAMPP CONTROL - GUI MANAGER
+# =============================================================================
+
+xhost +si:localuser:root >/dev/null 2>&1
+
+if [ -t 0 ]; then
+    sudo -v || exit 1
+    nohup sudo /opt/lampp/manager-linux-x64.run >/dev/null 2>&1 &
+else
+    if command -v pkexec >/dev/null 2>&1; then
+        pkexec /usr/bin/xampp-manager &
+    else
+        kitty --title "XAMPP Manager" -e bash -c "sudo /opt/lampp/manager-linux-x64.run" &
+    fi
+fi

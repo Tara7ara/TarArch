@@ -1,0 +1,70 @@
+#!/bin/bash
+# =============================================================================
+# SET-TARGET — IP OBJETIVO PERSISTENTE (labs / CTF)
+#   set-target <ip> [nombre]   fija el objetivo (el nombre solo sale en la notificación)
+#   set-target                 muestra el actual
+#   set-target -c              lo borra
+#   set-target --rofi          lo pide con rofi (lanzador Super+A / Super+Espacio)
+# El objetivo vive en ~/.local/state/target: sobrevive a reinicios, zsh lo exporta
+# como $T en cada prompt y localip.sh lo alterna con tu IP en Waybar.
+# =============================================================================
+
+STATE_FILE="$HOME/.local/state/target"
+WAYBAR_SIGNAL=8   # "signal" de custom/localip en la config de Waybar
+
+refresh_waybar() {
+    pkill -RTMIN+$WAYBAR_SIGNAL waybar 2>/dev/null
+}
+
+valid_ip() {
+    local ip="$1" IFS=.
+    [[ "$ip" =~ ^[0-9]{1,3}(\.[0-9]{1,3}){3}$ ]] || return 1
+    for octet in $ip; do
+        (( octet <= 255 )) || return 1
+    done
+}
+
+set_target() {
+    local ip="$1" name="$2"
+    if ! valid_ip "$ip"; then
+        echo "set-target: '$ip' no es una IPv4 válida" >&2
+        notify-send "Objetivo" "'$ip' no es una IPv4 válida" -u low
+        return 1
+    fi
+    mkdir -p "$(dirname "$STATE_FILE")"
+    echo "$ip" > "$STATE_FILE"
+    refresh_waybar
+    notify-send "󰓾 Objetivo fijado" "${name:+$name · }$ip" -u low
+    echo "Objetivo: $ip${name:+ ($name)}"
+}
+
+clear_target() {
+    rm -f "$STATE_FILE"
+    refresh_waybar
+    notify-send "󰓾 Objetivo borrado" -u low
+    echo "Objetivo borrado"
+}
+
+case "$1" in
+    -c|--clear)
+        clear_target
+        ;;
+    --rofi)
+        current=$(cat "$STATE_FILE" 2>/dev/null)
+        input=$(rofi -dmenu -p "󰓾 Objetivo" -mesg "IP [nombre]${current:+ · actual: $current}" \
+                     -l 0 -theme ~/.config/rofi/ssh-menu.rasi < /dev/null)
+        [ -z "$input" ] && exit 0
+        read -r ip name <<< "$input"
+        set_target "$ip" "$name"
+        ;;
+    "")
+        if [ -s "$STATE_FILE" ]; then
+            cat "$STATE_FILE"
+        else
+            echo "Sin objetivo (set-target <ip> [nombre])"
+        fi
+        ;;
+    *)
+        set_target "$1" "$2"
+        ;;
+esac

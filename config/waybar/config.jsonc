@@ -21,7 +21,9 @@
         "group/system"
     ],
 
-    // Grupos
+    // ==========================================
+    // GRUPOS (ISLAS FLOTANTES)
+    // ==========================================
     "group/connectivity": {
         "orientation": "horizontal",
         "modules": [
@@ -42,7 +44,9 @@
         ]
     },
 
-    // Módulos
+    // ==========================================
+    // MÓDULOS INDIVIDUALES
+    // ==========================================
     "hyprland/workspaces": {
         "format": "{id}",
         "on-click": "activate",
@@ -89,11 +93,14 @@
 
     "custom/localip": {
         "exec": "/home/tara/.local/bin/localip.sh",
-        "interval": 2,
+        "interval": 1,
+        "signal": 8,
         "return-type": "json",
         "format": "{}",
         "tooltip": true,
-        "on-click": "/home/tara/.local/bin/wifi-menu.sh"
+        "on-click": "/home/tara/.local/bin/wifi-menu.sh",
+        "on-click-right": "wl-copy -n < \"$XDG_RUNTIME_DIR/localip-shown\" && notify-send '󰆏 IP copiada' \"$(cat \"$XDG_RUNTIME_DIR/localip-shown\")\" -u low",
+        "on-click-middle": "/home/tara/.local/bin/set-target -c"
     },
 
     "custom/battery-info": {

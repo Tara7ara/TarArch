@@ -1,7 +1,11 @@
 #!/bin/bash
-# Chuleta de atajos y comandos (Super + A), Enter ejecuta lo seleccionado
+# ==============================================================================
+# LIBRERÍA COMPARTIDA DE ATAJOS Y COMANDOS — TARARCH
+# Usada por show-keybindings.sh (Super+A) y rofi-keys-mode.sh (pestaña "Comandos"
+# del lanzador unificado Super+Espacio). Un único listado, un único dispatcher.
+# ==============================================================================
 
-LIST=(
+KEYBINDINGS_LIST=(
 "=== APLICACIONES Y HERRAMIENTAS PRINCIPALES ==="
 "Super + Enter                  Abrir Terminal Kitty (GPU, pestañas Powerline)"
 "Super + Space                  Lanzador de aplicaciones (Rofi Spotlight)"
@@ -32,7 +36,7 @@ LIST=(
 "taratrack / series            Abrir plataforma de series y rankings ELO (tara.series)"
 "modos / bateria / gamer       Cambiar modo de energía (Uni 60Hz, Normal 144Hz, Gamer Turbo)"
 "cambiar-cursor / raton         Cambiar tema de cursor de ratón (Ice, Classic, Amber)"
-"codex-acc / codex-auth        Gestor multicuenta OpenAI Codex CLI (1-3 / rotar límites)"
+"codex-acc / codex-auth        Gestor multicuenta OpenAI Codex CLI (1-4 / rotar límites)"
 "xampp-start                    Iniciar servicios de XAMPP (Apache + MariaDB/MySQL)"
 "xampp-stop                     Detener servicios de XAMPP"
 "xampp-gui                      Abrir panel gráfico de control de XAMPP"
@@ -44,6 +48,10 @@ LIST=(
 "modo-gamer                    Activar modo juego (CPU 100%, sin blur/sombras)"
 "red-casa                       Perfil de red LAN Casa (DHCP + DNS AdGuard 192.168.1.10)"
 "red-fuera                      Perfil de red LAN Fuera (DHCP y DNS automáticos)"
+"red-auto                       Perfil de red automático según el router (casa / fuera)"
+"set-target <ip> [nombre]       Fijar IP objetivo del lab (\$T en terminales, Waybar la alterna en rojo)"
+"set-target -c                  Borrar IP objetivo (o clic central en la IP de Waybar)"
+"Clic derecho IP Waybar         Copiar la IP que se ve en ese momento (tuya/tun0 u objetivo)"
 "y / yazi                       Explorador de archivos en Rust con preview GPU de fotos/vídeos"
 "btop                           Monitor de recursos del sistema en tiempo real (Warm Dark)"
 "cava                           Visualizador de audio reactivo en terminal"
@@ -71,6 +79,7 @@ LIST=(
 ""
 "=== GESTIÓN DE VENTANAS Y RATÓN ==="
 "Super + Q                      Cerrar ventana activa"
+"Super + J                      Alternar división vertical / horizontal (togglesplit)"
 "Super + G / Super+Shift+Space  Alternar ventana flotante (compacta 800x520) / fija"
 "Super + Shift + R              Recargar configuración de Hyprland y Waybar"
 "Super + F11                    Pantalla completa pura (sin barra superior)"
@@ -103,14 +112,10 @@ LIST=(
 "Fn + Flechas Izq/Der           Restablecer teclado ROG a blanco puro fijo"
 )
 
-GEN_LIST=$(printf "%s\n" "${LIST[@]}")
-
-# Mostrar selector Rofi
-SELECTED=$(echo "$GEN_LIST" | rofi -dmenu -i -p "󰌌 " -theme ~/.config/rofi/keybindings.rasi)
-[ -z "$SELECTED" ] && exit 0
-
-# Ejecutar la acción correspondiente si es ejecutable
-case "$SELECTED" in
+dispatch_keybinding() {
+    local SELECTED="$1"
+    [ -z "$SELECTED" ] && return 0
+    case "$SELECTED" in
     *"Abrir Terminal Kitty"*)       kitty & ;;
     *"Lanzador de aplicaciones"*)   rofi -show drun -theme ~/.config/rofi/launcher.rasi & ;;
     *"Centro de Control"*)          /home/tara/.local/bin/control-center.py & ;;
@@ -145,6 +150,9 @@ case "$SELECTED" in
     *"modo-gamer"*)                 /home/tara/.local/bin/modo-gamer ;;
     *"red-casa"*)                   /home/tara/.local/bin/red-casa ;;
     *"red-fuera"*)                  /home/tara/.local/bin/red-fuera ;;
+    *"red-auto"*)                   /home/tara/.local/bin/red-auto ;;
+    *"set-target -c"*)              /home/tara/.local/bin/set-target -c ;;
+    *"set-target"*)                 /home/tara/.local/bin/set-target --rofi ;;
     *"y / yazi"*)                   kitty -e yazi & ;;
     *"btop"*)                       kitty -e btop & ;;
     *"cava"*)                       kitty -e cava & ;;
@@ -158,6 +166,8 @@ case "$SELECTED" in
     *"Siguiente fondo"*)            /home/tara/.local/bin/wallpaper-cycle.sh next ;;
     *"Anterior fondo"*)             /home/tara/.local/bin/wallpaper-cycle.sh prev ;;
     *"Alternar ventana flotante"*)  /home/tara/.local/bin/toggle-floating.sh ;;
+    *"Alternar división"*|*"togglesplit"*) hyprctl dispatch togglesplit ;;
     *"Ver ventanas ocultas"*)       hyprctl dispatch togglespecialworkspace minimized ;;
     *) exit 0 ;;
-esac
+    esac
+}

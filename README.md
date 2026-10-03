@@ -25,6 +25,7 @@ Hyprland · Waybar · Rofi · Kitty · GTK3/GtkLayerShell (Python) · Bash · hy
 ```
 config/       → ~/.config/*  (hypr, waybar, rofi, kitty, gtk, fastfetch...)
 local/bin/    → ~/.local/bin/*  (scripts propios)
+local/share/  → ~/.local/share/*  (lanzadores .desktop)
 usr-local-bin/→ /usr/local/bin/*  (scripts que necesitan vivir fuera del home)
 systemd/      → unidades de systemd (system, user, sleep hooks)
 udev-rules/   → reglas udev
@@ -38,3 +39,5 @@ sysctl.d/     → /etc/sysctl.d/*
 No es un instalador de un clic, son mis configs para copiar y adaptar. Como mínimo:
 
 `hyprland` `waybar` `rofi` `kitty` `hyprlock` `hypridle` `python-gobject` `gtk-layer-shell` `playerctl` `upower` `networkmanager` `cava`
+
+Para el visor de imágenes (`imv-dir`): `imv` `inotify-tools`.

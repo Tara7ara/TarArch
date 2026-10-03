@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Lógica de sistema del Centro de Control de TarArch: estado (volumen, brillo,
-notificaciones, toggles, red, bluetooth) y sincronización indexada CalDAV.
+notificaciones, toggles, red, bluetooth) y sincronización indexada de Google Calendar.
 Sin GTK — nada aquí construye UI, solo lee/escribe estado real del sistema.
 """
 import os
@@ -10,8 +10,6 @@ import subprocess
 import datetime
 import urllib.request
 import urllib.parse
-import base64
-import ssl
 import re
 import glob
 import json
@@ -19,9 +17,10 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 
 PID_FILE = "/tmp/tararch_control_center.pid"
-CALDAV_BASE = "https://tara.calendario/tara/"
-CALDAV_USER = "tara"
-CALDAV_PASS = "tara"
+GOOGLE_DIR = os.path.expanduser("~/.config/tararch/google")
+GOOGLE_CLIENT_FILE = os.path.join(GOOGLE_DIR, "client_secret.json")
+GOOGLE_TOKEN_FILE = os.path.join(GOOGLE_DIR, "token.json")
+GOOGLE_API = "https://www.googleapis.com/calendar/v3"
 NOTIF_CACHE_FILE = os.path.expanduser("~/.cache/tararch_notifications.json")
 MODE_FILE = os.path.expanduser("~/.cache/current_system_mode")
 NETWORK_PROFILE_FILE = os.path.expanduser("~/.cache/current_network_profile")
@@ -257,80 +256,98 @@ def save_calendar_index(events):
         pass
 
 
+def _google_access_token():
+    """Pide un access token nuevo con el refresh token guardado por google-calendar-auth.py."""
+    with open(GOOGLE_CLIENT_FILE, "r", encoding="utf-8") as f:
+        client = json.load(f)["installed"]
+    with open(GOOGLE_TOKEN_FILE, "r", encoding="utf-8") as f:
+        refresh_token = json.load(f)["refresh_token"]
+    body = urllib.parse.urlencode({
+        "client_id": client["client_id"],
+        "client_secret": client["client_secret"],
+        "refresh_token": refresh_token,
+        "grant_type": "refresh_token",
+    }).encode()
+    with urllib.request.urlopen(client["token_uri"], data=body, timeout=8) as resp:
+        return json.load(resp)["access_token"]
+
+
+def _google_get(path, token, params=None):
+    url = GOOGLE_API + path
+    if params:
+        url += "?" + urllib.parse.urlencode(params)
+    req = urllib.request.Request(url, headers={"Authorization": "Bearer " + token})
+    with urllib.request.urlopen(req, timeout=8) as resp:
+        return json.load(resp)
+
+
+def _google_calendar_events(token, cal_id, time_min, time_max):
+    """Eventos de un calendario con las recurrencias ya expandidas en instancias."""
+    parsed = []
+    params = {
+        "timeMin": time_min, "timeMax": time_max,
+        "singleEvents": "true", "orderBy": "startTime", "maxResults": "2500",
+    }
+    while True:
+        data = _google_get("/calendars/%s/events" % urllib.parse.quote(cal_id, safe=""), token, params)
+        for item in data.get("items", []):
+            if item.get("status") == "cancelled":
+                continue
+            start = item.get("start", {})
+            if "dateTime" in start:
+                dt = datetime.datetime.fromisoformat(start["dateTime"]).astimezone()
+                d_obj, time_str = dt.date(), dt.strftime("%H:%M")
+            elif "date" in start:
+                d_obj, time_str = datetime.date.fromisoformat(start["date"]), ""
+            else:
+                continue
+            parsed.append({
+                "summary": item.get("summary", "(sin título)"),
+                "time": time_str,
+                "date": d_obj,
+                "yearly": False
+            })
+        if not data.get("nextPageToken"):
+            return parsed
+        params["pageToken"] = data["nextPageToken"]
+
+
+def fetch_google_events():
+    """Todos los calendarios visibles de la cuenta, de 2 meses atrás a 1 año vista."""
+    token = _google_access_token()
+    calendars = [
+        c["id"] for c in _google_get("/users/me/calendarList", token).get("items", [])
+        if c.get("selected", True)
+    ]
+    now = datetime.datetime.now(datetime.timezone.utc)
+    time_min = (now - datetime.timedelta(days=62)).isoformat()
+    time_max = (now + datetime.timedelta(days=366)).isoformat()
+    with ThreadPoolExecutor(max_workers=6) as executor:
+        results = executor.map(lambda c: _google_calendar_events(token, c, time_min, time_max), calendars)
+    return [ev for evs in results for ev in evs]
+
+
 def fetch_all_events():
     """
-    Descarga eventos de CalDAV en paralelo con ThreadPool y añade los locales.
-    Actualiza el índice local en disco automáticamente.
+    Descarga eventos de Google Calendar y añade los locales de Evolution.
+    Actualiza el índice local en disco automáticamente; si Google falla
+    (sin red, sin token) devuelve [] y la UI se queda con la caché.
     """
     events = []
     seen_keys = set()
 
     def add_unique(ev_list):
         for ev in ev_list:
-            key = (ev["summary"], ev["date"].month, ev["date"].day)
+            key = (ev["summary"], ev["date"], ev["time"])
             if key not in seen_keys:
                 seen_keys.add(key)
                 events.append(ev)
 
-    # 1. Eventos del Servidor CalDAV (Radicale) en paralelo
+    # 1. Google Calendar
     try:
-        ctx = ssl.create_default_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
-
-        auth_header = "Basic " + base64.b64encode(f"{CALDAV_USER}:{CALDAV_PASS}".encode()).decode()
-
-        req = urllib.request.Request(CALDAV_BASE, method="PROPFIND")
-        req.add_header("Authorization", auth_header)
-        req.add_header("Depth", "1")
-
-        with urllib.request.urlopen(req, context=ctx, timeout=2.5) as resp:
-            xml_data = resp.read().decode()
-
-        hrefs = re.findall(r"<href>([^<]+)</href>", xml_data)
-        col_urls = []
-        for h in hrefs:
-            clean_h = h.strip("/")
-            if clean_h != "tara" and "/" in clean_h:
-                full_url = urllib.parse.urljoin(CALDAV_BASE, h)
-                if full_url not in col_urls and full_url != CALDAV_BASE:
-                    col_urls.append(full_url)
-
-        if not col_urls:
-            col_urls = [CALDAV_BASE]
-
-        all_ics_urls = []
-        for c_url in col_urls:
-            if not c_url.endswith("/"):
-                c_url += "/"
-            req_col = urllib.request.Request(c_url, method="PROPFIND")
-            req_col.add_header("Authorization", auth_header)
-            req_col.add_header("Depth", "1")
-
-            with urllib.request.urlopen(req_col, context=ctx, timeout=2.5) as c_resp:
-                c_xml = c_resp.read().decode()
-
-            for ics_h in re.findall(r"<href>([^<]+\.ics)</href>", c_xml):
-                all_ics_urls.append(urllib.parse.urljoin(c_url, ics_h))
-
-        def fetch_single_ics(url):
-            try:
-                ics_req = urllib.request.Request(url, method="GET")
-                ics_req.add_header("Authorization", auth_header)
-                with urllib.request.urlopen(ics_req, context=ctx, timeout=2.5) as ics_resp:
-                    return ics_resp.read().decode(errors="ignore")
-            except Exception:
-                return None
-
-        if all_ics_urls:
-            with ThreadPoolExecutor(max_workers=8) as executor:
-                ics_contents = list(executor.map(fetch_single_ics, all_ics_urls))
-            for content in ics_contents:
-                if content:
-                    add_unique(parse_vevents_from_ics(content))
-
+        add_unique(fetch_google_events())
     except Exception:
-        pass
+        return []
 
     # 2. Eventos Locales de Evolution
     for fpath in glob.glob(os.path.expanduser("~/.local/share/evolution/calendar/**/*.ics"), recursive=True):
@@ -345,3 +362,70 @@ def fetch_all_events():
         save_calendar_index(events)
 
     return events
+
+# =============================================================================
+# ACTIVIDAD DE GITHUB (heatmap del Centro de Control)
+# Lee el grafo de contribuciones publico del perfil, sin token ni terceros.
+# =============================================================================
+GITHUB_USER = "Tara7ara"
+GITHUB_CACHE_FILE = os.path.expanduser("~/.cache/tararch_github_activity.json")
+GITHUB_CACHE_TTL = 3 * 3600  # 3 horas: la actividad no cambia tan rapido
+
+
+def _fetch_github_activity(user):
+    """Descarga y parsea el grafo de contribuciones publico. Devuelve dict o None."""
+    url = "https://github.com/users/%s/contributions" % urllib.parse.quote(user)
+    req = urllib.request.Request(url, headers={
+        "User-Agent": "Mozilla/5.0",
+        "X-Requested-With": "XMLHttpRequest",
+    })
+    try:
+        with urllib.request.urlopen(req, timeout=12) as resp:
+            html = resp.read().decode("utf-8", "replace")
+    except Exception:
+        return None
+
+    # Un <td> por dia: data-date antes, data-level despues, dentro de la misma etiqueta.
+    days = [
+        {"date": m.group(1), "level": int(m.group(2))}
+        for m in re.finditer(r'data-date="(\d{4}-\d{2}-\d{2})"[^>]*data-level="(\d)"', html)
+    ]
+    # Total real desde los tooltips ("N contributions on ..."; "No contributions" = 0).
+    total = 0
+    for m in re.finditer(r'for="contribution-day-component-[^"]*"[^>]*>([^<]*)</tool-tip>', html):
+        mm = re.match(r'([\d,]+)\s+contribution', m.group(1))
+        if mm:
+            total += int(mm.group(1).replace(",", ""))
+
+    if not days:
+        return None
+    return {"days": days, "total": total, "fetched": time.time()}
+
+
+def get_github_activity(user=GITHUB_USER, ttl=GITHUB_CACHE_TTL):
+    """Actividad de GitHub con cache en disco. Nunca lanza: en fallo total
+    devuelve la cache vieja si existe, o {'days': [], 'total': 0, 'error': True}."""
+    try:
+        st = os.stat(GITHUB_CACHE_FILE)
+        if time.time() - st.st_mtime < ttl:
+            with open(GITHUB_CACHE_FILE) as f:
+                return json.load(f)
+    except (OSError, ValueError):
+        pass
+
+    data = _fetch_github_activity(user)
+    if data:
+        try:
+            os.makedirs(os.path.dirname(GITHUB_CACHE_FILE), exist_ok=True)
+            with open(GITHUB_CACHE_FILE, "w") as f:
+                json.dump(data, f)
+        except OSError:
+            pass
+        return data
+
+    # Fetch fallido: intentar cache vieja aunque haya caducado.
+    try:
+        with open(GITHUB_CACHE_FILE) as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {"days": [], "total": 0, "error": True}

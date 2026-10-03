@@ -1,0 +1,193 @@
+#!/usr/bin/env python3
+import sys
+import os
+import subprocess
+import socket
+import time
+import signal
+import threading
+
+IMAGE_EXTENSIONS = {
+    ".jpg", ".jpeg", ".jpe", ".pjpeg",
+    ".png", ".gif", ".webp", ".bmp",
+    ".tiff", ".tif", ".svg", ".svgz",
+    ".avif", ".heic", ".heif", ".jxl",
+    ".qoi", ".ico", ".farbfeld", ".ff",
+    ".pam", ".pbm", ".pgm", ".ppm"
+}
+
+def is_image(filename):
+    _, ext = os.path.splitext(filename)
+    return ext.lower() in IMAGE_EXTENSIONS
+
+def ipc_quote(path):
+    # imv pasa el argumento de "open" por wordexp(), que ejecuta $(...) y `...` incluso
+    # entre comillas dobles. Entre comillas simples no expande nada; las rutas con ' o \
+    # no se pueden meter ahi sin riesgo, asi que no se mandan (salen al recargar con F5).
+    if any(c in path for c in "'\\\n\r"):
+        return None
+    return "'" + path + "'"
+
+def main():
+    args = sys.argv[1:]
+
+    # Fallback to standard imv if multiple arguments are passed
+    if len(args) >= 2:
+        os.execvp("imv", ["imv"] + args)
+
+    if len(args) == 0:
+        target_dir = os.path.abspath(os.getcwd())
+        target_file = None
+    else:
+        arg = args[0]
+        if os.path.isdir(arg):
+            target_dir = os.path.abspath(arg)
+            target_file = None
+        elif os.path.isfile(arg):
+            target_file = os.path.abspath(arg)
+            target_dir = os.path.dirname(target_file)
+        else:
+            os.execvp("imv", ["imv"] + args)
+
+    # Launch imv with directory and focus on selected file if present
+    if target_file:
+        imv_cmd = ["imv", "-n", target_file, target_dir]
+    else:
+        imv_cmd = ["imv", target_dir]
+
+    imv_proc = subprocess.Popen(imv_cmd)
+
+    def cleanup(signum=None, frame=None):
+        if imv_proc.poll() is None:
+            imv_proc.terminate()
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, cleanup)
+    signal.signal(signal.SIGTERM, cleanup)
+
+    # Keep track of existing files to avoid duplicate entries in imv
+    try:
+        known_files = set(os.listdir(target_dir))
+    except Exception:
+        known_files = set()
+
+    runtime_dir = os.environ.get("XDG_RUNTIME_DIR", f"/run/user/{os.getuid()}")
+    sock_path = os.path.join(runtime_dir, f"imv-{imv_proc.pid}.sock")
+
+    # Connect to imv's IPC UNIX socket
+    sock = None
+    for _ in range(40):
+        if imv_proc.poll() is not None:
+            sys.exit(imv_proc.returncode)
+        if os.path.exists(sock_path):
+            try:
+                s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+                s.connect(sock_path)
+                sock = s
+                break
+            except Exception:
+                pass
+        time.sleep(0.04)
+
+    # If socket connection failed, just wait for imv
+    if not sock:
+        sys.exit(imv_proc.wait())
+
+    # Watch directory for new files in real time
+    try:
+        inotify_proc = subprocess.Popen(
+            ["inotifywait", "-m", "-e", "close_write,moved_to,delete,moved_from", "--format", "%e\t%f", target_dir],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            text=True
+        )
+    except Exception:
+        sys.exit(imv_proc.wait())
+
+    stop_event = threading.Event()
+    pending = {}
+    pending_lock = threading.Lock()
+
+    def dispatcher():
+        while not stop_event.is_set():
+            time.sleep(0.08)
+            if imv_proc.poll() is not None:
+                break
+
+            now = time.time()
+            to_process = []
+            with pending_lock:
+                # Wait 250ms of quiet time per file so writes/conversions finish cleanly
+                ready_keys = [f for f, t in pending.items() if now - t >= 0.25]
+                for f in ready_keys:
+                    to_process.append(f)
+                    del pending[f]
+
+            for filename in to_process:
+                if imv_proc.poll() is not None:
+                    break
+                filepath = os.path.join(target_dir, filename)
+                try:
+                    # Ensure file exists, is non-empty, and not already registered
+                    if os.path.isfile(filepath) and os.path.getsize(filepath) > 0:
+                        quoted = ipc_quote(filepath)
+                        if filename not in known_files and quoted:
+                            known_files.add(filename)
+                            cmd = f"open {quoted}\n"
+                            try:
+                                sock.sendall(cmd.encode())
+                                # Brief pause to allow imv's main UI loop to handle Wayland ping/pong events smoothly
+                                time.sleep(0.04)
+                            except Exception:
+                                return
+                except OSError:
+                    pass
+
+    def watcher():
+        for line in inotify_proc.stdout:
+            if imv_proc.poll() is not None or stop_event.is_set():
+                break
+            line = line.strip()
+            if not line:
+                continue
+            parts = line.split("\t", 1)
+            if len(parts) != 2:
+                continue
+            event, filename = parts
+
+            # Ignore hidden files / dotfiles
+            if filename.startswith("."):
+                continue
+
+            if "DELETE" in event or "MOVED_FROM" in event:
+                known_files.discard(filename)
+                with pending_lock:
+                    pending.pop(filename, None)
+            elif "CLOSE_WRITE" in event or "MOVED_TO" in event:
+                if is_image(filename):
+                    with pending_lock:
+                        pending[filename] = time.time()
+
+    dispatcher_thread = threading.Thread(target=dispatcher, daemon=True)
+    dispatcher_thread.start()
+
+    watcher_thread = threading.Thread(target=watcher, daemon=True)
+    watcher_thread.start()
+
+    ret = imv_proc.wait()
+    stop_event.set()
+
+    try:
+        inotify_proc.terminate()
+        inotify_proc.wait(timeout=0.5)
+    except Exception:
+        pass
+    try:
+        sock.close()
+    except Exception:
+        pass
+
+    sys.exit(ret)
+
+if __name__ == "__main__":
+    main()
