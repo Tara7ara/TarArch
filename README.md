@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/logo.svg" width="140" alt="Logo de TarArch"></p>
+
 # TarArch
 
 Mi Arch Linux con Hyprland, día a día, en un ASUS ROG con NVIDIA. Sin framework de dotfiles ni generador de plantillas. Es el primer proyecto que publico este verano; el segundo es [TaraTrack](https://github.com/Tara7ara/TaraTrack), mi tracker de series.
