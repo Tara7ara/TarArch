@@ -1,10 +1,16 @@
-@import url("/home/tara/.config/tararch/colors.css");
+@import url("colors.css");
+
+/* =============================================================================
+   CENTRO DE CONTROL — mismo estilo que menús, bloqueo y panel de estado:
+   fondo opaco, bordes finos grises, Inter, cabeceras pequeñas en gris
+   espaciadas, naranja solo para lo activo.
+   ============================================================================= */
 
 window {
     background-color: transparent;
 }
 
-/* Eliminar el fondo opaco por defecto de GTK3 (Adwaita background-image) */
+/* Quitar el fondo y sombras por defecto de GTK3 (Adwaita) */
 button {
     background-image: none;
     text-shadow: none;
@@ -14,316 +20,282 @@ button {
 
 /* --- PANEL PRINCIPAL --- */
 .main-panel {
-    background-color: rgba(15, 15, 18, 0.80);
-    border: 1px solid rgba(255, 158, 100, 0.15);
-    border-radius: 16px;
-    padding: 16px;
+    background-color: #0f0f0f;
+    border: 1px solid #2d2d2d;
+    border-radius: 12px;
+    padding: 18px;
     min-width: 390px;
 }
 
 .header-title {
     color: @fg-bright;
-    font-family: "Inter", "Adwaita Sans", sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
+    font-family: "Inter", sans-serif;
+    font-size: 30px;
+    font-weight: 300;
 }
 
 .header-subtitle {
     color: @accent-orange;
-    font-family: "Inter", "Adwaita Sans", sans-serif;
-    font-size: 13px;
+    font-family: "Inter", sans-serif;
+    font-size: 10px;
     font-weight: 600;
+    letter-spacing: 2px;
 }
 
 .btn-close {
-    background-image: none;
     background-color: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    color: @fg-main;
-    font-family: "JetBrainsMono Nerd Font", sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    padding: 6px 10px;
+    border: none;
+    border-radius: 6px;
+    color: #6e6e6e;
+    font-size: 13px;
+    padding: 4px 8px;
 }
 
 .btn-close:hover {
-    background-image: none;
-    background-color: rgba(247, 118, 142, 0.12);
-    border-color: @status-red;
-    color: @status-red;
+    background-color: #1c1a19;
+    color: @fg-bright;
 }
 
-/* --- TARJETAS QUICK TOGGLE (8 BOTONES) TRANSPARENTES --- */
+/* --- INTERRUPTORES (8 BOTONES) --- */
 .btn-toggle {
-    background-image: none;
-    background-color: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 11px 0;
-    color: #9a9a9a;
+    background-color: #161514;
+    border: 1px solid #2d2d2d;
+    border-radius: 8px;
+    padding: 10px 0;
+    color: #8a8580;
     font-family: "JetBrainsMono Nerd Font", sans-serif;
-    font-size: 21px;
-    min-height: 48px;
+    font-size: 19px;
+    min-height: 44px;
 }
 
 .btn-toggle:hover {
-    background-image: none;
-    background-color: rgba(255, 158, 100, 0.08);
-    border-color: rgba(255, 158, 100, 0.3);
-    color: @accent-orange;
+    background-color: #1c1a19;
+    border-color: #4a4a4a;
+    color: @fg-bright;
 }
 
-/* Activo Naranja (LanMouse, Cafeína, Red, Bluetooth) */
+/* Activo: solo el borde y el icono en color, sin relleno */
 .btn-toggle-active {
-    background-image: none;
-    background-color: rgba(255, 158, 100, 0.10);
-    border: 1px solid rgba(255, 158, 100, 0.5);
+    background-color: #161514;
+    border-color: @accent-orange;
     color: @accent-orange;
 }
 .btn-toggle-active:hover {
-    background-image: none;
-    background-color: rgba(255, 158, 100, 0.18);
-    border-color: rgba(255, 169, 122, 0.65);
+    background-color: #1c1a19;
     color: @fg-bright;
 }
 
-/* Activo Verde (Modo Uni / Lápiz) */
+/* Modo Uni */
 .btn-toggle-active-green {
-    background-image: none;
-    background-color: rgba(158, 206, 106, 0.10);
-    border: 1px solid rgba(158, 206, 106, 0.5);
+    background-color: #161514;
+    border-color: @status-green;
     color: @status-green;
 }
 .btn-toggle-active-green:hover {
-    background-image: none;
-    background-color: rgba(158, 206, 106, 0.18);
-    border-color: rgba(168, 212, 119, 0.65);
+    background-color: #1c1a19;
     color: @fg-bright;
 }
 
-/* Activo Rojo (Modo Gamer / Gamepad) */
+/* Modo Gamer */
 .btn-toggle-active-red {
-    background-image: none;
-    background-color: rgba(247, 118, 142, 0.10);
-    border: 1px solid rgba(247, 118, 142, 0.5);
+    background-color: #161514;
+    border-color: @status-red;
     color: @status-red;
 }
 .btn-toggle-active-red:hover {
-    background-image: none;
-    background-color: rgba(247, 118, 142, 0.18);
-    border-color: rgba(250, 139, 159, 0.65);
+    background-color: #1c1a19;
     color: @fg-bright;
 }
 
-/* --- BOTONES DE ACCIÓN (2 CALENDARIO + NOTIFICACIONES) --- */
+/* --- BOTONES PEQUEÑOS (sincronizar, abrir calendario) --- */
 .btn-action-icon {
-    background-image: none;
     background-color: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    color: #9a9a9a;
+    border: 1px solid #2d2d2d;
+    border-radius: 6px;
+    color: #8a8580;
     font-family: "JetBrainsMono Nerd Font", sans-serif;
-    font-size: 13px;
-    padding: 5px 9px;
+    font-size: 12px;
+    padding: 3px 8px;
 }
 .btn-action-icon:hover {
-    background-image: none;
-    background-color: rgba(255, 158, 100, 0.10);
-    border-color: rgba(255, 158, 100, 0.5);
-    color: @accent-orange;
+    border-color: @accent-orange;
+    color: @fg-bright;
 }
 
-/* --- SECCIONES Y SLIDERS --- */
+/* --- SECCIONES Y DESLIZADORES --- */
 .section-box {
-    background-color: rgba(255, 255, 255, 0.025);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
+    background-color: #161514;
+    border: 1px solid #2d2d2d;
+    border-radius: 8px;
     padding: 12px 14px;
 }
 
 .slider-icon {
-    color: @accent-orange;
+    color: #8a8580;
     font-family: "JetBrainsMono Nerd Font", sans-serif;
-    font-size: 16px;
+    font-size: 15px;
     min-width: 20px;
 }
 
 .slider-val-label {
     color: @fg-main;
-    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-family: "Inter", sans-serif;
     font-size: 11px;
-    font-weight: 600;
     min-width: 38px;
 }
 
 scale.horizontal,
 scale {
-    padding: 3px 0;
+    padding: 6px 0;
     margin: 0;
 }
 
 scale.horizontal trough,
 scale trough {
-    background-image: none;
-    background-color: rgba(255, 255, 255, 0.08);
+    background-color: #3a3a3a;
     border: none;
-    border-radius: 9999px;
-    min-height: 12px;
+    border-radius: 2px;
+    min-height: 4px;
 }
 
 scale.horizontal highlight,
 scale highlight {
-    background-image: none;
     background-color: @accent-orange;
     border: none;
-    border-radius: 9999px;
-    min-height: 12px;
+    border-radius: 2px;
+    min-height: 4px;
 }
 
 scale.horizontal slider,
 scale slider {
-    background-image: none;
     background-color: @fg-bright;
-    border: 2px solid @accent-orange;
+    border: none;
     border-radius: 9999px;
-    min-width: 16px;
-    min-height: 16px;
-    margin: -2px 0;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-    transition: all 0.15s ease;
+    min-width: 12px;
+    min-height: 12px;
+    margin: -4px 0;
+    box-shadow: none;
 }
 
 scale.horizontal slider:hover,
 scale slider:hover {
-    background-image: none;
     background-color: @accent-orange;
-    border-color: @fg-bright;
-    min-width: 18px;
-    min-height: 18px;
-    margin: -3px 0;
 }
 
-/* --- TABS (2 BOTONES CALENDARIO / NOTIFICACIONES) --- */
+/* --- PESTAÑAS (CALENDARIO / NOTIFICACIONES): subrayado como el lanzador --- */
 .btn-tab {
-    background-image: none;
     background-color: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    color: #7a7a7a;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    color: #6e6e6e;
     font-family: "JetBrainsMono Nerd Font", sans-serif;
-    font-size: 17px;
-    font-weight: 700;
-    padding: 7px 0;
+    font-size: 15px;
+    padding: 4px 0 6px 0;
 }
 .btn-tab:hover {
-    background-image: none;
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: transparent;
     color: @fg-bright;
 }
 .btn-tab-active {
-    background-image: none;
-    background-color: rgba(255, 158, 100, 0.12);
-    border: 1px solid rgba(255, 158, 100, 0.5);
-    color: @accent-orange;
-    font-weight: 700;
+    border-bottom-color: @accent-orange;
+    color: @fg-bright;
 }
 
 /* --- CALENDARIO --- */
 calendar {
     background-color: transparent;
-    color: @fg-bright;
-    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    color: @fg-main;
+    font-family: "Inter", sans-serif;
     font-size: 12px;
     border: none;
-    border-radius: 12px;
     padding: 4px;
 }
 
 calendar.header {
-    color: @accent-orange;
-    font-weight: 700;
-    font-size: 13px;
+    color: @fg-bright;
+    font-weight: 600;
+    font-size: 12px;
 }
 
-calendar.button { color: @accent-purple; background: transparent; background-image: none; }
-calendar.button:hover { color: @fg-bright; background: rgba(255, 255, 255, 0.08); background-image: none; }
+calendar.button { color: #6e6e6e; background: transparent; }
+calendar.button:hover { color: @fg-bright; background: transparent; }
+
 /* Días con eventos (mark_day) */
 calendar:active {
     color: @accent-orange;
 }
 calendar:selected,
 calendar:selected:active {
-    background-color: @accent-orange;
-    color: #0f0f0f;
-    border-radius: 8px;
-    font-weight: 700;
+    background-color: transparent;
+    color: @accent-orange;
+    border: 1px solid @accent-orange;
+    border-radius: 6px;
+    font-weight: 600;
 }
 
+/* Cabeceras de sección: pequeñas, gris, espaciadas (el texto va en mayúsculas) */
 .cal-header-label {
-    color: @accent-purple;
-    font-family: "Inter", "Adwaita Sans", sans-serif;
-    font-size: 13px;
-    font-weight: 700;
+    color: #6e6e6e;
+    font-family: "Inter", sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
 }
 
 .event-item-text {
-    color: @fg-bright;
-    font-family: "Inter", "Adwaita Sans", sans-serif;
+    color: @fg-main;
+    font-family: "Inter", sans-serif;
     font-size: 12px;
-    font-weight: 600;
 }
 
 /* --- NOTIFICACIONES --- */
 .noti-card {
-    background-color: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 12px;
+    background-color: #161514;
+    border: 1px solid #2d2d2d;
+    border-radius: 8px;
     padding: 10px 12px;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
 }
 
 .noti-card:hover {
-    background-color: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 158, 100, 0.30);
+    border-color: #4a4a4a;
 }
 
 .noti-card-header {
-    font-family: "Inter", "Adwaita Sans", sans-serif;
-    font-size: 11px;
-    font-weight: bold;
-    color: @accent-orange;
+    font-family: "Inter", sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    color: #6e6e6e;
 }
 
 .noti-card-time {
-    font-family: "Inter", "Adwaita Sans", sans-serif;
+    font-family: "Inter", sans-serif;
     font-size: 10px;
-    color: #7a7a7a;
+    color: #6e6e6e;
 }
 
 .noti-card-title {
-    font-family: "Inter", "Adwaita Sans", sans-serif;
+    font-family: "Inter", sans-serif;
     font-size: 12px;
-    font-weight: bold;
+    font-weight: 600;
     color: @fg-bright;
 }
 
 .noti-card-body {
-    font-family: "Inter", "Adwaita Sans", sans-serif;
+    font-family: "Inter", sans-serif;
     font-size: 11px;
     color: @fg-main;
 }
 
 .noti-btn-del {
     background: transparent;
-    background-image: none;
     border: none;
-    color: #7a7a7a;
+    color: #6e6e6e;
     font-size: 12px;
     padding: 0 4px;
 }
 
 .noti-btn-del:hover {
-    color: #ff5370;
+    color: @fg-bright;
 }

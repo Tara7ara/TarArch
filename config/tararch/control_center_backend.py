@@ -141,9 +141,9 @@ def is_casa_active():
 def toggle_casa_profile():
     """Alterna entre red-casa y red-fuera."""
     if is_casa_active():
-        subprocess.Popen(["/home/tara/.local/bin/red-fuera"], start_new_session=True)
+        subprocess.Popen([os.path.expanduser("~/.local/bin/red-fuera")], start_new_session=True)
     else:
-        subprocess.Popen(["/home/tara/.local/bin/red-casa"], start_new_session=True)
+        subprocess.Popen([os.path.expanduser("~/.local/bin/red-casa")], start_new_session=True)
 
 
 def get_system_mode():
@@ -159,7 +159,7 @@ def get_system_mode():
 
 def toggle_system_mode():
     """Alterna cíclicamente entre uni -> normal -> gamer -> uni."""
-    subprocess.Popen(["/home/tara/.local/bin/set-system-mode.sh", "toggle"], start_new_session=True)
+    subprocess.Popen([os.path.expanduser("~/.local/bin/set-system-mode.sh"), "toggle"], start_new_session=True)
 
 
 def load_notifications():

@@ -1,12 +1,23 @@
 #!/bin/bash
 # Menú de Bluetooth en rofi: conectar/desconectar dispositivos emparejados
 
+source $HOME/.local/bin/rofi-row.sh
+
+# Icono según el tipo de dispositivo (auriculares, móvil u otro)
+icono_bt() {
+    case "$1" in
+        *Barracuda*|*Headset*|*Audio*|*Buds*|*Auricular*) echo "󰋋" ;;
+        *iPhone*|*Iphone*|*Phone*|*Movil*|*Móvil*) echo "󰏲" ;;
+        *) echo "󰂯" ;;
+    esac
+}
+
 # Comprobar estado de encendido
 IS_POWERED=$(bluetoothctl show | grep "Powered: yes")
 
 if [ -z "$IS_POWERED" ]; then
-    CHOICE=$(printf "<span color='#9ece6a'>󰂯</span>  <b>Activar Bluetooth</b>\n" | \
-        rofi -dmenu -p "󰂯 " -theme ~/.config/rofi/bluetooth.rasi -markup-rows)
+    CHOICE=$(rofi_row "󰂯" "Activar bluetooth" | \
+        rofi -dmenu -p "󰂯" -theme ~/.config/rofi/bluetooth.rasi -markup-rows)
     
     if [ -n "$CHOICE" ]; then
         bluetoothctl power on
@@ -30,51 +41,41 @@ while IFS= read -r line; do
     IS_CONNECTED=$(bluetoothctl info "$MAC" | grep "Connected: yes")
     
     if [ -n "$IS_CONNECTED" ]; then
-        # Icono según nombre (auriculares vs móvil vs dispositivo)
-        ICON="󰂱"
-        [ "$NAME" =~ "Barracuda"|"Headset"|"Audio" ] && ICON="󰋋"
-        [ "$NAME" =~ "Iphone"|"Phone"|"Movil" ] && ICON="󰏲"
-        
-        LABEL="<span color='#9ece6a'>$ICON</span>  <b>$NAME</b>  <span color='#9ece6a'>(Conectado · Clic para desconectar)</span>"
+        LABEL=$(rofi_row "$(icono_bt "$NAME")" "$NAME" "conectado · Enter desconecta" activo)
     else
-        ICON="󰂯"
-        [ "$NAME" =~ "Barracuda"|"Headset"|"Audio" ] && ICON="󰋋"
-        [ "$NAME" =~ "Iphone"|"Phone"|"Movil" ] && ICON="󰏲"
-        
-        LABEL="<span color='#787c99'>$ICON</span>  <b>$NAME</b>  <span color='#787c99'>(Desconectado · Clic para conectar)</span>"
+        LABEL=$(rofi_row "$(icono_bt "$NAME")" "$NAME" "desconectado")
     fi
     
     ITEMS+=("$LABEL")
     MACS+=("$MAC::$NAME::$IS_CONNECTED")
 done <<< "$DEVICES_RAW"
 
-ITEMS+=("<span color='#ff9e64'>󰂰</span>  <b>Escanear nuevos dispositivos</b>")
-ITEMS+=("<span color='#f7768e'>󰂲</span>  <b>Desactivar Bluetooth</b>")
+N_DISP=${#ITEMS[@]}
+ITEMS+=("$(rofi_row "󰂰" "Buscar dispositivos nuevos")")
+ITEMS+=("$(rofi_row "󰂲" "Desactivar bluetooth")")
 
-# Generar lista para Rofi
-GEN_MENU=$(printf "%s\n" "${ITEMS[@]}")
+# Se elige por posición: un nombre puede estar contenido en otro
+IDX=$(printf "%s\n" "${ITEMS[@]}" | rofi -dmenu -format i -p "󰂯" -theme ~/.config/rofi/bluetooth.rasi -markup-rows -no-custom)
+[ -z "$IDX" ] && exit 0
 
-SELECTED=$(echo "$GEN_MENU" | rofi -dmenu -p "󰂯 " -theme ~/.config/rofi/bluetooth.rasi -markup-rows -no-custom)
-[ -z "$SELECTED" ] && exit 0
-
-if [[ "$SELECTED" == *"Desactivar Bluetooth"* ]]; then
+if [ "$IDX" -eq $((N_DISP + 1)) ]; then
     bluetoothctl power off
     notify-send "Bluetooth" "Adaptador desactivado" -i bluetooth-disabled -u low
     exit 0
 fi
 
-if [[ "$SELECTED" == *"Escanear nuevos dispositivos"* ]]; then
+if [ "$IDX" -eq "$N_DISP" ]; then
     kitty --title "Bluetooth Scan" bash -c "bluetoothctl scan on" &
     exit 0
 fi
 
 # Conectar / Desconectar dispositivo seleccionado
-for entry in "${MACS[@]}"; do
+for entry in "${MACS[$IDX]}"; do
     MAC=$(echo "$entry" | awk -F'::' '{print $1}')
     NAME=$(echo "$entry" | awk -F'::' '{print $2}')
     CONN=$(echo "$entry" | awk -F'::' '{print $3}')
     
-    if [[ "$SELECTED" == *"$NAME"* ]]; then
+    if [ -n "$MAC" ]; then
         if [ -n "$CONN" ]; then
             bluetoothctl disconnect "$MAC"
             notify-send "Bluetooth Desconectado" "$NAME" -i bluetooth -u low

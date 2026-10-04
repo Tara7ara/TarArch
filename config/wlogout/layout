@@ -1,6 +1,6 @@
 {
     "label" : "lock",
-    "action" : "/home/tara/.local/bin/hyprlock-launch.sh",
+    "action" : "$HOME/.local/bin/hyprlock-launch.sh",
     "text" : "Bloquear",
     "keybind" : "l"
 }

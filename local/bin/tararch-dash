@@ -1,0 +1,398 @@
+#!/usr/bin/env python3
+# =============================================================================
+# tararch-dash — panel de estado de TarArch (Super+Tab, otra vez lo cierra).
+#   Webview GTK como wallpaper-flow. Todo sale de datos reales del sistema:
+#   uso de CPU/memoria/disco, temperatura, red (IPs, VPN, tun0, objetivo de
+#   set-target), modo del sistema, escritorios con sus ventanas, próximos
+#   eventos (caché del Centro de Control), estado del backup y atajos.
+#   Clic en un escritorio va a él; clic en una IP la copia. Esc cierra.
+# =============================================================================
+import gi
+gi.require_version("Gtk", "3.0")
+gi.require_version("WebKit2", "4.1")
+from gi.repository import Gtk, WebKit2, GLib
+import datetime, html, json, os, shutil, signal, subprocess, sys
+
+HOME = os.path.expanduser("~")
+BIN = os.path.join(HOME, ".local/bin")
+LOGO = os.path.join(HOME, ".config/hypr/icons/logo-lock.png")
+
+# Instancia única: si ya está abierto, Super+Tab lo cierra.
+_LOCK = os.path.join(os.environ.get("XDG_RUNTIME_DIR", "/tmp"), "tararch-dash.pid")
+try:
+    with open(_LOCK) as f:
+        os.kill(int(f.read().strip()), signal.SIGTERM)
+    os.remove(_LOCK)
+    sys.exit(0)
+except (OSError, ValueError):
+    pass
+with open(_LOCK, "w") as f:
+    f.write(str(os.getpid()))
+
+
+def sh(cmd):
+    try:
+        return subprocess.run(cmd, shell=isinstance(cmd, str), capture_output=True,
+                              text=True, timeout=3).stdout.strip()
+    except (OSError, subprocess.TimeoutExpired):
+        return ""
+
+
+def leer(path, defecto=""):
+    try:
+        with open(os.path.expanduser(path)) as f:
+            return f.read().strip()
+    except OSError:
+        return defecto
+
+
+# --- Sistema ------------------------------------------------------------------
+_cpu_prev = None
+
+
+def cpu_uso():
+    global _cpu_prev
+    campos = [int(x) for x in leer("/proc/stat").split("\n")[0].split()[1:]]
+    idle, total = campos[3] + campos[4], sum(campos)
+    uso = 0
+    if _cpu_prev:
+        d_total, d_idle = total - _cpu_prev[1], idle - _cpu_prev[0]
+        uso = round(100 * (d_total - d_idle) / d_total) if d_total else 0
+    _cpu_prev = (idle, total)
+    return uso
+
+
+def memoria():
+    info = {}
+    for linea in leer("/proc/meminfo").split("\n"):
+        k, v = linea.split(":")
+        info[k] = int(v.split()[0])
+    total, libre = info["MemTotal"], info["MemAvailable"]
+    return (total - libre) / 1048576, total / 1048576
+
+
+def temperatura():
+    base = "/sys/class/thermal"
+    for z in sorted(os.listdir(base)):
+        if leer(f"{base}/{z}/type") == "x86_pkg_temp":
+            return round(int(leer(f"{base}/{z}/temp", "0")) / 1000)
+    return None
+
+
+def ventiladores():
+    base = "/sys/class/hwmon"
+    for h in os.listdir(base):
+        if leer(f"{base}/{h}/name") == "asus":
+            rpm = [int(leer(f"{base}/{h}/{f}", "0")) for f in sorted(os.listdir(f"{base}/{h}"))
+                   if f.startswith("fan") and f.endswith("_input")]
+            return rpm
+    return []
+
+
+def encendido():
+    s = int(float(leer("/proc/uptime", "0").split()[0]))
+    d, h, m = s // 86400, s % 86400 // 3600, s % 3600 // 60
+    return " ".join(p for p in (f"{d} d" if d else "", f"{h} h" if h else "", f"{m} min") if p)
+
+
+# --- Red ----------------------------------------------------------------------
+def red():
+    ifaces = []
+    try:
+        for i in json.loads(sh(["ip", "-j", "addr"]) or "[]"):
+            v4 = [a["local"] for a in i.get("addr_info", []) if a.get("family") == "inet"]
+            if i["ifname"] != "lo" and v4:
+                ifaces.append({"nombre": i["ifname"], "ip": v4[0]})
+    except ValueError:
+        pass
+    vpn = next((i for i in ifaces if i["nombre"] == "Portatil"), None)
+    tun = next((i for i in ifaces if i["nombre"].startswith("tun")), None)
+    lan = [i for i in ifaces if i not in (vpn, tun)]
+    return {
+        "perfil": leer("~/.cache/current_network_profile", "-"),
+        "lan": lan,
+        "vpn": vpn["ip"] if vpn else None,
+        "tun": tun["ip"] if tun else None,
+        "objetivo": leer("~/.local/state/target") or None,
+    }
+
+
+# --- Escritorios --------------------------------------------------------------
+def escritorios():
+    try:
+        wss = json.loads(sh(["hyprctl", "workspaces", "-j"]) or "[]")
+        clientes = json.loads(sh(["hyprctl", "clients", "-j"]) or "[]")
+        activo = json.loads(sh(["hyprctl", "activeworkspace", "-j"]) or "{}").get("id")
+    except ValueError:
+        return []
+    res = []
+    for w in sorted(wss, key=lambda w: w["id"]):
+        if w["id"] < 1:
+            continue
+        apps = [{"clase": (c.get("class") or c.get("initialClass") or "?").split(".")[-1],
+                 "titulo": c.get("title", "")}
+                for c in clientes
+                if c.get("workspace", {}).get("id") == w["id"] and c.get("mapped", True)
+                and c.get("class") != "tararch-dash"]
+        if apps:
+            res.append({"id": w["id"], "apps": apps, "activo": w["id"] == activo})
+    return res
+
+
+# --- Agenda y backup ------------------------------------------------------------
+DIAS = ["lun", "mar", "mié", "jue", "vie", "sáb", "dom"]
+MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"]
+
+
+def eventos(n=3):
+    try:
+        evs = json.loads(leer("~/.cache/tararch_calendar_index.json", "{}"))["events"]
+    except (ValueError, KeyError):
+        return []
+    ahora = datetime.datetime.now()
+    hoy = ahora.date()
+    lista = []
+    for ev in evs:
+        try:
+            fecha = datetime.date.fromisoformat(ev["date"])
+        except (KeyError, ValueError):
+            continue
+        if ev.get("yearly"):
+            fecha = fecha.replace(year=hoy.year)
+            if fecha < hoy:
+                fecha = fecha.replace(year=hoy.year + 1)
+        hora = ev.get("time") or ""
+        try:
+            t = datetime.time.fromisoformat(hora) if hora else datetime.time.max
+        except ValueError:
+            t = datetime.time.max
+        momento = datetime.datetime.combine(fecha, t)
+        if momento < ahora:
+            continue
+        if fecha == hoy:
+            dia = "hoy"
+        elif fecha == hoy + datetime.timedelta(days=1):
+            dia = "mañana"
+        else:
+            dia = f"{DIAS[fecha.weekday()]} {fecha.day} {MESES[fecha.month - 1]}"
+        lista.append((momento, f"{dia} {hora}".strip(), ev.get("summary", "").strip()))
+    return [{"cuando": c, "titulo": t} for _, c, t in sorted(lista)[:n]]
+
+
+def backup():
+    try:
+        d = json.loads(sh([os.path.join(BIN, "backup-status.sh")]) or "{}")
+        return {"estado": d.get("class", ""), "texto": d.get("tooltip", "").split("\n")[0]}
+    except ValueError:
+        return {"estado": "", "texto": ""}
+
+
+def atajos(n=8):
+    """Las primeras filas de "Aplicaciones" y "Herramientas" de Super+A."""
+    salida = sh(["bash", "-c", f'source {BIN}/keybindings-lib.sh; printf "%s\\n" "${{KEYBINDINGS_LIST[@]}}"'])
+    res, seccion = [], ""
+    for linea in salida.split("\n"):
+        if linea.startswith("# "):
+            seccion = linea[2:]
+        elif "|" in linea and seccion in ("Aplicaciones", "Herramientas"):
+            k, d = linea.split("|", 1)
+            if k.startswith("Super") and k != "Super + A":
+                res.append({"tecla": k.replace(" + ", "+"), "desc": d})
+    return res[:n]
+
+
+def estado():
+    usado, total = memoria()
+    disco = shutil.disk_usage("/")
+    return {
+        "usuario": f"{os.environ.get('USER', '')}@{os.uname().nodename}",
+        "cpu": cpu_uso(),
+        "mem": [round(usado, 1), round(total, 1)],
+        "disco": [round(disco.used / 2**30), round(disco.total / 2**30)],
+        "temp": temperatura(),
+        "fans": ventiladores(),
+        "encendido": encendido(),
+        "modo": leer("~/.cache/current_system_mode", "normal"),
+        "red": red(),
+        "escritorios": escritorios(),
+        "eventos": eventos(),
+        "backup": backup(),
+    }
+
+
+# --- Página -------------------------------------------------------------------
+PAGINA = r"""<!doctype html><html><head><meta charset="utf-8"><style>
+:root { --bg:#0f0f0f; --raised:#161514; --border:#2d2d2d; --text:#c9c9c9;
+        --bright:#fff; --muted:#6e6e6e; --accent:#ff9e64; --red:#f7768e; --green:#9ece6a; }
+* { box-sizing:border-box; margin:0; padding:0; }
+html,body { background:var(--bg); color:var(--text); font:13px "Inter",sans-serif;
+            height:100%; overflow:hidden; user-select:none; cursor:default; }
+body { border:1px solid var(--border); border-radius:12px; padding:22px 26px;
+       display:grid; grid-template-rows:auto auto 1fr auto; gap:18px; }
+.mono { font-family:"JetBrainsMono Nerd Font",monospace; }
+h2 { font-size:10px; font-weight:600; letter-spacing:2px; color:var(--muted);
+     text-transform:uppercase; margin-bottom:10px; }
+header { display:flex; align-items:center; gap:18px; padding-bottom:16px;
+         border-bottom:1px solid var(--border); }
+header img { width:44px; height:44px; }
+#hora { font-size:34px; font-weight:300; color:var(--bright); line-height:1; }
+#fecha { font-size:10px; font-weight:600; letter-spacing:2.5px; color:var(--accent); margin-top:6px; }
+.chips { margin-left:auto; display:flex; gap:8px; }
+.chip { border:1px solid var(--border); border-radius:6px; padding:5px 10px; color:var(--text); }
+.chip b { color:var(--muted); font-weight:500; margin-right:6px; }
+.cols { display:grid; grid-template-columns:1fr 1fr 1fr; gap:26px; }
+.fila { display:flex; align-items:center; justify-content:space-between; padding:5px 0; gap:10px; }
+.k { color:var(--muted); }
+.v { color:var(--bright); text-align:right; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.bar { height:3px; background:#2d2d2d; border-radius:2px; margin:2px 0 6px; }
+.bar i { display:block; height:100%; background:var(--accent); border-radius:2px; transition:width .6s; }
+.click { cursor:pointer; } .click:hover .v { color:var(--accent); }
+.on { color:var(--green) !important; } .off { color:var(--muted) !important; } .warn { color:var(--red) !important; }
+.ev { padding:5px 0; } .ev .c { color:var(--accent); font-size:12px; } .ev .t { color:var(--bright); }
+.abajo { display:grid; grid-template-columns:2fr 1fr; gap:26px; min-height:0; }
+.ws { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:10px; align-content:start; }
+.w { border:1px solid var(--border); border-radius:8px; padding:10px 12px;
+     cursor:pointer; background:var(--raised); min-width:0; }
+.w:hover { border-color:#4a4a4a; }
+.w.act { border-color:var(--accent); }
+.w .cab { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:6px; }
+.w .n { font-size:18px; font-weight:300; color:var(--bright); }
+.w.act .n { color:var(--accent); }
+.w .cnt { color:var(--muted); font-size:10px; }
+.w .vw { display:flex; gap:8px; font-size:11px; line-height:1.7; text-align:left; }
+.w .vw .cl { color:var(--muted); flex:none; min-width:58px; }
+.w .vw .ti { color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.w .mas { color:var(--muted); font-size:10px; margin-top:2px; }
+.at { display:grid; grid-template-columns:1fr; }
+.at div { display:flex; gap:10px; padding:3px 0; font-size:12px; white-space:nowrap; overflow:hidden; }
+.at .mono { color:var(--accent); font-size:11px; min-width:118px; }
+.pie { text-align:right; color:var(--muted); font-size:10px; }
+</style></head><body>
+<header>
+  <img src="LOGO">
+  <div><div id="hora"></div><div id="fecha"></div></div>
+  <div class="chips" id="chips"></div>
+</header>
+<div class="cols">
+  <section><h2>Sistema</h2><div id="sis"></div></section>
+  <section><h2>Red</h2><div id="red"></div></section>
+  <section><h2>Agenda</h2><div id="agenda"></div></section>
+</div>
+<div class="abajo">
+  <section><h2>Escritorios</h2><div class="ws" id="ws"></div></section>
+  <section><h2>Atajos</h2><div class="at" id="at"></div></section>
+</div>
+<div class="pie">Esc o Super+Tab cierra · clic en un escritorio para ir · clic en una IP para copiarla</div>
+<script>
+const e = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const send = m => window.webkit.messageHandlers.dash.postMessage(m);
+const DIAS = ["DOMINGO","LUNES","MARTES","MIÉRCOLES","JUEVES","VIERNES","SÁBADO"];
+const MESES = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
+function reloj() {
+  const d = new Date();
+  hora.textContent = d.toTimeString().slice(0,5);
+  fecha.textContent = `${DIAS[d.getDay()]} ${d.getDate()} ${MESES[d.getMonth()]}`;
+}
+reloj(); setInterval(reloj, 1000);
+const fila = (k, v, cls="", extra="") => `<div class="fila ${extra}"><span class="k">${k}</span><span class="v ${cls}">${v}</span></div>`;
+const barra = p => `<div class="bar"><i style="width:${Math.min(100,p)}%"></i></div>`;
+function update(s) {
+  chips.innerHTML = `<span class="chip"><b>modo</b>${e(s.modo)}</span><span class="chip"><b>red</b>${e(s.red.perfil)}</span><span class="chip mono">${e(s.usuario)}</span>`;
+  const mp = Math.round(100*s.mem[0]/s.mem[1]), dp = Math.round(100*s.disco[0]/s.disco[1]);
+  sis.innerHTML =
+    fila("cpu", `${s.cpu} %`) + barra(s.cpu) +
+    fila("memoria", `${s.mem[0]} / ${s.mem[1]} GiB`) + barra(mp) +
+    fila("disco", `${s.disco[0]} / ${s.disco[1]} GiB`) + barra(dp) +
+    (s.temp !== null ? fila("temperatura", `${s.temp} °C`, s.temp >= 85 ? "warn" : "") : "") +
+    (s.fans.length ? fila("ventiladores", s.fans.map(r => r ? `${r} rpm` : "parado").join(" · ")) : "") +
+    fila("encendido", e(s.encendido));
+  const r = s.red;
+  red.innerHTML =
+    r.lan.map(i => fila(e(i.nombre), e(i.ip), "", `click" data-copy="${e(i.ip)}`)).join("") +
+    fila("vpn", r.vpn ? e(r.vpn) : "apagada", r.vpn ? "on" : "off", r.vpn ? `click" data-copy="${e(r.vpn)}` : "") +
+    fila("tun0", r.tun ? e(r.tun) : "sin túnel", r.tun ? "on" : "off", r.tun ? `click" data-copy="${e(r.tun)}` : "") +
+    fila("objetivo", r.objetivo ? e(r.objetivo) : "ninguno", r.objetivo ? "warn" : "off", r.objetivo ? `click" data-copy="${e(r.objetivo)}` : "");
+  agenda.innerHTML =
+    (s.eventos.length ? s.eventos.map(v => `<div class="ev"><div class="c">${e(v.cuando)}</div><div class="t">${e(v.titulo)}</div></div>`).join("")
+                      : `<div class="ev k">Sin eventos próximos</div>`) +
+    `<div style="margin-top:12px">` + fila("backup", e(s.backup.texto || "sin datos"),
+        s.backup.estado === "done" ? "on" : (s.backup.estado === "error" || s.backup.estado === "missing") ? "warn" : "") + `</div>`;
+  ws.innerHTML = s.escritorios.map(w =>
+    `<div class="w ${w.activo ? "act" : ""}" data-ws="${w.id}">` +
+    `<div class="cab"><span class="n">${w.id}</span><span class="cnt">${w.apps.length} ${w.apps.length === 1 ? "ventana" : "ventanas"}</span></div>` +
+    w.apps.slice(0, 4).map(a => `<div class="vw"><span class="cl">${e(a.clase)}</span><span class="ti">${e(a.titulo || "")}</span></div>`).join("") +
+    (w.apps.length > 4 ? `<div class="mas">+${w.apps.length - 4} más</div>` : "") +
+    `</div>`).join("");
+}
+function atajosPinta(lista) {
+  at.innerHTML = lista.map(a => `<div><span class="mono">${e(a.tecla)}</span><span>${e(a.desc)}</span></div>`).join("");
+}
+document.addEventListener("click", ev => {
+  const w = ev.target.closest("[data-ws]"); if (w) return send("ws:" + w.dataset.ws);
+  const c = ev.target.closest("[data-copy]"); if (c) return send("copy:" + c.dataset.copy);
+});
+document.addEventListener("keydown", ev => {
+  if (ev.key === "Escape") send("close");
+  if (/^[1-9]$/.test(ev.key)) send("ws:" + ev.key);
+});
+</script></body></html>"""
+
+
+def enviar(view, fn, datos):
+    view.evaluate_javascript(f"{fn}({json.dumps(datos, ensure_ascii=False)})", -1, None, None, None)
+
+
+def on_message(_manager, valor):
+    msg = valor.to_string()
+    if msg == "close":
+        cerrar()
+    elif msg.startswith("ws:"):
+        subprocess.Popen(["hyprctl", "dispatch", "workspace", msg[3:]], stdout=subprocess.DEVNULL)
+        cerrar()
+    elif msg.startswith("copy:"):
+        ip = msg[5:]
+        subprocess.run(["wl-copy", "-n", ip])
+        subprocess.Popen(["notify-send", "-u", "low", "IP copiada", ip])
+
+
+def cerrar(*_):
+    try:
+        os.remove(_LOCK)
+    except OSError:
+        pass
+    Gtk.main_quit()
+
+
+# En Wayland la clase de la ventana (app_id) sale del prgname; la regla de
+# Hyprland busca "tararch-dash".
+GLib.set_prgname("tararch-dash")
+win = Gtk.Window(title="TarArch")
+win.set_default_size(1100, 640)
+win.set_decorated(False)
+win.connect("destroy", cerrar)
+
+ucm = WebKit2.UserContentManager()
+ucm.register_script_message_handler("dash")
+ucm.connect("script-message-received::dash", on_message)
+view = WebKit2.WebView.new_with_user_content_manager(ucm)
+view.set_background_color(__import__("gi.repository.Gdk", fromlist=["RGBA"]).RGBA(0.059, 0.059, 0.059, 1))
+cpu_uso()   # primera lectura, para que la siguiente ya tenga con qué comparar
+
+
+def al_cargar(v, evento):
+    if evento == WebKit2.LoadEvent.FINISHED:
+        enviar(v, "atajosPinta", atajos())
+        refrescar()
+
+
+def refrescar():
+    enviar(view, "update", estado())
+    return True
+
+
+view.connect("load-changed", al_cargar)
+view.load_html(PAGINA.replace("LOGO", "file://" + LOGO), "file:///")
+GLib.timeout_add(2000, refrescar)
+win.add(view)
+win.show_all()
+Gtk.main()

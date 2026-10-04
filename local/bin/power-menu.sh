@@ -1,7 +1,11 @@
 #!/bin/bash
-# Menú de apagado
-CHOICE=$(printf '<span color="#bb9af7">\U000f033e</span>\n<span color="#e0af68">\U000f0904</span>\n<span color="#ff9e64">\U000f0709</span>\n<span color="#ff6e6e">\U000f0425</span>' | \
-    rofi -dmenu \
+# Menú de apagado: cuatro opciones en fila (icono y nombre debajo).
+# Filas de dos líneas separadas por "|" (-sep) y elegidas por posición.
+row() { printf "<span font_family='JetBrainsMono Nerd Font' size='24pt'>%s</span>\n%s|" "$1" "$2"; }
+
+IDX=$( { row $'\U000f033e' "Bloquear"; row $'\U000f0904' "Suspender"
+         row $'\U000f0709' "Reiniciar"; row $'\U000f0425' "Apagar"; } | sed '$ s/|$//' | \
+    rofi -dmenu -sep "|" -eh 4 -format i \
          -theme ~/.config/rofi/power-menu.rasi \
          -no-custom \
          -markup-rows \
@@ -10,9 +14,9 @@ CHOICE=$(printf '<span color="#bb9af7">\U000f033e</span>\n<span color="#e0af68">
          -me-accept-entry 'MousePrimary' \
          -cache-file /dev/null)
 
-case "$CHOICE" in
-    *$'\U000f033e'*) /home/tara/.local/bin/hyprlock-launch.sh ;;
-    *$'\U000f0904'*) systemctl suspend -i ;;
-    *$'\U000f0709'*) systemctl reboot ;;
-    *$'\U000f0425'*) systemctl poweroff ;;
+case "$IDX" in
+    0) $HOME/.local/bin/hyprlock-launch.sh ;;
+    1) systemctl suspend -i ;;
+    2) systemctl reboot ;;
+    3) systemctl poweroff ;;
 esac

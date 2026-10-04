@@ -1,21 +1,30 @@
 #!/bin/bash
 # Menú de WiFi en rofi
 
-# Estado del WiFi (nmcli radio wifi no se traduce, nmcli g sí)
+source $HOME/.local/bin/rofi-row.sh
+
+# Comprobar estado de WiFi (nmcli radio wifi da siempre "enabled"/"disabled" en inglés,
+# a diferencia de "nmcli g" que se localiza a "activado"/"desactivado" en este sistema)
 WIFI_STATE=$(nmcli radio wifi)
 
 if [[ "$WIFI_STATE" == "disabled" ]]; then
-    CHOICE=$(printf "<span color='#9ece6a'>󰤨</span>  <b>Activar WiFi</b>\n" | \
-        rofi -dmenu -p "󰤨 " -theme ~/.config/rofi/wifi.rasi -markup-rows)
-    
-    if [ -n "$CHOICE" ]; then
-        nmcli radio wifi on
-        notify-send "WiFi" "Adaptador activado" -i network-wireless -u low
-    fi
-    exit 0
+    CHOICE=$(rofi_row "󰤨" "Activar wifi" | \
+        rofi -dmenu -p "󰤨" -theme ~/.config/rofi/wifi.rasi -markup-rows)
+
+    [ -z "$CHOICE" ] && exit 0
+
+    nmcli radio wifi on
+    notify-send "WiFi" "Adaptador activado" -i network-wireless -u low
+
+    # Esperar a que el adaptador salga de "unavailable" antes de escanear
+    for i in $(seq 1 20); do
+        state=$(nmcli -g GENERAL.STATE device show wlan0 2>/dev/null | cut -d' ' -f1)
+        [ "$state" != "20" ] && break
+        sleep 0.25
+    done
 fi
 
-# Aviso de escaneo
+# Notificación sutil de escaneo
 notify-send "WiFi" "Escaneando redes cercanas..." -i network-wireless -u low -t 1500 &
 
 # Obtener redes WiFi
@@ -50,13 +59,13 @@ while IFS=':' read -r in_use ssid signal security; do
         ICON="󰤟"
     fi
 
-    SEC_ICON=""
-    [ -n "$security" ] && [ "$security" != "--" ] && SEC_ICON="󰌾 "
+    DETAIL="${signal} %"
+    [ -n "$security" ] && [ "$security" != "--" ] && DETAIL="$DETAIL  󰌾"
 
     if [ "$in_use" == "*" ]; then
-        LABEL="<span color='#9ece6a'>$ICON</span>  <b>$ssid</b>  <span color='#9ece6a'>(Conectada · ${signal}%)</span>"
+        LABEL=$(rofi_row "$ICON" "$ssid" "conectada · $DETAIL" activo)
     else
-        LABEL="<span color='#c9c9c9'>$ICON</span>  <b>$ssid</b>  <span color='#787c99'>${SEC_ICON}(${signal}%)</span>"
+        LABEL=$(rofi_row "$ICON" "$ssid" "$DETAIL")
     fi
 
     ITEMS+=("$LABEL")
@@ -64,24 +73,24 @@ while IFS=':' read -r in_use ssid signal security; do
     SECS+=("$security")
 done <<< "$WIFI_LIST_RAW"
 
-ITEMS+=("<span color='#ff9e64'>󰤨</span>  <b>Conectar a red oculta / manual</b>")
-ITEMS+=("<span color='#f7768e'>󰤮</span>  <b>Desactivar WiFi</b>")
+N_REDES=${#ITEMS[@]}
+ITEMS+=("$(rofi_row "󰤨" "Conectar a una red oculta")")
+ITEMS+=("$(rofi_row "󰤮" "Desactivar wifi")")
 
-# Mostrar menú Rofi
-GEN_MENU=$(printf "%s\n" "${ITEMS[@]}")
-SELECTED=$(echo "$GEN_MENU" | rofi -dmenu -p "󰤨 " -theme ~/.config/rofi/wifi.rasi -markup-rows -no-custom)
-[ -z "$SELECTED" ] && exit 0
+# Mostrar menú Rofi (se elige por posición: un SSID puede estar contenido en otro)
+IDX=$(printf "%s\n" "${ITEMS[@]}" | rofi -dmenu -format i -p "󰤨" -theme ~/.config/rofi/wifi.rasi -markup-rows -no-custom)
+[ -z "$IDX" ] && exit 0
 
-if [[ "$SELECTED" == *"Desactivar WiFi"* ]]; then
+if [ "$IDX" -eq $((N_REDES + 1)) ]; then
     nmcli radio wifi off
     notify-send "WiFi" "Adaptador desactivado" -i network-wireless-offline -u low
     exit 0
 fi
 
-if [[ "$SELECTED" == *"Conectar a red oculta"* ]]; then
-    MANUAL_SSID=$(rofi -dmenu -p "󰤨 Nombre de la red (SSID):" -theme ~/.config/rofi/wifi.rasi)
+if [ "$IDX" -eq "$N_REDES" ]; then
+    MANUAL_SSID=$(rofi -dmenu -p "󰤨 Nombre de la red" -l 0 -theme ~/.config/rofi/wifi.rasi -theme-str 'entry { placeholder: ""; }' < /dev/null)
     [ -z "$MANUAL_SSID" ] && exit 0
-    MANUAL_PASS=$(rofi -dmenu -password -p "󰌾 Contraseña de $MANUAL_SSID:" -theme ~/.config/rofi/wifi.rasi)
+    MANUAL_PASS=$(rofi -dmenu -password -p "󰌾 $MANUAL_SSID:" -theme ~/.config/rofi/wifi.rasi -theme-str 'entry { placeholder: ""; }')
     
     notify-send "WiFi" "Conectando a $MANUAL_SSID..." -i network-wireless -u low
     if [ -n "$MANUAL_PASS" ]; then
@@ -93,11 +102,11 @@ if [[ "$SELECTED" == *"Conectar a red oculta"* ]]; then
 fi
 
 # Conectar a la red seleccionada
-for i in "${!SSIDS[@]}"; do
+for i in "$IDX"; do
     ssid="${SSIDS[$i]}"
     sec="${SECS[$i]}"
     
-    if [[ "$SELECTED" == *"$ssid"* ]]; then
+    if [ -n "$ssid" ]; then
         # Comprobar si ya está guardada en NetworkManager
         has_connection=$(nmcli -g NAME connection show | grep "^${ssid}$")
         
@@ -111,7 +120,7 @@ for i in "${!SSIDS[@]}"; do
         else
             # Si requiere contraseña
             if [ -n "$sec" ] && [ "$sec" != "--" ]; then
-                PASS=$(rofi -dmenu -password -p "󰌾 Contraseña de $ssid:" -theme ~/.config/rofi/wifi.rasi)
+                PASS=$(rofi -dmenu -password -p "󰌾 $ssid:" -theme ~/.config/rofi/wifi.rasi -theme-str 'entry { placeholder: ""; }')
                 [ -z "$PASS" ] && exit 0
                 
                 notify-send "WiFi" "Conectando a $ssid..." -i network-wireless -u low

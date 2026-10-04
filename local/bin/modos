@@ -83,14 +83,15 @@ case "$1" in
         CURRENT=$(cat "$CACHE_FILE" 2>/dev/null)
         [ -z "$CURRENT" ] && CURRENT="normal"
 
-        M_UNI="<span color='#9ece6a'>󰂑</span>  <b>Modo Uni (Silencioso)</b>    <span color='#787c99'>[60Hz · 0 RPM · Eco]</span>"
-        M_NORMAL="<span color='#7aa2f7'>󰓅</span>  <b>Modo Normal (Equilibrado)</b> <span color='#787c99'>[144Hz · Blur · Balance]</span>"
-        M_GAMER="<span color='#f7768e'>󰊴</span>  <b>Modo Gamer (Máximo)</b>     <span color='#ff9e64'>[144Hz · Turbo · No Blur]</span>"
-        M_AUTO="<span color='#bb9af7'>󰑓</span>  <b>Modo Automático</b>         <span color='#787c99'>[Uni en la uni · según cargador]</span>"
-
-        CHOICE=$(printf "%b\n%b\n%b\n%b" "$M_UNI" "$M_NORMAL" "$M_GAMER" "$M_AUTO" | \
-            rofi -dmenu \
-                 -p "󰓅 Modos" \
+        source $HOME/.local/bin/rofi-row.sh
+        act() { [ "$CURRENT" = "$1" ] && echo activo; }
+        # Se elige por posición: la fila Automático también contiene "Uni".
+        IDX=$( { rofi_row "󰂑" "Uni" "60 Hz, ventiladores parados, ahorro" "$(act uni)"
+                 rofi_row "󰓅" "Normal" "144 Hz, equilibrado" "$(act normal)"
+                 rofi_row "󰊴" "Gamer" "144 Hz, turbo, sin blur" "$(act gamer)"
+                 rofi_row "󰑓" "Automático" "uni con batería o en la uni, normal enchufado" "$([ -f "$MANUAL_FLAG" ] || echo activo)"; } | \
+            rofi -dmenu -format i \
+                 -p "󰓅" \
                  -theme "$ROFI_THEME" \
                  -no-custom \
                  -markup-rows \
@@ -99,11 +100,11 @@ case "$1" in
                  -me-accept-entry 'MousePrimary' \
                  -cache-file /dev/null)
 
-        case "$CHOICE" in
-            *"Uni"*)    apply_uni ;;
-            *"Normal"*) apply_normal ;;
-            *"Gamer"*)  apply_gamer ;;
-            *"Automático"*) apply_auto ;;
+        case "$IDX" in
+            0) apply_uni ;;
+            1) apply_normal ;;
+            2) apply_gamer ;;
+            3) apply_auto ;;
         esac
         ;;
 esac

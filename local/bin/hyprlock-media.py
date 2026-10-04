@@ -60,7 +60,7 @@ def main():
         if len(title) > 36:
             title = title[:33] + "..."
 
-        # Barra de progreso
+        # Barra de progreso fina y elegante
         width = 18
         if dur_s > 0:
             frac = min(1.0, max(0.0, pos_s / dur_s))
@@ -69,11 +69,11 @@ def main():
             dot = "●"
             bar_right = "━" * (width - 1 - idx)
             time_info = (
-                f"<span color='#a9b1d6'>{fmt_time(pos_s)}</span>  "
+                f"<span color='#8a8580'>{fmt_time(pos_s)}</span>  "
                 f"<span color='#ff9e64'>{bar_left}</span>"
                 f"<span color='#ffffff'>{dot}</span>"
-                f"<span color='#414868'>{bar_right}</span>  "
-                f"<span color='#787c99'>{fmt_time(dur_s)}</span>"
+                f"<span color='#2d2d2d'>{bar_right}</span>  "
+                f"<span color='#6e6e6e'>{fmt_time(dur_s)}</span>"
             )
         else:
             time_info = ""

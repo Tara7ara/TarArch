@@ -1,13 +1,16 @@
 #!/bin/bash
-# Lanza fastfetch eligiendo el logo segun el ancho real de la terminal,
-# para que el dibujo no salga cortado si la ventana esta partida/estrecha.
+# Lanza fastfetch adaptativo:
+# - En Kitty con ventana ancha (>= 75 cols): logo con fundido y filas una a una
+#   (fastfetch-anim.py; si falla, fastfetch normal con el logo de config.jsonc)
+# - En ventana partida (< 75 cols) o fuera de Kitty: logo ASCII compacto
+# - En ventana muy estrecha (< 55 cols): solo texto sin logo
 
-cols=$(tput cols)
+cols=$(tput cols 2>/dev/null || echo 80)
 
-if (( cols < 60 )); then
+if (( cols < 55 )); then
     exec fastfetch --logo none
-elif (( cols < 100 )); then
-    exec fastfetch --logo arch_small --logo-padding-top 6
+elif (( cols < 75 )) || [ -z "$KITTY_WINDOW_ID" ]; then
+    exec fastfetch --logo arch_small --logo-padding-top 2 --logo-color-1 '#ff9e64' --logo-color-2 '#ff9e64'
 else
-    exec fastfetch
+    exec $HOME/.local/bin/fastfetch-anim.py
 fi

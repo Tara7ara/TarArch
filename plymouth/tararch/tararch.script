@@ -1,0 +1,71 @@
+# =============================================================================
+# Tema Plymouth de TarArch — logo centrado con pulso suave y prompt LUKS a juego.
+# Fondo negro #000000, acento naranja #ff9e64 (1.0, 0.62, 0.39).
+# =============================================================================
+
+Window.SetBackgroundTopColor(0, 0, 0);
+Window.SetBackgroundBottomColor(0, 0, 0);
+
+sw = Window.GetWidth();
+sh = Window.GetHeight();
+
+# ---- Logo centrado, algo por encima del centro ----
+logo.image = Image("logo.png");
+logo.sprite = Sprite(logo.image);
+logo.x = sw / 2 - logo.image.GetWidth() / 2;
+logo.y = sh / 2 - logo.image.GetHeight() / 2 - 40;
+logo.sprite.SetPosition(logo.x, logo.y, 0);
+
+# ---- Tres puntos naranjas bajo el logo, como indicador de carga ----
+dots.image = Image.Text(".  .  .", 1.0, 0.62, 0.39);
+dots.sprite = Sprite(dots.image);
+dots.y = logo.y + logo.image.GetHeight() + 30;
+dots.sprite.SetPosition(sw / 2 - dots.image.GetWidth() / 2, dots.y, 1);
+
+# ---- Animación: el logo late y los puntos parpadean suave ----
+tick = 0;
+fun refresh_cb() {
+    tick++;
+    logo.sprite.SetOpacity(0.7 + 0.3 * Math.Sin(tick / 16));
+    dots.sprite.SetOpacity(0.4 + 0.6 * Math.Sin(tick / 10));
+}
+Plymouth.SetRefreshFunction(refresh_cb);
+
+# ---- Prompt de la contraseña de cifrado (LUKS) ----
+prompt.sprite = Sprite();
+bullets.sprite = Sprite();
+
+fun display_password_cb(prompt_text, bullet_count) {
+    # El hook encrypt manda "A password is required to access the ... volume:";
+    # se muestra un texto propio en español en su lugar. Va como imagen
+    # (prompt.png, Inter) porque Image.Text no pinta bien la ñ.
+    p_image = Image("prompt.png");
+    prompt.sprite.SetImage(p_image);
+    prompt.sprite.SetPosition(sw / 2 - p_image.GetWidth() / 2, dots.y + 26, 2);
+
+    bstr = "";
+    i = 0;
+    while (i < bullet_count) {
+        bstr = bstr + "o ";
+        i = i + 1;
+    }
+    b_image = Image.Text(bstr, 1.0, 0.62, 0.39);
+    bullets.sprite.SetImage(b_image);
+    bullets.sprite.SetPosition(sw / 2 - b_image.GetWidth() / 2, dots.y + 52, 2);
+}
+Plymouth.SetDisplayPasswordFunction(display_password_cb);
+
+fun display_normal_cb() {
+    prompt.sprite.SetImage(Image.Text("", 1, 1, 1));
+    bullets.sprite.SetImage(Image.Text("", 1, 1, 1));
+}
+Plymouth.SetDisplayNormalFunction(display_normal_cb);
+
+# ---- Mensajes del sistema (fsck, errores), discretos abajo ----
+message.sprite = Sprite();
+fun message_cb(text) {
+    m_image = Image.Text(text, 0.55, 0.54, 0.51);
+    message.sprite.SetImage(m_image);
+    message.sprite.SetPosition(sw / 2 - m_image.GetWidth() / 2, sh - 60, 3);
+}
+Plymouth.SetMessageFunction(message_cb);

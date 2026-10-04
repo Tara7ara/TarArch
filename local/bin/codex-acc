@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import html
 import os
 import sys
 import shutil
@@ -125,52 +126,52 @@ def login_flow(acc_id):
 def rofi_menu():
     active = get_active_id()
     menu_lines = []
-    
-    for k in list(ACCOUNTS.keys()):
+
+    def row(icon, text, detail="", activo=False):
+        color = "#ff9e64" if activo else "#6e6e6e"
+        extra = f"   <span size='9.5pt' foreground='#6e6e6e'>{html.escape(detail)}</span>" if detail else ""
+        return (f"<span foreground='{color}'>{icon}</span>   "
+                f"<span foreground='#d6d6d6'>{html.escape(text)}</span>{extra}")
+
+    keys = list(ACCOUNTS.keys())
+    for k in keys:
         acc = ACCOUNTS[k]
         is_active = (k == active)
-        saved = is_account_saved(k)
-        
         if is_active:
-            tag = "<span color='#9ece6a'><b>[ACTIVA]</b></span>"
-            icon = "<span color='#9ece6a'>󰄲</span>"
-        elif saved:
-            tag = "<span color='#7aa2f7'>[Guardada]</span>"
-            icon = "<span color='#7aa2f7'>󰄱</span>"
+            estado = "activa"
+        elif is_account_saved(k):
+            estado = "guardada"
         else:
-            tag = "<span color='#787c99'>[Sin login]</span>"
-            icon = "<span color='#787c99'>󰅖</span>"
-            
-        line = f"{icon}  <b>{k}. {acc['email']}</b>  {tag}  <span color='#787c99'>({acc['name']})</span>"
-        menu_lines.append(line)
-        
-    menu_lines.append("<span color='#ff9e64'>󰑐</span>  <b>Siguiente cuenta (rotar límite)</b>")
-    
+            estado = "sin sesión"
+        menu_lines.append(row("󰀄", acc["email"], f"{acc['name']} · {estado}", is_active))
+
+    menu_lines.append(row("󰑐", "Siguiente cuenta", "rotar al llegar al límite"))
+
     input_str = "\n".join(menu_lines)
-    
+
     try:
         proc = subprocess.Popen(
-            ["rofi", "-dmenu", "-p", "󰚩 Codex", "-theme", os.path.expanduser("~/.config/rofi/cursor-menu.rasi"), "-markup-rows", "-no-custom", "-hover-select", "-me-select-entry", "", "-me-accept-entry", "MousePrimary", "-cache-file", "/dev/null"],
+            ["rofi", "-dmenu", "-format", "i", "-p", "󰚩", "-theme", os.path.expanduser("~/.config/rofi/cursor-menu.rasi"), "-markup-rows", "-no-custom", "-hover-select", "-me-select-entry", "", "-me-accept-entry", "MousePrimary", "-cache-file", "/dev/null"],
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             text=True
         )
         out, _ = proc.communicate(input=input_str)
         selected = out.strip()
-        
+
         if not selected:
             return
-            
-        if "Siguiente cuenta" in selected:
+
+        # Se elige por posición: una fila por cuenta y la última es rotar.
+        idx = int(selected)
+        if idx == len(keys):
             switch_next()
         else:
-            for k in list(ACCOUNTS.keys()):
-                if f"{k}. " in selected or ACCOUNTS[k]["email"] in selected:
-                    if is_account_saved(k):
-                        switch_to(k)
-                    else:
-                        subprocess.run(["notify-send", "Codex Auth", f"La cuenta #{k} no tiene sesión. Ejecuta 'codex-acc login {k}' en Kitty.", "-u", "critical"], stdout=subprocess.DEVNULL)
-                    break
+            k = keys[idx]
+            if is_account_saved(k):
+                switch_to(k)
+            else:
+                subprocess.run(["notify-send", "Codex Auth", f"La cuenta #{k} no tiene sesión. Ejecuta 'codex-acc login {k}' en Kitty.", "-u", "critical"], stdout=subprocess.DEVNULL)
     except Exception as e:
         print(f"Error en Rofi: {e}")
 

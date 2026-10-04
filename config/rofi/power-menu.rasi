@@ -1,63 +1,58 @@
-/* Menú de apagado */
+/* =============================================================================
+   ROFI MENÚ DE APAGADO — PALETA TARARCH WARM DARK
+   Cuatro opciones en fila: icono gris y su nombre debajo; la seleccionada en
+   naranja sobre fondo apenas más claro. El markup sale de power-menu.sh.
+   ============================================================================= */
 
 * {
-    font:             "JetBrainsMono Nerd Font 48";
+    font:             "Inter 10";
     background-color: transparent;
     text-color:       #c9c9c9;
 }
 
 window {
-    background-color: #0f0f0feb;
+    background-color: #0f0f0f;
     border:           1px;
     border-color:     #2d2d2d;
-    border-radius:    20px;
-    width:            580px;
-    padding:          16px;
+    border-radius:    12px;
+    width:            520px;
+    padding:          10px;
     location:         center;
     anchor:           center;
 }
 
 mainbox {
-    background-color: transparent;
     children:         [listview];
 }
 
-inputbar {
-    enabled: false;
-}
-
 listview {
-    background-color: transparent;
     columns:          4;
     lines:            1;
     scrollbar:        false;
-    spacing:          12px;
+    spacing:          6px;
     fixed-height:     true;
 }
 
 element {
-    background-color: transparent;
-    border-radius:    16px;
-    padding:          18px 0px;
+    padding:          12px 0 8px 0;
+    border-radius:    8px;
     cursor:           pointer;
-    orientation:      vertical;
 }
 
 element-text {
-    background-color: transparent;
     text-color:       inherit;
     horizontal-align: 0.5;
     vertical-align:   0.5;
-    expand:           true;
+    cursor:           inherit;
 }
 
-element normal normal {
-    text-color: #c9c9c9;
+element normal normal,
+element alternate normal {
+    background-color: transparent;
+    text-color:       #6e6e6e;
 }
 
 element selected normal {
-    background-color: #00000059;
-    border:           1px;
-    border-color:     #ff9e64;
-    text-color:       #ffffff;
+    background-color: #1c1a19;
+    text-color:       #ff9e64;
 }

@@ -75,13 +75,13 @@ class ControlCenterWindow(Gtk.Window):
         title_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
         header_box.pack_start(title_vbox, True, True, 0)
 
-        self.lbl_clock = Gtk.Label(label=now.strftime("%H:%M:%S"), xalign=0)
+        self.lbl_clock = Gtk.Label(label=now.strftime("%H:%M"), xalign=0)
         self.lbl_clock.get_style_context().add_class("header-title")
         title_vbox.pack_start(self.lbl_clock, False, False, 0)
 
         dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
         meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
-        fecha_txt = f"{dias[now.weekday()]}, {now.day} de {meses[now.month-1]}"
+        fecha_txt = f"{dias[now.weekday()]} {now.day} {meses[now.month-1]}".upper()
         self.lbl_date = Gtk.Label(label=fecha_txt, xalign=0)
         self.lbl_date.get_style_context().add_class("header-subtitle")
         title_vbox.pack_start(self.lbl_date, False, False, 0)
@@ -105,21 +105,21 @@ class ControlCenterWindow(Gtk.Window):
         self.btn_wifi.get_style_context().add_class("flat")
         self.btn_wifi.get_style_context().add_class("btn-toggle")
         self.btn_wifi.set_tooltip_text("Red / WiFi")
-        self.btn_wifi.connect("clicked", lambda w: self.run_action("/home/tara/.local/bin/wifi-menu.sh", close_panel=True))
+        self.btn_wifi.connect("clicked", lambda w: self.run_action("$HOME/.local/bin/wifi-menu.sh", close_panel=True))
         grid.attach(self.btn_wifi, 0, 0, 1, 1)
 
         self.btn_bt = Gtk.Button(label="󰂯")
         self.btn_bt.get_style_context().add_class("flat")
         self.btn_bt.get_style_context().add_class("btn-toggle")
         self.btn_bt.set_tooltip_text("Bluetooth")
-        self.btn_bt.connect("clicked", lambda w: self.run_action("/home/tara/.local/bin/bluetooth-menu.sh", close_panel=True))
+        self.btn_bt.connect("clicked", lambda w: self.run_action("$HOME/.local/bin/bluetooth-menu.sh", close_panel=True))
         grid.attach(self.btn_bt, 1, 0, 1, 1)
 
         self.btn_ssh = Gtk.Button(label="󰒋")
         self.btn_ssh.get_style_context().add_class("flat")
         self.btn_ssh.get_style_context().add_class("btn-toggle")
         self.btn_ssh.set_tooltip_text("SSH Rápido (TaraNAS / Servidor)")
-        self.btn_ssh.connect("clicked", lambda w: self.run_action("/home/tara/.local/bin/ssh-launcher.sh", close_panel=True))
+        self.btn_ssh.connect("clicked", lambda w: self.run_action("$HOME/.local/bin/ssh-launcher.sh", close_panel=True))
         grid.attach(self.btn_ssh, 2, 0, 1, 1)
 
         self.btn_lanmouse = Gtk.Button(label="󰍽")
@@ -155,7 +155,7 @@ class ControlCenterWindow(Gtk.Window):
         self.btn_limpiar.get_style_context().add_class("flat")
         self.btn_limpiar.get_style_context().add_class("btn-toggle")
         self.btn_limpiar.set_tooltip_text("Mantenimiento y Limpieza TarArch")
-        self.btn_limpiar.connect("clicked", lambda w: self.run_action("kitty -e /home/tara/.local/bin/limpieza-tararch.sh", close_panel=True))
+        self.btn_limpiar.connect("clicked", lambda w: self.run_action("kitty -e $HOME/.local/bin/limpieza-tararch.sh", close_panel=True))
         grid.attach(self.btn_limpiar, 3, 1, 1, 1)
 
         # 3. Deslizadores (Sliders) Modernos de Volumen y Brillo con % en tiempo real
@@ -233,7 +233,7 @@ class ControlCenterWindow(Gtk.Window):
         cal_top = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         cal_box.pack_start(cal_top, False, False, 0)
 
-        self.cal_lbl = Gtk.Label(label="󰸗 Agenda", xalign=0)
+        self.cal_lbl = Gtk.Label(label="AGENDA", xalign=0)
         self.cal_lbl.get_style_context().add_class("cal-header-label")
         cal_top.pack_start(self.cal_lbl, True, True, 0)
 
@@ -248,7 +248,7 @@ class ControlCenterWindow(Gtk.Window):
         btn_open_full.get_style_context().add_class("flat")
         btn_open_full.get_style_context().add_class("btn-action-icon")
         btn_open_full.set_tooltip_text("Abrir Aplicación de Calendario")
-        btn_open_full.connect("clicked", lambda w: self.run_action("/home/tara/.local/bin/calendario.sh", close_panel=True))
+        btn_open_full.connect("clicked", lambda w: self.run_action("$HOME/.local/bin/calendario.sh", close_panel=True))
         cal_top.pack_start(btn_open_full, False, False, 0)
 
         self.calendar = Gtk.Calendar()
@@ -283,7 +283,7 @@ class ControlCenterWindow(Gtk.Window):
         gh_top = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         gh_card.pack_start(gh_top, False, False, 0)
 
-        gh_lbl = Gtk.Label(label=" Actividad GitHub", xalign=0)
+        gh_lbl = Gtk.Label(label="ACTIVIDAD EN GITHUB", xalign=0)
         gh_lbl.get_style_context().add_class("cal-header-label")
         gh_top.pack_start(gh_lbl, True, True, 0)
 
@@ -356,7 +356,7 @@ class ControlCenterWindow(Gtk.Window):
         if not self.btn_sync.get_sensitive():
             return
         self.btn_sync.set_sensitive(False)
-        self.cal_lbl.set_text("󰸗 Agenda · sincronizando…")
+        self.cal_lbl.set_text("AGENDA · SINCRONIZANDO…")
 
         def worker():
             evs = backend.fetch_all_events()
@@ -366,9 +366,9 @@ class ControlCenterWindow(Gtk.Window):
     def on_sync_done(self, events):
         self.btn_sync.set_sensitive(True)
         if events:
-            self.cal_lbl.set_text("󰸗 Agenda · " + datetime.datetime.now().strftime("%H:%M"))
+            self.cal_lbl.set_text("AGENDA · " + datetime.datetime.now().strftime("%H:%M"))
         else:
-            self.cal_lbl.set_text("󰸗 Agenda · sin conexión")
+            self.cal_lbl.set_text("AGENDA · SIN CONEXIÓN")
         self.apply_synced_events(events)
 
     def apply_synced_events(self, events):
@@ -538,7 +538,12 @@ class ControlCenterWindow(Gtk.Window):
 
     def update_events_ui(self):
         d = self.selected_date
-        self.lbl_selected_header.set_text(f"📌 {d.day}/{d.month}/{d.year}:")
+        dias = ["lun", "mar", "mié", "jue", "vie", "sáb", "dom"]
+        meses = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"]
+        fecha_corta = lambda f: f"{f.day} {meses[f.month - 1]}"
+        gris = lambda t: f"<span foreground='#6e6e6e'>{t}</span>"
+        naranja = lambda t: f"<span foreground='#ff9e64'>{t}</span>"
+        self.lbl_selected_header.set_text(f"{dias[d.weekday()]} {fecha_corta(d)}".upper())
 
         matched = [
             ev for ev in self.all_events
@@ -547,11 +552,11 @@ class ControlCenterWindow(Gtk.Window):
 
         lines = []
         if matched:
-            for m in matched:
-                time_part = f"<span color='#ff9e64'>[{m['time']}]</span> " if m["time"] else ""
-                lines.append(f"• {time_part}<b>{GLib.markup_escape_text(m['summary'])}</b>")
+            for m in sorted(matched, key=lambda m: m["time"] or "99"):
+                hora = naranja(m["time"]) + "   " if m["time"] else ""
+                lines.append(f"{hora}{GLib.markup_escape_text(m['summary'])}")
         else:
-            lines.append("<i>Sin eventos este día.</i>")
+            lines.append(gris("Sin eventos este día"))
 
         today = datetime.date.today()
         upcoming = []
@@ -565,10 +570,10 @@ class ControlCenterWindow(Gtk.Window):
         upcoming.sort(key=lambda x: (x["date"], x["time"]))
         if upcoming:
             lines.append("")
-            lines.append("<i>Próximas citas:</i>")
+            lines.append("<span size='8pt' letter_spacing='2000' foreground='#6e6e6e'>PRÓXIMAS</span>")
             for u in upcoming[:4]:
-                time_p = f" ({u['time']})" if u['time'] else ""
-                lines.append(f"• <span color='#ff9e64'>{u['date'].day}/{u['date'].month}</span>: {GLib.markup_escape_text(u['summary'])}{time_p}")
+                hora = "   " + gris(u["time"]) if u["time"] else ""
+                lines.append(f"{naranja(fecha_corta(u['date']))}   {GLib.markup_escape_text(u['summary'])}{hora}")
         self.lbl_event_item.set_markup("\n".join(lines))
 
     def switch_tab(self, tab_name):
@@ -664,7 +669,7 @@ class ControlCenterWindow(Gtk.Window):
             self.close()
 
     def on_toggle_lanmouse(self):
-        self.run_action("/home/tara/.local/bin/toggle-lanmouse.sh")
+        self.run_action("$HOME/.local/bin/toggle-lanmouse.sh")
         GLib.timeout_add(300, self.update_toggles_state)
         GLib.timeout_add(800, self.update_toggles_state)
 
@@ -674,11 +679,11 @@ class ControlCenterWindow(Gtk.Window):
         GLib.timeout_add(1500, self.update_toggles_state)
 
     def on_toggle_bloqueo(self):
-        self.run_action("/home/tara/.local/bin/nobloqueo")
+        self.run_action("$HOME/.local/bin/nobloqueo")
         GLib.timeout_add(350, self.update_toggles_state)
 
     def on_click_modos(self):
-        self.run_action("/home/tara/.local/bin/set-system-mode.sh", close_panel=True)
+        self.run_action("$HOME/.local/bin/set-system-mode.sh", close_panel=True)
 
     def set_btn_state(self, btn, label, is_active, color_type="orange"):
         if btn.get_label() != label:
@@ -772,7 +777,7 @@ class ControlCenterWindow(Gtk.Window):
 
     def update_data(self):
         now = datetime.datetime.now()
-        self.lbl_clock.set_text(now.strftime("%H:%M:%S"))
+        self.lbl_clock.set_text(now.strftime("%H:%M"))
 
         notifs = backend.load_notifications()
         count = len(notifs)

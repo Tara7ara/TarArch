@@ -1,33 +1,26 @@
 #!/bin/bash
 # Menu rofi para elegir la salida de audio (altavoces internos, HDMI, etc.) sin pavucontrol.
+source $HOME/.local/bin/rofi-row.sh
 THEME="$HOME/.config/rofi/wifi.rasi"
-ICON_SPEAKER=$(python3 -c "print(chr(0xf0299))")
-ICON_CHECK=$(python3 -c "print(chr(0xf05f0))")
-
-rofi_menu() {
-    rofi -dmenu -p "$1" -theme "$THEME" -markup-rows
-}
 
 CURRENT=$(pactl get-default-sink)
 
-declare -A LINE_NAME
-menu_lines=""
-
+NAMES=()
+ROWS=()
 while IFS='|' read -r name desc; do
     [[ -z "$name" ]] && continue
+    NAMES+=("$name")
     if [[ "$name" == "$CURRENT" ]]; then
-        display="${ICON_CHECK}  ${desc}"
+        ROWS+=("$(rofi_row "󰓃" "$desc" "en uso" activo)")
     else
-        display="${ICON_SPEAKER}  ${desc}"
+        ROWS+=("$(rofi_row "󰓃" "$desc")")
     fi
-    menu_lines="${menu_lines}${display}\n"
-    LINE_NAME["$display"]="$name"
 done < <(pactl list sinks | awk -F': ' '/^Sink #/{name="";desc=""} /^\tName:/{name=$2} /^\tDescription:/{desc=$2; print name"|"desc}')
 
-CHOICE=$(echo -e "$menu_lines" | rofi_menu "$ICON_SPEAKER Salida de audio")
-[[ -z "$CHOICE" ]] && exit 0
+IDX=$(printf "%s\n" "${ROWS[@]}" | rofi -dmenu -format i -no-custom -markup-rows -p "Salida de audio" -theme "$THEME" -theme-str 'entry { placeholder: ""; }')
+[[ -z "$IDX" ]] && exit 0
 
-SELECTED="${LINE_NAME[$CHOICE]}"
+SELECTED="${NAMES[$IDX]}"
 [[ -z "$SELECTED" || "$SELECTED" == "$CURRENT" ]] && exit 0
 
 pactl set-default-sink "$SELECTED"

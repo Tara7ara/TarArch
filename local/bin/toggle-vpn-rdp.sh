@@ -3,7 +3,7 @@ W11_IP="192.168.1.20"
 W11_USER="usuario"
 W11_MAC="AA:BB:CC:DD:EE:01"
 WG_INTERFACE="Portatil"
-W11_PASS_FILE="/home/tara/.ssh/.w11_pass"
+W11_PASS_FILE="$HOME/.ssh/.w11_pass"
 
 FREERDP=$(command -v xfreerdp3 || command -v xfreerdp)
 

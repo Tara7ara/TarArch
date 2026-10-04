@@ -1,0 +1,33 @@
+# =============================================================================
+# lazygit — paleta TarArch (negro, grises cálidos, naranja para lo activo)
+# Se abre flotante desde el menú de repos (Super+Shift+G, Alt+Enter).
+# =============================================================================
+gui:
+  theme:
+    activeBorderColor: ["#ff9e64", bold]
+    inactiveBorderColor: ["#2d2d2d"]
+    searchingActiveBorderColor: ["#e0af68", bold]
+    optionsTextColor: ["#6e6e6e"]
+    selectedLineBgColor: ["#1c1a19"]
+    inactiveViewSelectedLineBgColor: ["#161514"]
+    cherryPickedCommitFgColor: ["#ff9e64"]
+    cherryPickedCommitBgColor: ["#2d2d2d"]
+    markedBaseCommitFgColor: ["#e0af68"]
+    markedBaseCommitBgColor: ["#2d2d2d"]
+    unstagedChangesColor: ["#f7768e"]
+    defaultFgColor: ["#c9c9c9"]
+  # Todos los autores en el mismo tono, sin el arcoíris por defecto
+  authorColors:
+    "*": "#b5a07a"
+  border: single
+  # Sin iconos: lazygit los colorea por tipo de fichero (muchos en azul)
+  nerdFontsVersion: ""
+  showRandomTip: false
+  showBottomLine: true
+  showCommandLog: false
+  expandFocusedSidePanel: true
+  language: auto
+git:
+  autoFetch: false
+update:
+  method: never

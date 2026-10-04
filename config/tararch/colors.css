@@ -1,0 +1,24 @@
+/* =============================================================================
+   TARARCH — TOKENS DE COLOR COMPARTIDOS (GTK CSS)
+   Fuente de verdad para Waybar, Centro de Control y Media Card.
+
+   rofi NO puede @import esto (rofi 2.0.0 no soporta @import ni @define-color,
+   ver ~/.config/rofi/colors.rasi) — sus valores se mantienen sincronizados
+   a mano contra esta misma lista.
+
+   Solo colores base aquí. Las variantes con alpha por estado (hover/activo/
+   error de cada componente) se quedan literales en cada fichero: GTK3 CSS
+   no tiene color-mix()/alpha(), no se pueden derivar de un token base.
+   ============================================================================= */
+
+@define-color bg-dark          #0a0a0a;
+@define-color bg-base          #0f0f0f;
+@define-color fg-main          #c9c9c9;
+@define-color fg-bright        #ffffff;
+@define-color fg-muted         rgba(255, 255, 255, 0.40);
+
+@define-color accent-orange    #ff9e64;
+@define-color accent-purple    #bb9af7;
+@define-color status-green     #9ece6a;
+@define-color status-yellow    #e0af68;
+@define-color status-red       #f7768e;

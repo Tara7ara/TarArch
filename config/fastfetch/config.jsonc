@@ -1,103 +1,63 @@
 {
   "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/master/doc/json_schema.json",
+  // Mismo estilo que el menú de atajos (Super+A): claves en minúscula, naranja
+  // y en columna fija; valores en claro; sin iconos por fila.
+  // El logo (imagen en Kitty, ASCII o ninguno) lo elige fastfetch-adaptive.sh.
   "logo": {
-    "color": {
-      "1": "#ff9e64",
-      "2": "yellow"
-    },
+    "type": "kitty",
+    "source": "~/.config/fastfetch/logo.png",
+    "width": 20,
+    "preserveAspectRatio": true,
     "padding": {
       "top": 1,
-      "right": 3
+      "left": 2,
+      "right": 4
+    },
+    "color": {
+      "1": "#ff9e64",
+      "2": "#ff9e64"
     }
   },
   "display": {
-    "separator": " 󰄾 ",
+    "separator": "",
+    "key": {
+      "width": 12
+    },
+    // Barra de uso (memoria y disco): línea fina naranja sobre gris, sin corchetes.
+    "bar": {
+      "char": { "elapsed": "━", "total": "━" },
+      "border": { "left": "", "right": "" },
+      "color": { "elapsed": "#ff9e64", "total": "#3a3a3a" },
+      "width": 10
+    },
+    // El porcentaje solo cambia de color si se llena: amarillo y luego rojo.
+    "percent": {
+      "width": 3,
+      "color": { "green": "#d6d6d6", "yellow": "#e0af68", "red": "#f7768e" }
+    },
     "color": {
       "keys": "#ff9e64",
-      "output": "white"
+      "output": "#d6d6d6",
+      "title": "#ffffff",
+      "separator": "#2d2d2d"
     }
   },
   "modules": [
     "title",
-    { "type": "separator", "string": "─", "outputColor": "#ff9e64", "times": 40 },
-    {
-      "type": "os",
-      "key": "   OS",
-      "keyColor": "#ff9e64"
-    },
-    {
-      "type": "kernel",
-      "key": "   Kernel",
-      "keyColor": "#ff9e64"
-    },
-    {
-      "type": "uptime",
-      "key": "   Uptime",
-      "keyColor": "#ff9e64"
-    },
-    {
-      "type": "packages",
-      "key": "  󰏖 Packages",
-      "keyColor": "#ff9e64"
-    },
-    {
-      "type": "shell",
-      "key": "   Shell",
-      "keyColor": "#ff9e64"
-    },
-    {
-      "type": "wm",
-      "key": "  󰨇 WM",
-      "keyColor": "#ff9e64"
-    },
-    {
-      "type": "terminal",
-      "key": "   Terminal",
-      "keyColor": "#ff9e64"
-    },
-    { "type": "separator", "string": "─", "outputColor": "#e0af68", "times": 40 },
-    {
-      "type": "cpu",
-      "key": "   CPU",
-      "keyColor": "yellow"
-    },
-    {
-      "type": "gpu",
-      "key": "  󰢮 GPU",
-      "keyColor": "yellow"
-    },
-    {
-      "type": "memory",
-      "percent": { "type": 3 },
-      "key": "   Memory",
-      "keyColor": "yellow"
-    },
-    {
-      "type": "disk",
-      "percent": { "type": 3 },
-      "key": "  󰍛 Disk",
-      "keyColor": "yellow"
-    },
-    {
-      "type": "battery",
-      "percent": { "type": 3 },
-      "key": "  󰁹 Battery",
-      "keyColor": "yellow"
-    },
-    {
-      "type": "custom",
-      "key": "  󰚩 Agentes",
-      "keyColor": "yellow",
-      "format": "claude / codex / agy"
-    },
-    { "type": "separator", "string": "─", "outputColor": "#6e6e6e", "times": 40 },
-    {
-      "type": "colors",
-      "block": { "range": [0, 7], "width": 3 }
-    },
-    {
-      "type": "colors",
-      "block": { "range": [8, 15], "width": 3 }
-    }
+    { "type": "separator", "string": "─", "outputColor": "#2d2d2d" },
+    { "type": "os", "key": "os", "format": "{name} {arch}" },
+    { "type": "kernel", "key": "kernel" },
+    { "type": "uptime", "key": "encendido" },
+    { "type": "packages", "key": "paquetes" },
+    { "type": "wm", "key": "wm" },
+    // Como comando: con la animación, el proceso padre de fastfetch es fastfetch-anim.py
+    { "type": "command", "key": "shell", "text": "$SHELL --version | head -1 | awk '{print $1, $2}'" },
+    { "type": "terminal", "key": "terminal" },
+    "break",
+    { "type": "cpu", "key": "cpu" },
+    { "type": "gpu", "key": "gpu" },
+    { "type": "memory", "key": "memoria", "percent": { "type": 3 }, "format": "{percentage-bar} {percentage}   {used} / {total}" },
+    { "type": "disk", "key": "disco", "folders": "/", "percent": { "type": 3 }, "format": "{size-percentage-bar} {size-percentage}   {size-used} / {size-total}" },
+    { "type": "custom", "key": "agentes", "format": "claude / codex / agy" }
   ]
 }

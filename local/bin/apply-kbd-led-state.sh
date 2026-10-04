@@ -3,7 +3,7 @@
 STATE_DIR="/var/lib/asus-kbd-led"
 LEDS="/sys/class/leds/asus::kbd_backlight/brightness"
 
-/home/tara/.local/bin/ensure-asusd-masked.sh
+$HOME/.local/bin/ensure-asusd-masked.sh
 
 /usr/local/bin/rogauracore initialize_keyboard
 /usr/local/bin/rogauracore white

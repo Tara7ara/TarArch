@@ -19,7 +19,7 @@ theme[selected_bg]="#2d2d2d"
 theme[selected_fg]="#ffffff"
 
 # Color of inactive/disabled text
-theme[inactive_fg]="#787c99"
+theme[inactive_fg]="#6e6e6e"
 
 # Color of text appearing on top of graphs
 theme[graph_text]="#ff9e64"
@@ -37,7 +37,7 @@ theme[cpu_box]="#ff9e64"
 theme[mem_box]="#9d7cd8"
 
 # Net up/down box outline color
-theme[net_box]="#7aa2f7"
+theme[net_box]="#b5a07a"
 
 # Processes box outline color
 theme[proc_box]="#e0af68"
@@ -61,7 +61,7 @@ theme[free_mid]="#e0af68"
 theme[free_end]="#ff9e64"
 
 # Mem/Disk cached meter
-theme[cached_start]="#7aa2f7"
+theme[cached_start]="#b5a07a"
 theme[cached_mid]="#bb9af7"
 theme[cached_end]="#9d7cd8"
 
@@ -76,7 +76,7 @@ theme[used_mid]="#ffb88c"
 theme[used_end]="#f7768e"
 
 # Download graph colors
-theme[download_start]="#7aa2f7"
+theme[download_start]="#b5a07a"
 theme[download_mid]="#bb9af7"
 theme[download_end]="#9d7cd8"
 

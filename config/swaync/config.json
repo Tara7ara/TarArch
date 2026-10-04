@@ -1,0 +1,109 @@
+{
+  "$schema": "/etc/xdg/swaync/configSchema.json",
+  "positionX": "right",
+  "positionY": "top",
+  "layer": "overlay",
+  "control-center-layer": "overlay",
+  "layer-shell": true,
+  "cssPriority": "application",
+  "control-center-margin-top": 8,
+  "control-center-margin-bottom": 8,
+  "control-center-margin-right": 12,
+  "control-center-margin-left": 0,
+  "notification-2fa-action": true,
+  "notification-inline-replies": true,
+  "notification-window-width": 400,
+  "control-center-width": 420,
+  "control-center-height": 1050,
+  "notification-icon-size": 36,
+  "notification-body-image-height": 100,
+  "notification-body-image-width": 200,
+  "timeout": 6,
+  "timeout-low": 3,
+  "timeout-critical": 0,
+  "fit-to-screen": false,
+  "keyboard-shortcuts": true,
+  "image-visibility": "when-available",
+  "transition-time": 200,
+  "hide-on-clear": false,
+  "hide-on-action": true,
+  "script-fail-notify": true,
+  "scripts": {},
+  "notification-visibility": {},
+  "widgets": [
+    "title",
+    "buttons-grid",
+    "volume",
+    "backlight",
+    "mpris",
+    "dnd",
+    "notifications"
+  ],
+  "widget-config": {
+    "title": {
+      "text": "Centro de Control",
+      "clear-all-button": true,
+      "button-text": "󰆴 Limpiar"
+    },
+    "dnd": {
+      "text": "No Molestar"
+    },
+    "volume": {
+      "label": "󰕾",
+      "show-per-app": true
+    },
+    "backlight": {
+      "label": "󰃟",
+      "device": "intel_backlight",
+      "subsystem": "backlight"
+    },
+    "mpris": {
+      "image-size": 64,
+      "image-radius": 8
+    },
+    "buttons-grid": {
+      "actions": [
+        {
+          "label": "󰤨 WiFi",
+          "type": "normal",
+          "command": "$HOME/.local/bin/wifi-menu.sh"
+        },
+        {
+          "label": "󰂯 Bluetooth",
+          "type": "normal",
+          "command": "$HOME/.local/bin/bluetooth-menu.sh"
+        },
+        {
+          "label": "󰌾 VPN",
+          "type": "normal",
+          "command": "/usr/local/bin/toggle-vpn.sh"
+        },
+        {
+          "label": "󰍽 LanMouse",
+          "type": "normal",
+          "command": "$HOME/.local/bin/toggle-lanmouse.sh"
+        },
+        {
+          "label": "󰸗 Calendario",
+          "type": "normal",
+          "command": "$HOME/.local/bin/calendario.sh"
+        },
+        {
+          "label": "󰸉 Fondos",
+          "type": "normal",
+          "command": "$HOME/.local/bin/wallpaper-picker.sh"
+        },
+        {
+          "label": "󰎁 TaraTrack",
+          "type": "normal",
+          "command": "$HOME/.local/bin/taratrack-app.sh"
+        },
+        {
+          "label": "󰌪 Batería",
+          "type": "normal",
+          "command": "$HOME/.local/bin/toggle-power-profile.sh"
+        }
+      ]
+    }
+  }
+}

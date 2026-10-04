@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=TarArch
+Description=Splash de arranque de TarArch (logo de TarArch con pulso, fondo negro)
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/tararch
+ScriptFile=/usr/share/plymouth/themes/tararch/tararch.script

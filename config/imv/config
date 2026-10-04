@@ -35,8 +35,8 @@ o = zoom -1
 <Ctrl+r> = rotate by 90
 
 # Recargar directorio manualmente (F5 o Mayús+R)
-<F5> = exec /home/tara/.local/bin/imv-reload
-<Shift+R> = exec /home/tara/.local/bin/imv-reload
+<F5> = exec $HOME/.local/bin/imv-reload
+<Shift+R> = exec $HOME/.local/bin/imv-reload
 
 # Otros comandos
 x = close

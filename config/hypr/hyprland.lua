@@ -144,6 +144,26 @@ hl.window_rule({
     center = true,
 })
 
+-- Panel de estado (tararch-dash, Super+Tab): flotante y centrado.
+hl.window_rule({
+    match = {
+        class = "^(tararch-dash)$",
+    },
+    float = true,
+    size = "1100 640",
+    center = true,
+})
+
+-- lazygit (menú de repos, Alt+Enter): flotante y centrado.
+hl.window_rule({
+    match = {
+        class = "^(lazygit)$",
+    },
+    float = true,
+    size = "1400 860",
+    center = true,
+})
+
 -- Input
 
 hl.config({
@@ -316,39 +336,40 @@ hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag())
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize())
 hl.bind("ALT + mouse:272", hl.dsp.window.drag())
 hl.bind("ALT + mouse:273", hl.dsp.window.resize())
-hl.bind(mainMod .. " + mouse:274", hl.dsp.exec_cmd("/home/tara/.local/bin/workspace-picker.sh"))
+hl.bind(mainMod .. " + mouse:274", hl.dsp.exec_cmd("$HOME/.local/bin/workspace-picker.sh"))
 
 -- Aplicaciones
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd("kitty"))
 hl.bind(mainMod .. " + P", hl.dsp.exec_cmd("~/.local/bin/nota-rapida.sh"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("thunar"))
 hl.bind(mainMod .. " + Space", hl.dsp.exec_cmd("rofi -show drun -theme ~/.config/rofi/launcher.rasi"))
-hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("/home/tara/.local/bin/control-center.py"))
-hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("/home/tara/.local/bin/show-keybindings.sh"))
-hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("/home/tara/.local/bin/bluetooth-menu.sh"))
+hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("$HOME/.local/bin/control-center.py"))
+hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("$HOME/.local/bin/show-keybindings.sh"))
+hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd("$HOME/.local/bin/tararch-dash"))
+hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("$HOME/.local/bin/bluetooth-menu.sh"))
 hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("wasistlos"))
-hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("/home/tara/.local/bin/ssh-launcher.sh"))
-hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("/home/tara/.local/bin/seclists"))
-hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd("/home/tara/.local/bin/zen-mode"))
-hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd("/home/tara/.local/bin/buscar-vault"))
-hl.bind(mainMod .. " + SHIFT + G", hl.dsp.exec_cmd("/home/tara/.local/bin/repos"))
-hl.bind(mainMod .. " + H", hl.dsp.exec_cmd("/home/tara/.local/bin/identificar-hash --rofi"))
-hl.bind(mainMod .. " + ALT + W", hl.dsp.exec_cmd("/home/tara/.local/bin/wallpaper-picker.sh"))
-hl.bind(mainMod .. " + ALT + C", hl.dsp.exec_cmd("/home/tara/.local/bin/change-cursor.sh"))
-hl.bind(mainMod .. " + ALT + P", hl.dsp.exec_cmd("/home/tara/.local/bin/set-system-mode.sh"))
+hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("$HOME/.local/bin/ssh-launcher.sh"))
+hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("$HOME/.local/bin/seclists"))
+hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd("$HOME/.local/bin/zen-mode"))
+hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd("$HOME/.local/bin/buscar-vault"))
+hl.bind(mainMod .. " + SHIFT + G", hl.dsp.exec_cmd("$HOME/.local/bin/repos"))
+hl.bind(mainMod .. " + H", hl.dsp.exec_cmd("$HOME/.local/bin/identificar-hash --rofi"))
+hl.bind(mainMod .. " + ALT + W", hl.dsp.exec_cmd("$HOME/.local/bin/wallpaper-picker.sh"))
+hl.bind(mainMod .. " + ALT + C", hl.dsp.exec_cmd("$HOME/.local/bin/change-cursor.sh"))
+hl.bind(mainMod .. " + ALT + P", hl.dsp.exec_cmd("$HOME/.local/bin/set-system-mode.sh"))
 
 -- Bloquear pantalla y apagado
-hl.bind(mainMod .. " + ALT + L", hl.dsp.exec_cmd("/home/tara/.local/bin/hyprlock-launch.sh"))
-hl.bind(mainMod .. " + X", hl.dsp.exec_cmd("/home/tara/.local/bin/power-menu.sh"))
+hl.bind(mainMod .. " + ALT + L", hl.dsp.exec_cmd("$HOME/.local/bin/hyprlock-launch.sh"))
+hl.bind(mainMod .. " + X", hl.dsp.exec_cmd("$HOME/.local/bin/power-menu.sh"))
 
 -- Ventanas
 hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
-hl.bind(mainMod .. " + SHIFT + Space", hl.dsp.exec_cmd("/home/tara/.local/bin/toggle-floating.sh"))
-hl.bind(mainMod .. " + G", hl.dsp.exec_cmd("/home/tara/.local/bin/toggle-floating.sh"))
+hl.bind(mainMod .. " + SHIFT + Space", hl.dsp.exec_cmd("$HOME/.local/bin/toggle-floating.sh"))
+hl.bind(mainMod .. " + G", hl.dsp.exec_cmd("$HOME/.local/bin/toggle-floating.sh"))
 hl.bind(mainMod .. " + CTRL + M", hl.dsp.exit())
 hl.bind(mainMod .. " + SHIFT + R", hl.dsp.exec_cmd("hyprctl reload && notify-send \"Hyprland\" \"Config recargado\""))
-hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("/home/tara/.local/bin/compact-workspaces.sh"))
+hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("$HOME/.local/bin/compact-workspaces.sh"))
 
 -- Foco entre ventanas (Super + Ctrl + Flechas)
 hl.bind(mainMod .. " + CTRL + left", hl.dsp.focus({ direction = "left" }))
@@ -411,12 +432,12 @@ hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("swayosd-client --brightness lo
 hl.bind("Caps_Lock", hl.dsp.exec_cmd("swayosd-client --caps-lock"), { release = true })
 
 -- LEDs teclado ROG: brillo (Super+Shift+flechas arriba/abajo)
-hl.bind(mainMod .. " + SHIFT + up", hl.dsp.exec_cmd("sudo /home/tara/.local/bin/kbd-brightness.sh up"), { locked = true, repeating = true })
-hl.bind(mainMod .. " + SHIFT + down", hl.dsp.exec_cmd("sudo /home/tara/.local/bin/kbd-brightness.sh down"), { locked = true, repeating = true })
+hl.bind(mainMod .. " + SHIFT + up", hl.dsp.exec_cmd("sudo $HOME/.local/bin/kbd-brightness.sh up"), { locked = true, repeating = true })
+hl.bind(mainMod .. " + SHIFT + down", hl.dsp.exec_cmd("sudo $HOME/.local/bin/kbd-brightness.sh down"), { locked = true, repeating = true })
 
 -- Screenshot
-hl.bind("Print", hl.dsp.exec_cmd("/home/tara/.local/bin/screenshot.sh"))
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("/home/tara/.local/bin/screenshot.sh"))
+hl.bind("Print", hl.dsp.exec_cmd("$HOME/.local/bin/screenshot.sh"))
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("$HOME/.local/bin/screenshot.sh"))
 
 -- Desactivar la red (FN+F12)
 hl.bind("XF86RFKill", hl.dsp.exec_cmd("sudo /usr/local/bin/toggle-network.sh"), { locked = true })
@@ -428,7 +449,7 @@ hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("/usr/local/bin/toggle-vpn.sh"))
 hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("cliphist list | rofi -dmenu -p \"󰅍 \" -theme ~/.config/rofi/clipboard.rasi | cliphist decode | wl-copy"))
 hl.bind(mainMod .. " + CTRL + V", hl.dsp.exec_cmd("pkill -x wl-paste; rm -f \"${XDG_CACHE_HOME:-$HOME/.cache}/cliphist/db\"; wl-paste --watch cliphist store & notify-send \"Portapapeles\" \"Historial reiniciado\" -i edit-clear"))
 -- VPN + RDP a Windows 11 (FN+F10)
-hl.bind("XF86TouchpadToggle", hl.dsp.exec_cmd("kitty --class rdp-console --title \"RDP Console\" -e /home/tara/.local/bin/toggle-vpn-rdp.sh"))
+hl.bind("XF86TouchpadToggle", hl.dsp.exec_cmd("kitty --class rdp-console --title \"RDP Console\" -e $HOME/.local/bin/toggle-vpn-rdp.sh"))
 
 -- Modo RDP: rdp-mode-watch.py activa este submap automaticamente en
 -- cuanto la ventana xfreerdp coge el foco (y lo quita al perderlo), asi
@@ -438,7 +459,7 @@ hl.bind("XF86TouchpadToggle", hl.dsp.exec_cmd("kitty --class rdp-console --title
 -- es un escape manual por si el vigia se cae.
 hl.define_submap("rdp", function()
     hl.bind("control_r", hl.dsp.submap("reset"))
-    hl.bind("control_r", hl.dsp.exec_cmd("/home/tara/.local/bin/rdp-mode.sh off"))
+    hl.bind("control_r", hl.dsp.exec_cmd("$HOME/.local/bin/rdp-mode.sh off"))
     hl.bind(mainMod .. " + Q", hl.dsp.window.close())
     hl.bind("ALT + 1", hl.dsp.focus({ workspace = 1 }))
     hl.bind("ALT + 2", hl.dsp.focus({ workspace = 2 }))
@@ -454,8 +475,8 @@ hl.define_submap("rdp", function()
 end)
 
 -- Fondos de pantalla
-hl.bind(mainMod .. " + right", hl.dsp.exec_cmd("/home/tara/.local/bin/wallpaper-flow next"))
-hl.bind(mainMod .. " + left", hl.dsp.exec_cmd("/home/tara/.local/bin/wallpaper-flow prev"))
+hl.bind(mainMod .. " + right", hl.dsp.exec_cmd("$HOME/.local/bin/wallpaper-flow next"))
+hl.bind(mainMod .. " + left", hl.dsp.exec_cmd("$HOME/.local/bin/wallpaper-flow prev"))
 
 -- Apps rápidas
 hl.bind(mainMod .. " + F", hl.dsp.exec_cmd("firefox"))
@@ -483,18 +504,18 @@ hl.bind("ALT + SHIFT + Tab", hl.dsp.window.cycle_next({ next = false }))
 -- Autostart
 -- Arranque secuencial: Hyprlock cubre la pantalla antes de cargar el wallpaper.
 hl.on("hyprland.start", function()
-    hl.exec_cmd("/home/tara/.local/bin/hyprland-startup-lock.sh")
-    hl.exec_cmd("/home/tara/.local/bin/change-cursor.sh apply")
-    hl.exec_cmd("/home/tara/.local/bin/auto-battery-watcher.sh")
-    hl.exec_cmd("/home/tara/.local/bin/auto-network-watcher.sh")
+    hl.exec_cmd("$HOME/.local/bin/hyprland-startup-lock.sh")
+    hl.exec_cmd("$HOME/.local/bin/change-cursor.sh apply")
+    hl.exec_cmd("$HOME/.local/bin/auto-battery-watcher.sh")
+    hl.exec_cmd("$HOME/.local/bin/auto-network-watcher.sh")
     hl.exec_cmd("waybar")
     hl.exec_cmd("/usr/lib/xfce-polkit/xfce-polkit")
     hl.exec_cmd("wl-paste --watch cliphist store")
     hl.exec_cmd("hypridle")
     hl.exec_cmd("swaync")
     hl.exec_cmd("systemctl --user start swayosd.service")
-    hl.exec_cmd("/home/tara/.local/bin/lanmouse-autostart.sh")
-    hl.exec_cmd("python3 /home/tara/.local/bin/rdp-mode-watch.py")
-    hl.exec_cmd("/home/tara/.local/bin/notification-daemon.py")
+    hl.exec_cmd("$HOME/.local/bin/lanmouse-autostart.sh")
+    hl.exec_cmd("python3 $HOME/.local/bin/rdp-mode-watch.py")
+    hl.exec_cmd("$HOME/.local/bin/notification-daemon.py")
 end)
 

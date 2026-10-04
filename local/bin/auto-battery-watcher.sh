@@ -15,7 +15,7 @@ MODE_CACHE="$HOME/.cache/current_system_mode"
 LOCATION_FILE="/run/user/$(id -u)/network-location"
 MANUAL_FLAG="/run/user/$(id -u)/system-mode-manual"
 RECHECK_FLAG="/run/user/$(id -u)/system-mode-recheck"
-SET_MODE="/home/tara/.local/bin/set-system-mode.sh"
+SET_MODE="$HOME/.local/bin/set-system-mode.sh"
 LAST_STATE=""
 FIRST_RUN=1
 

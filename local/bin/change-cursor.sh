@@ -111,13 +111,14 @@ case "$1" in
         ;;
     *)
         # Menú Rofi
-        OPT_ICE="<span color='#7aa2f7'>󰍽</span>  <b>Bibata Modern Ice</b>      <span color='#9ece6a'>[Blanco - Default]</span>"
-        OPT_CLASSIC="<span color='#bb9af7'>󰍽</span>  <b>Bibata Modern Classic</b>  <span color='#787c99'>[Negro]</span>"
-        OPT_AMBER="<span color='#ff9e64'>󰍽</span>  <b>Bibata Modern Amber</b>    <span color='#ff9e64'>[Ámbar / Naranja]</span>"
-
-        CHOICE=$(printf "%b\n%b\n%b" "$OPT_ICE" "$OPT_CLASSIC" "$OPT_AMBER" | \
-            rofi -dmenu \
-                 -p "󰍽 " \
+        source $HOME/.local/bin/rofi-row.sh
+        ACTUAL=$(gsettings get org.gnome.desktop.interface cursor-theme 2>/dev/null | tr -d "'")
+        act() { [ "$ACTUAL" = "$1" ] && echo activo; }
+        IDX=$( { rofi_row "󰇀" "Bibata Modern Ice" "blanco" "$(act Bibata-Modern-Ice)"
+                 rofi_row "󰇀" "Bibata Modern Classic" "negro" "$(act Bibata-Modern-Classic)"
+                 rofi_row "󰇀" "Bibata Modern Amber" "ámbar" "$(act Bibata-Modern-Amber)"; } | \
+            rofi -dmenu -format i \
+                 -p "󰇀" \
                  -theme ~/.config/rofi/cursor-menu.rasi \
                  -no-custom \
                  -markup-rows \
@@ -126,10 +127,10 @@ case "$1" in
                  -me-accept-entry 'MousePrimary' \
                  -cache-file /dev/null)
 
-        case "$CHOICE" in
-            *"Ice"*)     apply_cursor "Bibata-Modern-Ice" "Bibata Modern Ice (Blanco)" ;;
-            *"Classic"*) apply_cursor "Bibata-Modern-Classic" "Bibata Modern Classic (Negro)" ;;
-            *"Amber"*)   apply_cursor "Bibata-Modern-Amber" "Bibata Modern Amber (Ámbar)" ;;
+        case "$IDX" in
+            0) apply_cursor "Bibata-Modern-Ice" "Bibata Modern Ice (Blanco)" ;;
+            1) apply_cursor "Bibata-Modern-Classic" "Bibata Modern Classic (Negro)" ;;
+            2) apply_cursor "Bibata-Modern-Amber" "Bibata Modern Amber (Ámbar)" ;;
         esac
         ;;
 esac

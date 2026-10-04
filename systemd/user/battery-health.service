@@ -3,4 +3,4 @@ Description=Registrar la salud de la batería
 
 [Service]
 Type=oneshot
-ExecStart=/home/tara/.local/bin/battery-health --quiet
+ExecStart=%h/.local/bin/battery-health --quiet

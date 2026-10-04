@@ -1,17 +1,18 @@
 #!/bin/bash
 # Menu rofi para elegir perfil de energia (power-profiles-daemon)
+source $HOME/.local/bin/rofi-row.sh
 THEME="$HOME/.config/rofi/wifi.rasi"
 
 CURRENT=$(powerprofilesctl get 2>/dev/null)
+act() { [ "$1" = "$CURRENT" ] && echo activo; }
 
-mark() { [ "$1" = "$CURRENT" ] && echo "●" || echo "○"; }
+IDX=$( { rofi_row "󰓅" "Rendimiento" "" "$(act performance)"
+         rofi_row "󰾅" "Equilibrado" "" "$(act balanced)"
+         rofi_row "󰾆" "Ahorro" "" "$(act power-saver)"; } \
+    | rofi -dmenu -format i -no-custom -markup-rows -p "Perfil de energía" -theme "$THEME" -theme-str 'entry { placeholder: ""; }')
 
-CHOICE=$(printf "%s 󰓁  Rendimiento\n%s 󰔳  Equilibrado\n%s 󰑈  Ahorro" \
-    "$(mark performance)" "$(mark balanced)" "$(mark power-saver)" \
-    | rofi -dmenu -p "Perfil de energia . ${CURRENT}" -theme "$THEME")
-
-case "$CHOICE" in
-    *"Rendimiento"*) powerprofilesctl set performance ;;
-    *"Equilibrado"*) powerprofilesctl set balanced ;;
-    *"Ahorro"*) powerprofilesctl set power-saver ;;
+case "$IDX" in
+    0) powerprofilesctl set performance ;;
+    1) powerprofilesctl set balanced ;;
+    2) powerprofilesctl set power-saver ;;
 esac

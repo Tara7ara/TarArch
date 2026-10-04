@@ -1,0 +1,251 @@
+/* =============================================================================
+   PALETA TARARCH WARM DARK — SWAYNC (SWAY NOTIFICATION CENTER)
+   Mismo estilo que los menús rofi y el bloqueo: fondo opaco, borde fino gris,
+   Inter, sin colores por app. Las críticas llevan una barra lateral roja.
+   ============================================================================= */
+
+@define-color bg          #0f0f0f;
+@define-color bg-raised   #1c1a19;
+@define-color border      #2d2d2d;
+@define-color text        #c9c9c9;
+@define-color text-bright #ffffff;
+@define-color text-muted  #6e6e6e;
+@define-color accent      #ff9e64;
+@define-color red         #f7768e;
+
+* {
+    font-family: "Inter", "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 13px;
+}
+
+/* =============================================================================
+   NOTIFICACIONES (EMERGENTES Y LISTA DEL PANEL)
+   ============================================================================= */
+.notification-row {
+    outline: none;
+    margin: 0 0 6px 0;
+}
+
+.notification-row:focus,
+.notification-row:hover {
+    background: transparent;
+}
+
+.notification {
+    background: @bg;
+    border: 1px solid @border;
+    border-radius: 10px;
+    padding: 4px 6px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    transition: border-color 0.2s ease;
+}
+
+.notification:hover {
+    border-color: #3a3a3a;
+}
+
+/* Críticas: barra lateral roja, como la barra naranja de selección de los menús */
+.notification.critical {
+    border-left: 2px solid @red;
+}
+
+/* Baja prioridad: un poco más apagadas */
+.notification.low .summary,
+.notification.low .body {
+    color: @text-muted;
+}
+
+.notification-content {
+    padding: 6px 4px;
+}
+
+.notification-default-action,
+.notification-action {
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    padding: 4px;
+}
+
+.notification-default-action:hover,
+.notification-action:hover {
+    background: transparent;
+}
+
+.notification-action {
+    margin: 4px 2px 2px 2px;
+    background: @bg-raised;
+    color: @text;
+    border: 1px solid @border;
+    padding: 6px 10px;
+}
+
+.notification-action:hover {
+    color: @text-bright;
+    border-color: @accent;
+}
+
+.image {
+    margin-right: 10px;
+    border-radius: 6px;
+}
+
+.summary {
+    color: @text-bright;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.body {
+    color: @text;
+    font-size: 12px;
+}
+
+.time {
+    color: @text-muted;
+    font-size: 11px;
+    margin-right: 22px;
+}
+
+.close-button {
+    background: transparent;
+    color: @text-muted;
+    border: none;
+    border-radius: 6px;
+    padding: 0;
+    margin: 6px 6px 0 0;
+    min-width: 20px;
+    min-height: 20px;
+}
+
+.close-button:hover {
+    background: @bg-raised;
+    color: @text-bright;
+}
+
+.inline-reply-entry {
+    background: @bg-raised;
+    color: @text-bright;
+    border: 1px solid @border;
+    border-radius: 6px;
+}
+
+/* =============================================================================
+   PANEL (swaync-client -t)
+   ============================================================================= */
+.control-center {
+    background: @bg;
+    border: 1px solid @border;
+    border-radius: 12px;
+    padding: 14px;
+}
+
+.widget-title {
+    color: @text-muted;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.widget-title > button {
+    background: transparent;
+    color: @text-muted;
+    border: 1px solid @border;
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 12px;
+    letter-spacing: 0;
+}
+
+.widget-title > button:hover {
+    color: @text-bright;
+    border-color: @accent;
+}
+
+.widget-buttons-grid {
+    margin-bottom: 10px;
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button {
+    background: @bg-raised;
+    border: 1px solid @border;
+    border-radius: 8px;
+    color: @text;
+    padding: 9px 12px;
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button:hover {
+    color: @text-bright;
+    border-color: #3a3a3a;
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button.active {
+    color: @accent;
+    border-color: @accent;
+}
+
+.widget-volume,
+.widget-backlight,
+.widget-mpris,
+.widget-dnd {
+    background: @bg-raised;
+    border: 1px solid @border;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+}
+
+.widget-volume label,
+.widget-backlight label {
+    color: @text-muted;
+    font-size: 15px;
+    margin-right: 8px;
+}
+
+scale trough {
+    background: #3a3a3a;
+    border-radius: 4px;
+    min-height: 4px;
+}
+
+scale highlight {
+    background: @accent;
+    border-radius: 4px;
+}
+
+scale slider {
+    background: @text-bright;
+    border-radius: 50%;
+    min-width: 12px;
+    min-height: 12px;
+}
+
+.widget-mpris-title {
+    color: @text-bright;
+    font-weight: 600;
+}
+
+.widget-mpris-subtitle {
+    color: @text-muted;
+}
+
+.widget-mpris-player button {
+    background: transparent;
+    color: @text;
+    border-radius: 6px;
+    padding: 4px;
+}
+
+.widget-mpris-player button:hover {
+    color: @accent;
+}
+
+.widget-dnd > switch {
+    background: #3a3a3a;
+    border-radius: 12px;
+}
+
+.widget-dnd > switch:checked {
+    background: @accent;
+}

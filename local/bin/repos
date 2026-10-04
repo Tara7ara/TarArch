@@ -2,7 +2,7 @@
 # =============================================================================
 # repos — lanzador de repositorios git en rofi (Super+G)
 #   Lista los repos de ~ con su rama y si tienen cambios o commits sin subir.
-#   Enter abre una terminal Kitty en la carpeta elegida.
+#   Enter abre una terminal Kitty en la carpeta elegida; Alt+Enter, lazygit flotante.
 #   repos -p   imprime la ruta elegida en vez de abrir la terminal.
 # =============================================================================
 
@@ -33,12 +33,16 @@ for r in "${repos[@]}"; do
 done
 
 idx=$(printf "%s" "$filas" | rofi -dmenu -i -format i -p "󰊢 Repos" \
-    -mesg "● cambios sin guardar · ↑ commits sin subir" -theme "$THEME")
+    -kb-custom-1 "Alt+Return" \
+    -mesg "● cambios sin guardar · ↑ commits sin subir · Alt+Enter abre lazygit" -theme "$THEME")
+salida=$?
 [ -z "$idx" ] && exit 0
 
 elegido="${repos[$idx]}"
 if [ "$1" = "-p" ]; then
     echo "$elegido"
+elif [ "$salida" -eq 10 ] && command -v lazygit >/dev/null; then
+    kitty --class lazygit --directory "$elegido" -e lazygit >/dev/null 2>&1 &
 else
     kitty --directory "$elegido" >/dev/null 2>&1 &
 fi

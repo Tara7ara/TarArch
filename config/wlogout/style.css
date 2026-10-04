@@ -60,9 +60,9 @@ button:focus {
 }
 
 #suspend:hover {
-    background-color: rgba(122, 162, 247, 0.18);
-    border-color: #7aa2f7;
-    color: #7aa2f7;
+    background-color: rgba(181, 160, 122, 0.18);
+    border-color: #b5a07a;
+    color: #b5a07a;
 }
 
 #reboot {

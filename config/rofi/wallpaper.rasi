@@ -1,104 +1,95 @@
-/* Selector de wallpapers */
+/* =============================================================================
+   ROFI SELECTOR DE FONDOS (respaldo del coverflow) — PALETA TARARCH WARM DARK
+   Cuadrícula de miniaturas; la seleccionada lleva borde naranja fino.
+   ============================================================================= */
 
 configuration {
-    show-icons: true;
+    show-icons:          true;
     drun-display-format: "{name}";
 }
 
 * {
-    font:             "JetBrainsMono Nerd Font 11";
+    font:             "Inter 10";
     background-color: transparent;
-    text-color:       #ffffff;
-    accent:           #ff9e64;
-    text-muted:       #787c99;
+    text-color:       #c9c9c9;
 }
 
 window {
-    background-color: #0f0f0fef;
-    border:           2px;
-    border-color:     rgba(255, 158, 100, 0.40);
-    border-radius:    20px;
+    background-color: #0f0f0f;
+    border:           1px;
+    border-color:     #2d2d2d;
+    border-radius:    12px;
     width:            820px;
-    padding:          20px;
+    padding:          0;
     location:         center;
     anchor:           center;
 }
 
 mainbox {
-    background-color: transparent;
-    spacing:          16px;
-    children:         [ inputbar, listview ];
+    children:         [inputbar, listview];
+    spacing:          0;
 }
 
 inputbar {
-    background-color: rgba(255, 255, 255, 0.05);
-    border:           1px;
-    border-color:     rgba(255, 255, 255, 0.08);
-    border-radius:    14px;
-    padding:          12px 16px;
-    children:         [ prompt, entry ];
+    padding:          16px 20px;
     spacing:          12px;
+    border:           0 0 1px 0;
+    border-color:     #2d2d2d;
+    children:         [prompt, entry];
 }
 
 prompt {
-    background-color: transparent;
-    text-color:       @accent;
-    font:             "JetBrainsMono Nerd Font Bold 12";
+    text-color:       #6e6e6e;
+    font:             "Inter 11";
+    vertical-align:   0.5;
 }
 
 entry {
-    background-color: transparent;
+    font:             "Inter 11";
     text-color:       #ffffff;
-    placeholder:      "Buscar fondo de pantalla...";
-    placeholder-color:@text-muted;
+    placeholder:      "Buscar fondo";
+    placeholder-color: #6e6e6e;
+    vertical-align:   0.5;
+    cursor-color:     #ff9e64;
 }
 
 listview {
-    background-color: transparent;
     columns:          3;
-    lines:            4;
-    spacing:          12px;
+    lines:            3;
+    spacing:          10px;
+    padding:          14px;
     cycle:            true;
     dynamic:          true;
     layout:           vertical;
 }
 
 element {
-    background-color: rgba(255, 255, 255, 0.04);
-    border:           1px;
-    border-color:     rgba(255, 255, 255, 0.06);
-    border-radius:    14px;
-    padding:          12px;
+    padding:          8px;
+    spacing:          6px;
     orientation:      vertical;
-    alignment:        center;
-    spacing:          8px;
+    border:           1px;
+    border-color:     transparent;
+    border-radius:    8px;
     cursor:           pointer;
 }
 
 element selected {
-    background-color: rgba(255, 158, 100, 0.22);
-    border:           1px;
-    border-color:     @accent;
+    background-color: #1c1a19;
+    border-color:     #ff9e64;
 }
 
 element-icon {
-    size:             96px;
+    size:             150px;
     horizontal-align: 0.5;
-    vertical-align:   0.5;
-    background-color: transparent;
-    cursor:           pointer;
+    cursor:           inherit;
 }
 
 element-text {
-    background-color: transparent;
-    text-color:       #ffffff;
+    text-color:       #6e6e6e;
     horizontal-align: 0.5;
-    vertical-align:   0.5;
-    font:             "JetBrainsMono Nerd Font 10";
-    cursor:           pointer;
+    cursor:           inherit;
 }
 
 element-text selected {
-    text-color:       @accent;
-    font:             "JetBrainsMono Nerd Font Bold 10";
+    text-color:       #ffffff;
 }

@@ -1,0 +1,48 @@
+/* =============================================================================
+   PALETA TARARCH WARM DARK — SWAYOSD (INDICADORES EN PANTALLA)
+   Mismo estilo que notificaciones y menús: fondo opaco, borde fino gris,
+   icono gris y barra fina naranja.
+   ============================================================================= */
+
+@define-color bg-base          #0f0f0f;
+@define-color border-color     #2d2d2d;
+@define-color accent-orange    #ff9e64;
+@define-color icon-color       #c9c9c9;
+@define-color trough-color     #3a3a3a;
+
+window {
+    background-color: transparent;
+}
+
+#container {
+    background-color: @bg-base;
+    border: 1px solid @border-color;
+    border-radius: 10px;
+    padding: 12px 18px;
+}
+
+image {
+    color: @icon-color;
+}
+
+label {
+    color: @icon-color;
+    font-family: "Inter", sans-serif;
+}
+
+progressbar {
+    background-color: transparent;
+}
+
+progressbar trough {
+    background-color: @trough-color;
+    border-radius: 2px;
+    min-height: 4px;
+    min-width: 180px;
+}
+
+progressbar progress {
+    background-color: @accent-orange;
+    border-radius: 2px;
+    min-height: 4px;
+}

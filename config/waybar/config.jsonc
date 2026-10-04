@@ -57,9 +57,9 @@
     },
 
     "custom/media": {
-        "exec": "/home/tara/.local/bin/mediaplayer.sh",
+        "exec": "$HOME/.local/bin/mediaplayer.sh",
         "format": "{}",
-        "on-click": "/home/tara/.local/bin/media-card.py",
+        "on-click": "$HOME/.local/bin/media-card.py",
         "on-click-right": "playerctl play-pause",
         "on-click-middle": "playerctl next",
         "tooltip": true,
@@ -83,28 +83,28 @@
     },
 
     "custom/lanmouse": {
-        "exec": "/home/tara/.local/bin/lanmouse-status.sh",
+        "exec": "$HOME/.local/bin/lanmouse-status.sh",
         "interval": 3,
         "return-type": "json",
         "format": "{}",
         "tooltip": true,
-        "on-click": "/home/tara/.local/bin/toggle-lanmouse.sh"
+        "on-click": "$HOME/.local/bin/toggle-lanmouse.sh"
     },
 
     "custom/localip": {
-        "exec": "/home/tara/.local/bin/localip.sh",
+        "exec": "$HOME/.local/bin/localip.sh",
         "interval": 1,
         "signal": 8,
         "return-type": "json",
         "format": "{}",
         "tooltip": true,
-        "on-click": "/home/tara/.local/bin/wifi-menu.sh",
+        "on-click": "$HOME/.local/bin/wifi-menu.sh",
         "on-click-right": "wl-copy -n < \"$XDG_RUNTIME_DIR/localip-shown\" && notify-send '󰆏 IP copiada' \"$(cat \"$XDG_RUNTIME_DIR/localip-shown\")\" -u low",
-        "on-click-middle": "/home/tara/.local/bin/set-target -c"
+        "on-click-middle": "$HOME/.local/bin/set-target -c"
     },
 
     "custom/battery-info": {
-        "exec": "/home/tara/.local/bin/battery-tooltip.sh",
+        "exec": "$HOME/.local/bin/battery-tooltip.sh",
         "interval": 10,
         "return-type": "json",
         "format": "{}",
@@ -112,8 +112,8 @@
     },
 
     "custom/backup": {
-        "exec": "/home/tara/.local/bin/backup-status.sh",
-        "on-click": "/home/tara/.local/bin/manual-backup.sh",
+        "exec": "$HOME/.local/bin/backup-status.sh",
+        "on-click": "$HOME/.local/bin/manual-backup.sh",
         "interval": 10,
         "return-type": "json",
         "format": "{}",
@@ -122,12 +122,12 @@
 
     "pulseaudio": {
         "format": "{icon} {volume}%",
-        "format-muted": "󰝟 Muted",
+        "format-muted": "󰝟",
         "format-icons": {
             "default": ["󰕿", "󰖀", "󰕾"]
         },
         "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
-        "on-click-right": "/home/tara/.local/bin/audio-output-menu.sh",
+        "on-click-right": "$HOME/.local/bin/audio-output-menu.sh",
         "on-scroll-up": "wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+",
         "on-scroll-down": "wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%-",
         "tooltip": true,
@@ -135,9 +135,10 @@
     },
 
     "clock": {
-        "format": "{:%H:%M   %a %d %b}",
-        "on-click": "/home/tara/.local/bin/control-center.py",
-        "on-click-right": "/home/tara/.local/bin/calendario.sh",
+        "format": "{:L%H:%M   %a %d %b}",
+        "locale": "es_ES.UTF-8",
+        "on-click": "$HOME/.local/bin/control-center.py",
+        "on-click-right": "$HOME/.local/bin/calendario.sh",
         "tooltip": true,
         "tooltip-format": "<tt><small>{calendar}</small></tt>",
         "calendar": {
@@ -148,7 +149,7 @@
             "format": {
                 "months": "<span color='#ff9e64'><b>{}</b></span>",
                 "days": "<span color='#c9c9c9'><b>{}</b></span>",
-                "weeks": "<span color='#787c99'><b>W{}</b></span>",
+                "weeks": "<span color='#6e6e6e'><b>W{}</b></span>",
                 "weekdays": "<span color='#bb9af7'><b>{}</b></span>",
                 "today": "<span color='#ff9e64'><b><u>{}</u></b></span>"
             }
@@ -161,7 +162,7 @@
 
     "custom/power": {
         "format": "⏻",
-        "on-click": "/home/tara/.local/bin/power-menu.sh",
+        "on-click": "$HOME/.local/bin/power-menu.sh",
         "tooltip": false
     }
 }

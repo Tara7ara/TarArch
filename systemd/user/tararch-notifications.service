@@ -4,7 +4,7 @@ After=graphical-session.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 /home/tara/.local/bin/notification-daemon.py
+ExecStart=/usr/bin/python3 %h/.local/bin/notification-daemon.py
 Restart=always
 RestartSec=3
 

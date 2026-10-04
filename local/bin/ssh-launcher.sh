@@ -1,12 +1,11 @@
 #!/bin/bash
 # Lanzador rápido de conexiones SSH (TaraNAS / Servidor)
+source $HOME/.local/bin/rofi-row.sh
 
-OPT1="<span color='#ff9e64'>󰒋</span>  <b>TaraNAS</b>        <span color='#787c99'>(Almacenamiento NAS)</span>"
-OPT2="<span color='#bb9af7'>󰣀</span>  <b>Servidor</b>       <span color='#787c99'>(Servicios Linux)</span>"
-
-CHOICE=$(printf "%b\n%b" "$OPT1" "$OPT2" | \
-    rofi -dmenu \
-         -p "󰣀 " \
+IDX=$( { rofi_row "󰒋" "TaraNAS" "almacenamiento"
+         rofi_row "󰒍" "Servidor" "servicios de casa"; } | \
+    rofi -dmenu -format i \
+         -p "󰣀" \
          -theme ~/.config/rofi/ssh-menu.rasi \
          -no-custom \
          -markup-rows \
@@ -15,7 +14,7 @@ CHOICE=$(printf "%b\n%b" "$OPT1" "$OPT2" | \
          -me-accept-entry 'MousePrimary' \
          -cache-file /dev/null)
 
-case "$CHOICE" in
-    *"TaraNAS"*)  kitty --title "SSH TaraNAS" sh -c "ssh nas; exec \$SHELL" ;;
-    *"Servidor"*) kitty --title "SSH Servidor" sh -c "ssh servidor; exec \$SHELL" ;;
+case "$IDX" in
+    0) kitty --title "SSH TaraNAS" sh -c "ssh nas; exec \$SHELL" ;;
+    1) kitty --title "SSH Servidor" sh -c "ssh servidor; exec \$SHELL" ;;
 esac

@@ -71,7 +71,7 @@ while true; do
         echo "$LOCATION" > "$LOCATION_FILE"
         PROFILE="fuera"; [ "$LOCATION" = "casa" ] && PROFILE="casa"
         if [ ! -f "$MANUAL_FLAG" ] && ! profile_applied "$PROFILE"; then
-            RED_AUTO=1 "/home/tara/.local/bin/red-$PROFILE"
+            RED_AUTO=1 "$HOME/.local/bin/red-$PROFILE"
         fi
         # En la uni, VPN arriba salvo que la hayas apagado a mano
         # (toggle-vpn.sh deja vpn-manual-off al apagarla)

@@ -3,192 +3,240 @@
 # LIBRERÍA COMPARTIDA DE ATAJOS Y COMANDOS — TARARCH
 # Usada por show-keybindings.sh (Super+A) y rofi-keys-mode.sh (pestaña "Comandos"
 # del lanzador unificado Super+Espacio). Un único listado, un único dispatcher.
+#
+# Formato: "# Sección" para cabeceras, "tecla|descripción" para cada fila.
+# La acción se busca por la TECLA exacta (columna izquierda), no por el texto
+# de la descripción, así que las descripciones se pueden reescribir sin miedo.
 # ==============================================================================
 
 KEYBINDINGS_LIST=(
-"=== APLICACIONES Y HERRAMIENTAS PRINCIPALES ==="
-"Super + Enter                  Abrir Terminal Kitty (GPU, pestañas Powerline)"
-"Super + Space                  Lanzador de aplicaciones (Rofi Spotlight)"
-"Super + C                      Centro de Control (Toggles, Sliders, Notis, CalDAV)"
-"Super + X                      Menú de Apagado Cinemático (Bloquear, Suspender, Reiniciar, Apagar)"
-"Super + A                      Guía interactiva de Atajos y Comandos (CheatSheet)"
-"Super + B                      Gestor rápido de Bluetooth (Razer, iPhone...)"
-"Super + W                      Abrir WhatsApp (Wasistlos)"
-"Super + Alt + W                Selector de fondos clásico (rofi, respaldo)"
-"Super + Alt + C                Selector de tema de ratón / cursor (Ice, Classic, Amber)"
-"Super + Alt + P                Selector de Modos del Sistema (Uni 60Hz Silent, Normal, 144Hz Gamer)"
-"Super + Alt + L                Bloquear pantalla con fondo desenfocado (Hyprlock)"
-"Super + R                      Lanzador rápido SSH (TaraNAS / Servidor)"
-"Super + L                      Selector de diccionarios SecLists (copia la ruta)"
-"Super + Z                      Modo zen (sin barra ni huecos, repetir para volver)"
-"Super + Shift + O              Buscar texto en el vault de Obsidian y abrir la nota"
-"Super + Shift + G              Lanzador de repos git (rama y cambios sin subir)"
-"Super + H                      Identificar un hash (tipo + modo hashcat/john)"
-"Super + V                      Activar / Desactivar VPN WireGuard (con DNS AdGuard)"
-"Fn + F10                       Conexión VPN + RDP a Windows 11 (Workspace 9)"
-"Super + E                      Abrir gestor de archivos (Thunar)"
-"Super + F                      Abrir navegador Firefox"
-"Super + D                      Abrir Discord (tema oscuro)"
-"Super + S                      Abrir Spotify (Sleek WarmDark)"
-"Super + O                      Abrir Obsidian (Baúl de notas y apuntes)"
-"Super + T                      Abrir Telegram Desktop"
-"Super + K                      Gestor de contraseñas (KeePassXC)"
-"Super + P                      Nota rápida inmediata (ventana flotante · ~/notas.txt)"
-"cursor                         Abrir Cursor AI (Editor de código con Inteligencia Artificial)"
-""
-"=== COMANDOS Y UTILIDADES DE CONSOLA ==="
-"calendario / cal               Abrir agenda y gestor de eventos CalDAV (GNOME Calendar)"
-"taratrack / series            Abrir plataforma de series y rankings ELO (tara.series)"
-"modos / bateria / gamer       Cambiar modo de energía (Uni 60Hz, Normal 144Hz, Gamer Turbo)"
-"cambiar-cursor / raton         Cambiar tema de cursor de ratón (Ice, Classic, Amber)"
-"codex-acc / codex-auth        Gestor multicuenta OpenAI Codex CLI (1-4 / rotar límites)"
-"xampp-start                    Iniciar servicios de XAMPP (Apache + MariaDB/MySQL)"
-"xampp-stop                     Detener servicios de XAMPP"
-"xampp-gui                      Abrir panel gráfico de control de XAMPP"
-"limpiar                        Mantenimiento: purga capturas >14d, pacman/yay, huérfanos y logs"
-"wifi                           Abrir selector Spotlight de redes WiFi"
-"bluetooth                      Abrir gestor de dispositivos Bluetooth"
-"fondos / wallpaper            Abrir galería visual de wallpapers con miniaturas"
-"nobloqueo                      Inhibir bloqueo automático y suspensión (Modo Cafeína)"
-"modo-gamer                    Activar modo juego (CPU 100%, sin blur/sombras)"
-"red-casa                       Perfil de red LAN Casa (DHCP + DNS AdGuard 192.168.1.101)"
-"red-fuera                      Perfil de red LAN Fuera (DHCP y DNS automáticos)"
-"red-auto                       Perfil de red automático según el router (casa / fuera)"
-"set-target <ip> [nombre]       Fijar IP objetivo del lab (\$T en terminales, Waybar la alterna en rojo)"
-"set-target -c                  Borrar IP objetivo (o clic central en la IP de Waybar)"
-"seclists [texto] / -p          Diccionarios SecLists: rofi, búsqueda por terminal o ruta para \$(seclists -p)"
-"buscar-vault [texto]           Buscar en las notas del vault (rofi o terminal)"
-"repos                          Lanzador de repos git (rama, cambios, commits sin subir)"
-"battery-health / --log         Salud de la batería y su histórico semanal"
-"tarascan-lab                   TaraScan contra el laboratorio Docker local (172.30.0.0/24)"
-"nuevo-lab <nombre> [ip]        Esqueleto de máquina CTF (~/labs) + set-target + terminal"
-"cb                             Portapapeles Wayland: una_salida | cb copia, cb a secas pega"
-"cheat [nombre] / -e / -l       Chuletas de comandos propias (nmap, web, smb, shell, privesc)"
-"identificar-hash <hash>        Tipo de hash + modo de hashcat y john"
-"simbolos                       Selector de símbolos técnicos (→ ✓ ≈ ...) que copia"
-"Clic derecho IP Waybar         Copiar la IP que se ve en ese momento (tuya/tun0 u objetivo)"
-"y / yazi                       Explorador de archivos en Rust con preview GPU de fotos/vídeos"
-"btop                           Monitor de recursos del sistema en tiempo real (Warm Dark)"
-"cava                           Visualizador de audio reactivo en terminal"
-"fastfetch                      Información del sistema y hardware adaptativo"
-"letras                         Ver letras sincronizadas de la canción actual de Spotify"
-"ls / ll / lt                   Listado moderno con iconos y estado Git (eza)"
-"cat <archivo>                  Ver archivos con resaltado de sintaxis (bat)"
-"z <carpeta>                    Navegación inteligente a directorios frecuentes (zoxide)"
-"ex <archivo>                   Extractor universal multiformato (.zip .tar.gz .rar .7z...)"
-""
-"=== TERMINAL Y EDICIÓN (KITTY) ==="
-"Ctrl + Shift + T               Nueva pestaña en terminal Kitty"
-"Ctrl + Tab / Ctrl+Shift+Tab    Cambiar entre pestañas de terminal"
-"Ctrl + Shift + W               Cerrar pestaña actual de terminal"
-"Ctrl + V / Clic Derecho        Pegar texto en la terminal"
-"Shift + Arrastrar Ratón        Seleccionar y copiar texto en TUIs (Claude Code)"
-"Ctrl + Backspace               Borrar palabra completa hacia atrás"
-"Ctrl + R                       Buscar en historial de comandos interactivo (fzf)"
-"Ctrl + T                       Buscar archivos con previsualización en vivo (fzf + bat)"
-""
-"=== CAPTURAS Y PORTAPAPELES ==="
-"Imp Pant / Super + Shift + S   Capturar región (copia ruta al portapapeles y abre Swappy)"
-"Super + Shift + V              Abrir historial del portapapeles (Spotlight)"
-"Super + Ctrl + V               Vaciar y limpiar historial del portapapeles"
-""
-"=== GESTIÓN DE VENTANAS Y RATÓN ==="
-"Super + Q                      Cerrar ventana activa"
-"Super + J                      Alternar división vertical / horizontal (togglesplit)"
-"Super + G / Super+Shift+Space  Alternar ventana flotante (compacta 800x520) / fija"
-"Super + Shift + R              Recargar configuración de Hyprland y Waybar"
-"Super + F11                    Pantalla completa pura (sin barra superior)"
-"Super + Shift + F11            Pantalla completa (con barra superior)"
-"Super + Shift + N              Ocultar ventana activa (minimizar suave)"
-"Super + N                      Ver ventanas ocultas / minimizadas (overlay)"
-"Super + Ctrl + N               Restaurar ventana minimizada al workspace anterior"
-"Super + Shift + C              Compactar escritorios vacíos"
-"Super + Ctrl + Flechas         Mover foco entre ventanas"
-"Super + Ctrl + Shift + Flechas Mover ventana activa de posición"
-"Super + Alt + Flechas          Redimensionar tamaño de ventana"
-"Super/Alt + Clic Izquierdo     Mover ventana libremente con el ratón"
-"Super/Alt + Clic Derecho       Redimensionar ventana con el ratón"
-"Super + Clic Rueda             Enviar ventana a otro escritorio (selector Rofi)"
-""
-"=== WORKSPACES Y FONDOS ==="
-"Alt + [1 - 9]                  Ir al escritorio 1 - 9"
-"Alt + Shift + [1 - 9]          Mover ventana activa al escritorio 1 - 9"
-"Alt + Flecha Izq / Der         Cambiar entre escritorios (slidefade 15%)"
-"Alt + Tab / Alt + Shift + Tab  Alternar entre ventanas recientes"
-"Super + Flecha Der/Izq        Abrir selector de fondos en coverflow"
-""
-"=== AUDIO, BRILLO Y TECLADO ROG (SWAYOSD) ==="
-"Fn + Volumen Arr/Ab            Subir / Bajar volumen con OSD flotante"
-"Fn + Mute                      Silenciar / Reactivar audio con OSD"
-"Fn + F7 / F8                   Subir / Bajar brillo de pantalla con OSD"
-"Bloq Mayús (Caps Lock)         Indicador visual flotante de mayúsculas (OSD)"
-"Super + Shift + Flechas Arr/Ab Subir / Bajar brillo de LEDs del teclado ROG"
-"Fn + Flechas Izq/Der           Restablecer teclado ROG a blanco puro fijo"
+"# Aplicaciones"
+"Super + Enter|Terminal"
+"Super + Space|Lanzador de aplicaciones"
+"Super + C|Centro de control"
+"Super + X|Apagar, reiniciar, suspender"
+"Super + A|Esta guía de atajos"
+"Super + E|Archivos"
+"Super + F|Firefox"
+"Super + O|Obsidian"
+"Super + K|KeePassXC"
+"Super + S|Spotify"
+"Super + D|Discord"
+"Super + T|Telegram"
+"Super + W|WhatsApp"
+"Super + P|Nota rápida"
+"cursor|Cursor"
+
+"# Herramientas"
+"Super + Tab|Panel de estado del sistema"
+"Super + R|Conexión SSH al NAS o al servidor"
+"Super + V|VPN WireGuard on/off"
+"Fn + F10|VPN + escritorio remoto de Windows"
+"Super + B|Bluetooth"
+"Super + L|SecLists: elegir diccionario y copiar ruta"
+"Super + H|Identificar un hash"
+"Super + Shift + O|Buscar en el vault"
+"Super + Shift + G|Repos git (Alt+Enter abre lazygit)"
+"Super + Alt + P|Modo del sistema: uni, normal, gamer"
+"Super + Alt + C|Cursor del ratón"
+"Super + Alt + L|Bloquear pantalla"
+
+"# Comandos"
+"set-target <ip> [nombre]|Fijar el objetivo del lab (\$T)"
+"set-target -c|Borrar el objetivo"
+"nuevo-lab <nombre> [ip]|Carpeta de máquina nueva en ~/labs"
+"tarascan-lab|TaraScan contra el lab Docker local"
+"seclists [texto] / -p|SecLists desde la terminal"
+"identificar-hash <hash>|Tipo de hash y modo de hashcat/john"
+"cheat [nombre] / -e / -l|Chuletas de comandos"
+"buscar-vault [texto]|Buscar en el vault"
+"repos|Repos git con cambios sin subir"
+"cb|Portapapeles: algo | cb copia, cb pega"
+"simbolos|Símbolos técnicos para copiar"
+"red-auto|Perfil de red según el router"
+"red-casa|Perfil de red de casa (DNS AdGuard)"
+"red-fuera|Perfil de red de fuera"
+"modos / bateria / gamer|Modo del sistema"
+"modo-gamer|Modo juego"
+"nobloqueo|No bloquear ni suspender"
+"wifi|Redes wifi"
+"bluetooth|Bluetooth"
+"fondos / wallpaper|Fondos de pantalla"
+"cambiar-cursor / raton|Cursor del ratón"
+"calendario / cal|Calendario"
+"taratrack / series|TaraTrack"
+"letras|Letra de la canción que suena"
+"battery-health / --log|Salud de la batería y su histórico"
+"limpiar|Limpieza: capturas viejas, caché, huérfanos, logs"
+"codex-acc / codex-auth|Cuentas de Codex"
+"xampp-start|Arrancar XAMPP"
+"xampp-stop|Parar XAMPP"
+"xampp-gui|Panel de XAMPP"
+"y / yazi|Explorador de archivos en terminal"
+"btop|Monitor del sistema"
+"cava|Visualizador de audio"
+"fastfetch|Información del sistema"
+"ls / ll / lt|Listar con iconos y estado git (eza)"
+"cat <archivo>|Ver con resaltado (bat)"
+"z <carpeta>|Saltar a carpetas frecuentes (zoxide)"
+"ex <archivo>|Descomprimir cualquier formato"
+
+"# Ventanas"
+"Super + Q|Cerrar ventana"
+"Super + G|Flotante / fija"
+"Super + Shift + Space|Flotante / fija"
+"Super + J|Cambiar división vertical / horizontal"
+"Super + F11|Pantalla completa"
+"Super + Shift + F11|Pantalla completa con barra"
+"Super + Z|Modo zen"
+"Super + Shift + N|Minimizar"
+"Super + N|Ver minimizadas"
+"Super + Ctrl + N|Restaurar minimizada"
+"Super + Ctrl + Flechas|Mover el foco"
+"Super + Ctrl + Shift + Flechas|Mover la ventana"
+"Super + Alt + Flechas|Redimensionar"
+"Super/Alt + Arrastrar|Mover con el ratón"
+"Super/Alt + Clic derecho|Redimensionar con el ratón"
+"Super + Clic rueda|Enviar a otro escritorio"
+"Super + Shift + R|Recargar Hyprland"
+
+"# Escritorios"
+"Alt + 1-9|Ir al escritorio"
+"Alt + Shift + 1-9|Mover la ventana al escritorio"
+"Alt + Izq / Der|Escritorio anterior / siguiente"
+"Alt + (Shift) + Tab|Ventana anterior / siguiente"
+"Super + Shift + C|Compactar escritorios vacíos"
+"Super + Izq / Der|Fondos de pantalla"
+"Super + Alt + W|Fondos de pantalla (lista)"
+
+"# Capturas y portapapeles"
+"Super + Shift + S|Capturar región"
+"Imp Pant|Capturar región"
+"Super + Shift + V|Historial del portapapeles"
+"Super + Ctrl + V|Vaciar el historial"
+
+"# Terminal"
+"Ctrl + Shift + T|Pestaña nueva"
+"Ctrl + (Shift) + Tab|Pestaña siguiente / anterior"
+"Ctrl + V / Clic derecho|Pegar"
+"Ctrl + Shift + W|Cerrar pestaña"
+"Ctrl + R|Buscar en el historial (fzf)"
+"Ctrl + T|Buscar archivos (fzf)"
+"Ctrl + Backspace|Borrar palabra"
+"Shift + Arrastrar|Seleccionar texto en TUIs"
+
+"# Audio, brillo y teclado"
+"Fn + Volumen|Volumen"
+"Fn + Mute|Silenciar"
+"Fn + F7 / F8|Brillo"
+"Super + Shift + Arr / Ab|Luz del teclado"
+"Fn + Izq / Der|Teclado en blanco fijo"
+"Bloq Mayús|Aviso de mayúsculas en pantalla"
+"Clic derecho en la IP|Copiar la IP de Waybar"
 )
 
+# Ancho de la columna de teclas (va en monoespaciada): la tecla más larga + 3.
+KB_KEY_WIDTH=0
+for _e in "${KEYBINDINGS_LIST[@]}"; do
+    [[ $_e == "# "* ]] && continue
+    _k=${_e%%|*}; _k=${_k// + /+}; (( ${#_k} > KB_KEY_WIDTH )) && KB_KEY_WIDTH=${#_k}
+done
+KB_KEY_WIDTH=$((KB_KEY_WIDTH + 3)); unset _e _k
+
+_kb_escape() {
+    local s="$1"
+    s=${s//&/&amp;}; s=${s//</&lt;}; s=${s//>/&gt;}
+    printf '%s' "$s"
+}
+
+# Una fila de rofi (markup de Pango) por entrada, en el mismo orden que la
+# lista. Las cabeceras van como no seleccionables y cada fila lleva su tecla en
+# "info" (rofi la devuelve en $ROFI_INFO en modo script).
+render_keybindings() {
+    local entry key desc pad sect
+    for entry in "${KEYBINDINGS_LIST[@]}"; do
+        if [[ $entry == "# "* ]]; then
+            sect=${entry#\# }
+            printf '<span size="9pt" weight="600" letter_spacing="1500" foreground="#6e6e6e">%s</span>\0nonselectable\x1ftrue\n' \
+                "$(_kb_escape "${sect^^}")"
+            continue
+        fi
+        key=${entry%%|*}; desc=${entry#*|}
+        # "Super + Shift + S" se ve como "Super+Shift+S" con los + atenuados.
+        printf -v pad '%-*s' "$KB_KEY_WIDTH" "${key// + /+}"
+        pad=$(_kb_escape "$pad"); pad=${pad//+/<span foreground=\"#5a4a40\">+</span>}
+        printf '<span font_family="JetBrainsMono Nerd Font" size="10pt" foreground="#ff9e64">%s</span><span foreground="#d6d6d6">%s</span>\0info\x1f%s\n' \
+            "$pad" "$(_kb_escape "$desc")" "$key"
+    done
+}
+
+# Recibe la TECLA de una entrada (columna izquierda) y ejecuta su acción.
+# Las que no tienen acción (atajos de Kitty, de ratón...) no hacen nada.
 dispatch_keybinding() {
-    local SELECTED="$1"
-    [ -z "$SELECTED" ] && return 0
-    case "$SELECTED" in
-    *"Abrir Terminal Kitty"*)       kitty & ;;
-    *"Lanzador de aplicaciones"*)   rofi -show drun -theme ~/.config/rofi/launcher.rasi & ;;
-    *"Centro de Control"*)          /home/tara/.local/bin/control-center.py & ;;
-    *"Menú de Apagado"*)            /home/tara/.local/bin/power-menu.sh ;;
-    *"Gestor rápido de Bluetooth"*|*"bluetooth"*) /home/tara/.local/bin/bluetooth-menu.sh ;;
-    *"Selector visual de fondos"*|*"wallpaper"*|*"fondos"*) /home/tara/.local/bin/wallpaper-flow ;;
-    *"Abrir Cursor"*|*"cursor"*)    cursor & ;;
-    *"Selector de tema de ratón"*|*"raton"*|*"cambiar-cursor"*|*"cambiar-curso"*) /home/tara/.local/bin/change-cursor.sh ;;
-    *"Selector de Modos del Sistema"*|*"modos"*|*"bateria"*|*"rendimiento"*|*"gamer"*) /home/tara/.local/bin/set-system-mode.sh ;;
-    *"Bloquear pantalla"*|*"hyprlock"*) /home/tara/.local/bin/hyprlock-launch.sh ;;
-    *"Lanzador rápido SSH"*)        /home/tara/.local/bin/ssh-launcher.sh & ;;
-    *"Activar / Desactivar VPN"*)   /usr/local/bin/toggle-vpn.sh ;;
-    *"Conexión VPN + RDP"*|*"rdp"*|*"windows"*) kitty --class rdp-console --title "RDP Console" -e /usr/local/bin/toggle-vpn-rdp.sh & ;;
-    *"Abrir gestor de archivos"*)   thunar & ;;
-    *"Abrir navegador Firefox"*)    firefox & ;;
-    *"Abrir Discord"*)              discord & ;;
-    *"Abrir Spotify"*)              spotify & ;;
-    *"Abrir Obsidian"*)             obsidian & ;;
-    *"Abrir Telegram"*)             telegram-desktop & ;;
-    *"Gestor de contraseñas"*|*"KeePassXC"*) keepassxc & ;;
-    *"Abrir WhatsApp"*)             wasistlos & ;;
-    *"Nota rápida"*)                /home/tara/.local/bin/nota-rapida.sh ;;
-    *"Abrir agenda y gestor"*|*"calendario"*|*"cal"*) /home/tara/.local/bin/calendario.sh ;;
-    *"Abrir plataforma de series"*|*"taratrack"*|*"series"*) /home/tara/.local/bin/taratrack-app.sh ;;
-    *"Gestor multicuenta OpenAI"*|*"codex-acc"*|*"codex-auth"*) /home/tara/.local/bin/codex-acc --rofi ;;
-    *"xampp-start"*)                /home/tara/.local/bin/xampp-start ;;
-    *"xampp-stop"*)                 /home/tara/.local/bin/xampp-stop ;;
-    *"xampp-gui"*)                  /home/tara/.local/bin/xampp-gui ;;
-    *"Mantenimiento"*|*"limpiar"*)  kitty -e /home/tara/.local/bin/limpieza-tararch.sh & ;;
-    *"Abrir selector Spotlight de redes"*|*"wifi"*) /home/tara/.local/bin/wifi-menu.sh ;;
-    *"nobloqueo"*)                  /home/tara/.local/bin/nobloqueo ;;
-    *"modo-gamer"*)                 /home/tara/.local/bin/modo-gamer ;;
-    *"red-casa"*)                   /home/tara/.local/bin/red-casa ;;
-    *"red-fuera"*)                  /home/tara/.local/bin/red-fuera ;;
-    *"red-auto"*)                   /home/tara/.local/bin/red-auto ;;
-    *"Selector de diccionarios SecLists"*|*"seclists"*) /home/tara/.local/bin/seclists ;;
-    *"Modo zen"*) /home/tara/.local/bin/zen-mode ;;
-    *"Buscar texto en el vault"*|*"buscar-vault"*) /home/tara/.local/bin/buscar-vault ;;
-    *"Lanzador de repos git"*|*"repos"*) /home/tara/.local/bin/repos ;;
-    *"Salud de la batería"*|*"battery-health"*) kitty -e bash -c "battery-health; echo; read -n1 -r -p 'Pulsa una tecla...'" & ;;
-    *"Chuletas de comandos"*|*"cheat "*) /home/tara/.local/bin/cheat ;;
-    *"Identificar un hash"*|*"identificar-hash"*) /home/tara/.local/bin/identificar-hash --rofi ;;
-    *"Selector de símbolos"*|*"simbolos"*) /home/tara/.local/bin/simbolos ;;
-    *"set-target -c"*)              /home/tara/.local/bin/set-target -c ;;
-    *"set-target"*)                 /home/tara/.local/bin/set-target --rofi ;;
-    *"y / yazi"*)                   kitty -e yazi & ;;
-    *"btop"*)                       kitty -e btop & ;;
-    *"cava"*)                       kitty -e cava & ;;
-    *"fastfetch"*)                  kitty -e bash -c "fastfetch-adaptive.sh; echo; read -n1 -r -p 'Pulsa una tecla para cerrar...'" & ;;
-    *"letras"*)                     kitty -e letras & ;;
-    *"Capturar región"*)            /home/tara/.local/bin/screenshot.sh ;;
-    *"Abrir historial del portapapeles"*) /home/tara/.local/bin/cliphist-menu.sh ;;
-    *"Vaciar y limpiar historial"*) cliphist wipe && notify-send "Portapapeles" "Historial vaciado" -u low & ;;
-    *"Recargar configuración de Hyprland"*) hyprctl reload && notify-send "Hyprland" "Configuración recargada" -u low & ;;
-    *"Compactar escritorios"*)      /home/tara/.local/bin/compact-workspaces.sh ;;
-    *"selector de fondos en coverflow"*) /home/tara/.local/bin/wallpaper-flow ;;
-    *"Alternar ventana flotante"*)  /home/tara/.local/bin/toggle-floating.sh ;;
-    *"Alternar división"*|*"togglesplit"*) hyprctl dispatch togglesplit ;;
-    *"Ver ventanas ocultas"*)       hyprctl dispatch togglespecialworkspace minimized ;;
-    *) exit 0 ;;
+    local B=$HOME/.local/bin
+    case "$1" in
+    "Super + Enter")            kitty & ;;
+    "Super + Space")            rofi -show drun -theme ~/.config/rofi/launcher.rasi & ;;
+    "Super + C")                $B/control-center.py & ;;
+    "Super + X")                $B/power-menu.sh ;;
+    "Super + E")                thunar & ;;
+    "Super + F")                firefox & ;;
+    "Super + O")                obsidian & ;;
+    "Super + K")                keepassxc & ;;
+    "Super + S")                spotify-launcher & ;;
+    "Super + D")                discord & ;;
+    "Super + T")                telegram-desktop & ;;
+    "Super + W")                wasistlos & ;;
+    "Super + P")                $B/nota-rapida.sh ;;
+    "cursor")                   cursor & ;;
+    "Super + Tab")              $B/tararch-dash & ;;
+    "Super + R")                $B/ssh-launcher.sh & ;;
+    "Super + V")                /usr/local/bin/toggle-vpn.sh ;;
+    "Fn + F10")                 kitty --class rdp-console --title "RDP Console" -e $B/toggle-vpn-rdp.sh & ;;
+    "Super + B"|"bluetooth")    $B/bluetooth-menu.sh ;;
+    "Super + L")                $B/seclists ;;
+    "Super + H")                $B/identificar-hash --rofi ;;
+    "Super + Shift + O"|"buscar-vault [texto]") $B/buscar-vault ;;
+    "Super + Shift + G"|"repos") $B/repos ;;
+    "Super + Alt + P"|"modos / bateria / gamer")  $B/set-system-mode.sh ;;
+    "Super + Alt + C"|"cambiar-cursor / raton") $B/change-cursor.sh ;;
+    "Super + Alt + L")          $B/hyprlock-launch.sh ;;
+    "set-target <ip> [nombre]") $B/set-target --rofi ;;
+    "set-target -c")            $B/set-target -c ;;
+    "seclists [texto] / -p")    $B/seclists ;;
+    "identificar-hash <hash>")  $B/identificar-hash --rofi ;;
+    "cheat [nombre] / -e / -l")           $B/cheat ;;
+    "simbolos")                 $B/simbolos ;;
+    "red-auto")                 $B/red-auto ;;
+    "red-casa")                 $B/red-casa ;;
+    "red-fuera")                $B/red-fuera ;;
+    "modo-gamer")               $B/modo-gamer ;;
+    "nobloqueo")                $B/nobloqueo ;;
+    "wifi")                     $B/wifi-menu.sh ;;
+    "fondos / wallpaper"|"Super + Izq / Der") $B/wallpaper-flow ;;
+    "Super + Alt + W")          $B/wallpaper-picker.sh ;;
+    "calendario / cal")               $B/calendario.sh ;;
+    "taratrack / series")                $B/taratrack-app.sh ;;
+    "letras")                   kitty -e letras & ;;
+    "battery-health / --log")           kitty -e bash -c "battery-health; echo; read -n1 -r -p 'Pulsa una tecla...'" & ;;
+    "limpiar")                  kitty -e $B/limpieza-tararch.sh & ;;
+    "codex-acc / codex-auth")                $B/codex-acc --rofi ;;
+    "xampp-start")              $B/xampp-start ;;
+    "xampp-stop")               $B/xampp-stop ;;
+    "xampp-gui")                $B/xampp-gui ;;
+    "y / yazi")                 kitty -e yazi & ;;
+    "btop")                     kitty -e btop & ;;
+    "cava")                     kitty -e cava & ;;
+    "fastfetch")                kitty -e bash -c "fastfetch-adaptive.sh; echo; read -n1 -r -p 'Pulsa una tecla para cerrar...'" & ;;
+    "Super + G"|"Super + Shift + Space")                $B/toggle-floating.sh ;;
+    "Super + J")                hyprctl dispatch layoutmsg togglesplit ;;
+    "Super + Z")                $B/zen-mode ;;
+    "Super + N")                hyprctl dispatch togglespecialworkspace minimized ;;
+    "Super + Shift + R")        hyprctl reload && notify-send "Hyprland" "Configuración recargada" -u low & ;;
+    "Super + Shift + C")        $B/compact-workspaces.sh ;;
+    "Super + Shift + S"|"Imp Pant")        $B/screenshot.sh ;;
+    "Super + Shift + V")        cliphist list | rofi -dmenu -p "󰅍 " -theme ~/.config/rofi/clipboard.rasi | cliphist decode | wl-copy ;;
+    "Super + Ctrl + V")         cliphist wipe && notify-send "Portapapeles" "Historial vaciado" -u low & ;;
+    *) return 0 ;;
     esac
 }

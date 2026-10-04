@@ -1,4 +1,9 @@
-/* Swappy theme — paleta TarArch warm */
+/* Swappy theme — paleta TarArch warm. Afecta a todo GTK3 (ubicación global
+   ~/.config/gtk-3.0/gtk.css), no solo a Swappy pese al comentario original. */
+
+* {
+  font-family: "Inter", "Adwaita Sans", sans-serif;
+}
 
 /* Ventana principal */
 window,
@@ -32,7 +37,7 @@ button,
 button:backdrop {
   background-color: #2d2d2d;
   background-image: none;
-  border: 1px solid #4e5173;
+  border: 1px solid #3a3a3a;
   border-radius: 4px;
   color: #c9c9c9;
   box-shadow: none;
@@ -64,7 +69,7 @@ headerbar button:backdrop,
 .titlebar button:backdrop {
   background-color: #2d2d2d;
   background-image: none;
-  border: 1px solid #4e5173;
+  border: 1px solid #3a3a3a;
   color: #c9c9c9;
   box-shadow: none;
   -gtk-icon-shadow: none;
@@ -102,7 +107,7 @@ toolbar button:hover,
 .toolbar button:hover {
   background-color: #2d2d2d;
   background-image: none;
-  border-color: #787c99;
+  border-color: #6e6e6e;
 }
 
 toolbar button:checked,
@@ -116,7 +121,7 @@ toolbar button:checked,
 /* Entradas de texto */
 entry {
   background-color: #1a1a1a;
-  border: 1px solid #4e5173;
+  border: 1px solid #3a3a3a;
   border-radius: 4px;
   color: #c9c9c9;
   caret-color: #ff9e64;
@@ -130,7 +135,7 @@ entry:focus {
 /* Spinbutton (tamaño de pincel/texto) */
 spinbutton {
   background-color: #1a1a1a;
-  border: 1px solid #4e5173;
+  border: 1px solid #3a3a3a;
   color: #c9c9c9;
 }
 
@@ -147,14 +152,14 @@ scrollbar {
 }
 
 scrollbar slider {
-  background-color: #4e5173;
+  background-color: #3a3a3a;
   border-radius: 4px;
   min-width: 6px;
   min-height: 6px;
 }
 
 scrollbar slider:hover {
-  background-color: #787c99;
+  background-color: #6e6e6e;
 }
 
 /* Menús desplegables */
@@ -182,6 +187,6 @@ popover,
 /* Combobox */
 combobox button {
   background-color: #1a1a1a;
-  border: 1px solid #4e5173;
+  border: 1px solid #3a3a3a;
   color: #c9c9c9;
 }

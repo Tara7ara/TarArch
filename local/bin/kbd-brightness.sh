@@ -6,7 +6,7 @@ MAX=$(cat "/sys/class/leds/asus::kbd_backlight/max_brightness")
 STATE="/var/lib/asus-kbd-led/brightness"
 current=$(cat "$LEDS")
 
-/home/tara/.local/bin/ensure-asusd-masked.sh
+$HOME/.local/bin/ensure-asusd-masked.sh
 
 case "$1" in
     up)   new=$(( current + 1 )); [ "$new" -gt "$MAX" ] && new=$MAX ;;

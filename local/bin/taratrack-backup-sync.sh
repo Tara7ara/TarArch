@@ -2,7 +2,7 @@
 # Copia el backup diario de TaraTrack del servidor al NAS y deja los 7 últimos.
 set -euo pipefail
 
-DEST="/home/tara/.mounts/TaraNAS/Taratara/TaraTrack/Backup"
+DEST="$HOME/.mounts/TaraNAS/Taratara/TaraTrack/Backup"
 KEEP=7
 STAMP=$(date +%F)
 

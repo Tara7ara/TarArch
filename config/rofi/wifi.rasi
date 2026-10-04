@@ -1,86 +1,82 @@
-/* WiFi */
+/* =============================================================================
+   ROFI WIFI Y MENÚS RÁPIDOS (brillo, volumen, audio, perfil) — PALETA TARARCH WARM DARK
+   Mismo estilo que keybindings.rasi: fondo opaco, buscador sin caja y la
+   selección con una barra naranja a la izquierda.
+   ============================================================================= */
 
 * {
-    font:             "JetBrainsMono Nerd Font 12";
+    font:             "Inter 11";
     background-color: transparent;
     text-color:       #c9c9c9;
 }
 
 window {
-    background-color: #0f0f0fef;
+    background-color: #0f0f0f;
     border:           1px;
-    border-color:     rgba(255, 255, 255, 0.10);
-    border-radius:    20px;
-    width:            600px;
-    padding:          16px;
+    border-color:     #2d2d2d;
+    border-radius:    12px;
+    width:            560px;
+    padding:          0;
     location:         center;
     anchor:           center;
 }
 
 mainbox {
-    background-color: transparent;
     children:         [inputbar, listview];
-    spacing:          12px;
+    spacing:          0;
 }
 
 inputbar {
-    background-color: rgba(255, 255, 255, 0.05);
-    border:           1px;
-    border-color:     rgba(255, 255, 255, 0.08);
-    border-radius:    14px;
-    padding:          10px 14px;
-    spacing:          10px;
+    padding:          16px 20px;
+    spacing:          12px;
+    border:           0 0 1px 0;
+    border-color:     #2d2d2d;
     children:         [prompt, entry];
 }
 
 prompt {
-    background-color: transparent;
-    text-color:       #ff9e64;
-    font:             "JetBrainsMono Nerd Font 14";
+    text-color:       #6e6e6e;
+    font:             "Inter 11";
     vertical-align:   0.5;
 }
 
 entry {
-    background-color: transparent;
     text-color:       #ffffff;
-    placeholder:      "Seleccionar red WiFi...";
-    placeholder-color: rgba(255, 255, 255, 0.25);
+    placeholder:      "Buscar";
+    placeholder-color: #6e6e6e;
     vertical-align:   0.5;
+    cursor-color:     #ff9e64;
 }
 
 listview {
-    background-color: transparent;
     columns:          1;
-    lines:            7;
+    lines:            8;
     scrollbar:        false;
-    spacing:          6px;
+    spacing:          0;
+    padding:          8px 8px 10px 8px;
     fixed-height:     false;
 }
 
 element {
-    background-color: rgba(255, 255, 255, 0.03);
-    border:           1px;
-    border-color:     rgba(255, 255, 255, 0.05);
-    border-radius:    12px;
-    padding:          10px 14px;
+    padding:          9px 12px;
+    border:           0 0 0 2px;
+    border-color:     transparent;
+    border-radius:    6px;
     cursor:           pointer;
 }
 
 element-text {
-    background-color: transparent;
     text-color:       inherit;
     vertical-align:   0.5;
-    cursor:           inherit;
-    font:             "JetBrainsMono Nerd Font 12";
 }
 
-element normal normal {
-    text-color: #c9c9c9;
+element normal normal,
+element alternate normal {
+    background-color: transparent;
 }
 
 element selected normal {
-    background-color: rgba(255, 158, 100, 0.16);
-    border:           1px;
+    background-color: #1c1a19;
     border-color:     #ff9e64;
     text-color:       #ffffff;
 }

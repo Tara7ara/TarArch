@@ -90,7 +90,7 @@ integral = 75
     def smooth_tick(self):
         if not self.running:
             return False
-        # Interpolación
+        # Interpolacion suave
         for i in range(self.num_bars):
             self.bar_values[i] += (self.target_values[i] - self.bar_values[i]) * 0.35
         self.queue_draw()
@@ -110,10 +110,10 @@ integral = 75
             x = i * (bar_width + bar_spacing)
             y = height - bar_h
 
-            # Degradado Warm Dark: Morado (#bb9af7) a Naranja Calido (#ff9e64)
+            # Naranja (#ff9e64) que se apaga hacia la base, sin mezclar colores
             pat = cairo.LinearGradient(x, height, x, y)
-            pat.add_color_stop_rgba(0.0, 0.73, 0.60, 0.97, 0.85)  # #bb9af7
-            pat.add_color_stop_rgba(1.0, 1.0, 0.62, 0.39, 1.0)   # #ff9e64
+            pat.add_color_stop_rgba(0.0, 1.0, 0.62, 0.39, 0.25)
+            pat.add_color_stop_rgba(1.0, 1.0, 0.62, 0.39, 1.0)
 
             cr.set_source(pat)
             # Dibujar rectangulo con esquinas redondeadas
@@ -169,7 +169,8 @@ class MediaCardWindow(Gtk.Window):
         Gtk.StyleContext.add_provider_for_screen(
             Gdk.Screen.get_default(),
             css_provider,
-            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
+            # Por encima de ~/.config/gtk-3.0/gtk.css, que estiliza todos los botones
+            Gtk.STYLE_PROVIDER_PRIORITY_USER + 1,
         )
 
         # Layout Principal
