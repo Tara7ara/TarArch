@@ -12,7 +12,7 @@ CHOICE=$(printf '<span color="#bb9af7">\U000f033e</span>\n<span color="#e0af68">
 
 case "$CHOICE" in
     *$'\U000f033e'*) /home/tara/.local/bin/hyprlock-launch.sh ;;
-    *$'\U000f0904'*) systemctl suspend ;;
+    *$'\U000f0904'*) systemctl suspend -i ;;
     *$'\U000f0709'*) systemctl reboot ;;
     *$'\U000f0425'*) systemctl poweroff ;;
 esac
