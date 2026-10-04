@@ -1,0 +1,271 @@
+#!/usr/bin/env python3
+# =============================================================================
+# wallpaper-flow — selector de fondos en coverflow (webview GTK + awww).
+#   Sustituto visual de wallpaper-picker.sh: en vez de la rejilla de rofi, un
+#   carrusel 3D infinito. Al elegir (clic en el central o Enter) aplica el fondo
+#   con awww, igual que el selector de antes, y cierra la ventana. Esc cierra.
+# =============================================================================
+import gi
+gi.require_version("Gtk", "3.0")
+gi.require_version("WebKit2", "4.1")
+from gi.repository import Gtk, WebKit2, GLib
+import os, html, subprocess, pathlib, hashlib, sys
+
+# Argumento opcional: next / prev / apply / close (lo mandan los Super+flecha).
+_CMD = sys.argv[1] if len(sys.argv) > 1 else None
+
+# Instancia única + canal: si ya hay un selector abierto, no abrir otro; en su lugar
+# le mandamos el comando por un FIFO para que navegue (así se mantiene Super pulsado).
+_LOCKDIR = os.environ.get("XDG_RUNTIME_DIR", "/tmp")
+_LOCK = os.path.join(_LOCKDIR, "wallpaper-flow.pid")
+_FIFO = os.path.join(_LOCKDIR, "wallpaper-flow.fifo")
+_alive = False
+try:
+    if os.path.exists(_LOCK):
+        with open(_LOCK) as _f:
+            _pid = int(_f.read().strip())
+        os.kill(_pid, 0)        # vive -> ya hay una ventana abierta
+        _alive = True
+except (ValueError, ProcessLookupError, PermissionError, OSError):
+    _alive = False
+if _alive:
+    # ventana ya abierta: mandarle el comando (o nada si solo se reabrió) y salir
+    if _CMD in ("next", "prev", "apply", "close"):
+        try:
+            _fd = os.open(_FIFO, os.O_WRONLY | os.O_NONBLOCK)
+            os.write(_fd, (_CMD + "\n").encode())
+            os.close(_fd)
+        except OSError:
+            pass
+    sys.exit(0)
+try:
+    with open(_LOCK, "w") as _f:
+        _f.write(str(os.getpid()))
+except OSError:
+    pass
+# FIFO limpio para esta instancia
+try:
+    if os.path.exists(_FIFO):
+        os.remove(_FIFO)
+    os.mkfifo(_FIFO)
+except OSError:
+    _FIFO = None
+
+WALL_DIR = os.path.expanduser("~/img/wallpapers")
+CACHE = os.path.expanduser("~/.cache/current_wallpaper")
+LOCK = os.path.expanduser("~/.cache/current_wallpaper_lock.png")
+THUMBS = os.path.expanduser("~/.cache/wallpaper-thumbs")
+EXTS = (".jpg", ".jpeg", ".png", ".webp")
+
+
+def thumb(path):
+    """Miniatura cacheada (640px de ancho) para que el coverflow no lagee.
+    Se regenera solo si falta o el original cambió. Si convert falla, usa el original."""
+    os.makedirs(THUMBS, exist_ok=True)
+    st = os.stat(path)
+    key = hashlib.md5(path.encode()).hexdigest()[:12] + f"-{int(st.st_mtime)}.jpg"
+    out = os.path.join(THUMBS, key)
+    if not os.path.exists(out):
+        r = subprocess.run(
+            ["convert", path + "[0]", "-resize", "640x", "-strip", "-quality", "82", out],
+            capture_output=True)
+        if r.returncode != 0 or not os.path.exists(out):
+            return path
+    return out
+
+GLib.set_prgname("wallpaper-flow")  # -> app_id en Wayland, para la regla de Hyprland
+
+walls = sorted(
+    str(p) for p in pathlib.Path(WALL_DIR).glob("*")
+    if p.suffix.lower() in EXTS and p.is_file()
+)
+if not walls:
+    subprocess.run(["notify-send", "Fondos", f"No hay imágenes en {WALL_DIR}"])
+    raise SystemExit(1)
+
+try:
+    actual = os.path.realpath(CACHE) if os.path.exists(CACHE) else ""
+    with open(CACHE) as f:
+        actual = f.read().strip()
+except OSError:
+    actual = ""
+start = next((i for i, w in enumerate(walls) if w == actual), len(walls) // 2)
+
+
+def slide(path):
+    name = html.escape(pathlib.Path(path).stem)
+    uri = "file://" + GLib.uri_escape_string(thumb(path), "/", False)  # miniatura, no el original
+    return (name, uri)
+
+
+items = [slide(w) for w in walls]
+cards = "".join(
+    f'<div class="cover" data-path="{html.escape(w)}">'
+    f'<div class="art" style="background-image:url(\'{uri}\')"></div>'
+    f'<div class="label">{name}</div></div>'
+    for (name, uri), w in zip(items, walls)
+)
+
+PAGE = """<!doctype html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:#0b0b0c;color:#f2efe9;overflow:hidden;
+  font-family:Inter,"Segoe UI",system-ui,sans-serif;user-select:none}
+.app{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.stage{position:relative;width:100%;height:62%;perspective:1500px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.track{position:relative;width:min(40vw,620px);height:min(25vw,388px);transform-style:preserve-3d}
+.cover{position:absolute;inset:0;border-radius:14px;overflow:hidden;cursor:pointer;background:#000;
+  border:1px solid rgba(255,255,255,.08);box-shadow:0 18px 40px rgba(0,0,0,.55);
+  transition:transform .5s cubic-bezier(.2,.7,.2,1),filter .5s,opacity .45s;will-change:transform}
+.art{position:absolute;inset:0;background-size:cover;background-position:center}
+.label{position:absolute;left:0;right:0;bottom:0;padding:26px 12px 9px;font-size:.82rem;
+  background:linear-gradient(transparent,rgba(0,0,0,.75));opacity:0;transition:opacity .4s}
+.cover.c .label{opacity:1}
+.cover.c{box-shadow:0 26px 60px rgba(0,0,0,.6),0 0 0 2px #ff9e64}
+.caption{text-align:center}
+.caption .n{font-size:1.05rem;font-weight:600}
+.caption .p{color:#8d8a84;font-size:.8rem}
+.hint{color:#6f6c67;font-size:.76rem}
+.arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:500;width:46px;height:46px;border-radius:50%;
+  display:grid;place-items:center;background:rgba(20,20,22,.7);color:#f2efe9;border:1px solid rgba(255,255,255,.08);
+  cursor:pointer;font-size:1.4rem;line-height:1}
+.arrow:hover{background:#1c1c20;border-color:#ff9e64}
+.arrow.prev{left:14px}.arrow.next{right:14px}
+@media(prefers-reduced-motion:reduce){.cover{transition:none}}
+</style></head><body><div class="app">
+<div class="stage">
+  <button class="arrow prev" data-go="-1">&lsaquo;</button>
+  <div class="track" id="track">__CARDS__</div>
+  <button class="arrow next" data-go="1">&rsaquo;</button>
+</div>
+<div class="caption"><div class="n" id="name"></div><div class="p" id="pos"></div></div>
+</div><script>
+const covers=[...document.querySelectorAll('.cover')];
+const N=covers.length;let cur=__START__;const VIS=3;
+const nameEl=document.getElementById('name'),posEl=document.getElementById('pos');
+function ring(i){let o=i-cur;if(o>N/2)o-=N;if(o<-N/2)o+=N;return o;}
+function render(){
+  covers.forEach((el,i)=>{
+    const o=ring(i),a=Math.abs(o),s=Math.sign(o);
+    // Si una portada "da la vuelta" (salto de wrap) o entra/sale de rango, se recoloca
+    // SIN animar, para que no cruce por encima de las demas.
+    const prev=el._o;
+    const jump=(prev===undefined)||Math.abs(o-prev)>1||(Math.abs(prev)>VIS)!==(a>VIS);
+    if(jump)el.style.transition='none';
+    if(a>VIS){el.style.opacity=0;el.style.pointerEvents='none';
+      el.style.transform=`translateX(${s*480}px) rotateY(${-s*55}deg) scale(.5)`;}
+    else{el.style.opacity=1;el.style.pointerEvents='auto';
+      const x=s*(a===0?0:74+(a-1)*46),ry=o===0?0:(-s*48),sc=1-a*.12,z=o===0?0:-90-(a-1)*40;
+      el.style.transform=`translateX(${x}%) translateZ(${z}px) rotateY(${ry}deg) scale(${sc})`;
+      el.style.filter=o===0?'brightness(1)':'brightness(.5)';}
+    el.style.zIndex=100-a;el.classList.toggle('c',o===0);
+    if(jump){void el.offsetWidth;el.style.transition='';}  // reflow y restaura la animacion
+    el._o=o;
+  });
+  nameEl.textContent=covers[cur].querySelector('.label').textContent;
+  posEl.textContent=(cur+1)+' / '+N;
+}
+function go(i){cur=((i%N)+N)%N;render();}
+function step(d){go(cur+d);}
+function apply(){try{window.webkit.messageHandlers.bridge.postMessage(covers[cur].dataset.path);}catch(e){}}
+covers.forEach((el,i)=>el.addEventListener('click',()=>{i===cur?apply():go(i);}));
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>step(+b.dataset.go)));
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft'){step(-1);e.preventDefault();}
+  else if(e.key==='ArrowRight'){step(1);e.preventDefault();}
+  else if(e.key==='Enter'){apply();}
+  else if(e.key==='Escape'){try{window.webkit.messageHandlers.bridge.postMessage('::close');}catch(e){}}
+});
+let wl=0;addEventListener('wheel',e=>{const n=Date.now();if(n-wl<240)return;wl=n;
+  step((e.deltaX||e.deltaY)>0?1:-1);e.preventDefault();},{passive:false});
+render();
+</script></body></html>"""
+
+PAGE = PAGE.replace("__CARDS__", cards).replace("__START__", str(start))
+
+
+def apply_wallpaper(path):
+    if subprocess.run(["pgrep", "-x", "awww-daemon"], capture_output=True).returncode != 0:
+        subprocess.Popen(["awww-daemon"])
+        import time
+        time.sleep(0.3)
+    subprocess.run(["awww", "img", path, "--transition-type", "fade",
+                    "--transition-duration", "0.5", "--transition-fps", "144",
+                    "--filter", "Lanczos3"])
+    try:
+        with open(CACHE, "w") as f:
+            f.write(path)
+        if os.path.islink(LOCK) or os.path.exists(LOCK):
+            os.remove(LOCK)
+        os.symlink(path, LOCK)
+    except OSError:
+        pass
+    subprocess.run(["notify-send", "Fondo de pantalla",
+                    f"Aplicado: {pathlib.Path(path).stem}", "-u", "low"])
+
+
+def on_message(manager, result):
+    try:
+        val = result.get_js_value().to_string()
+    except Exception:
+        val = result.to_string()
+    if val == "::close":
+        Gtk.main_quit()
+        return
+    apply_wallpaper(val)
+    Gtk.main_quit()
+
+
+win = Gtk.Window()
+win.set_title("Fondos")
+win.set_default_size(1920, 520)
+win.set_position(Gtk.WindowPosition.CENTER)
+win.connect("destroy", Gtk.main_quit)
+
+ucm = WebKit2.UserContentManager()
+ucm.register_script_message_handler("bridge")
+ucm.connect("script-message-received::bridge", on_message)
+
+view = WebKit2.WebView.new_with_user_content_manager(ucm)
+s = view.get_settings()
+s.set_property("allow-file-access-from-file-urls", True)
+view.load_html(PAGE, "file://" + WALL_DIR + "/")
+win.add(view)
+
+# Escuchar el FIFO: los Super+flecha (con la ventana ya abierta) mandan next/prev aquí.
+_JS = {"next": "step(1)", "prev": "step(-1)", "apply": "apply()", "close": "::close"}
+
+
+def _on_fifo(channel, condition):
+    try:
+        data = os.read(_fifo_fd, 256).decode(errors="ignore")
+    except OSError:
+        return True
+    for line in data.split():
+        if line == "close":
+            Gtk.main_quit()
+        elif line in _JS:
+            view.evaluate_javascript(_JS[line], -1, None, None, None, None, None)
+    return True
+
+
+_fifo_fd = None
+if _FIFO:
+    try:
+        # O_RDWR: la propia ventana es escritor, así el FIFO nunca da EOF
+        _fifo_fd = os.open(_FIFO, os.O_RDWR | os.O_NONBLOCK)
+        _ch = GLib.IOChannel.unix_new(_fifo_fd)
+        _ch.set_encoding(None)
+        _ch.set_flags(GLib.IOFlags.NONBLOCK)
+        GLib.io_add_watch(_ch, GLib.PRIORITY_DEFAULT, GLib.IOCondition.IN, _on_fifo)
+    except Exception:
+        _fifo_fd = None
+
+win.show_all()
+Gtk.main()
+
+for _p in (_LOCK, _FIFO):
+    try:
+        if _p:
+            os.remove(_p)
+    except OSError:
+        pass

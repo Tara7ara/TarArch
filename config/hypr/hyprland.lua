@@ -134,6 +134,16 @@ hl.window_rule({
     move = "100%-500 100%-290",
 })
 
+-- Selector de fondos en coverflow (webview GTK): flotante y centrado.
+hl.window_rule({
+    match = {
+        class = "^(wallpaper-flow)$",
+    },
+    float = true,
+    size = "1920 520",
+    center = true,
+})
+
 -- Input
 
 hl.config({
@@ -444,8 +454,8 @@ hl.define_submap("rdp", function()
 end)
 
 -- Fondos de pantalla
-hl.bind(mainMod .. " + right", hl.dsp.exec_cmd("/home/tara/.local/bin/wallpaper-cycle.sh next"))
-hl.bind(mainMod .. " + left", hl.dsp.exec_cmd("/home/tara/.local/bin/wallpaper-cycle.sh prev"))
+hl.bind(mainMod .. " + right", hl.dsp.exec_cmd("/home/tara/.local/bin/wallpaper-flow next"))
+hl.bind(mainMod .. " + left", hl.dsp.exec_cmd("/home/tara/.local/bin/wallpaper-flow prev"))
 
 -- Apps rápidas
 hl.bind(mainMod .. " + F", hl.dsp.exec_cmd("firefox"))

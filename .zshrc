@@ -61,8 +61,8 @@ alias taranas='cd /home/tara/.mounts/TaraNAS'
 alias bluetooth='bluetooth-menu.sh'
 alias calendario='calendario.sh'
 alias cal='calendario.sh'
-alias fondos='wallpaper-picker.sh'
-alias wallpaper='wallpaper-picker.sh'
+alias fondos='wallpaper-flow'
+alias wallpaper='wallpaper-flow'
 
 # TaraScan contra el laboratorio Docker local (no hay que escribir el CIDR a mano)
 alias tarascan-lab='tarascan --net 172.30.0.0/24'

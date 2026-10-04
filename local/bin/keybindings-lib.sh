@@ -14,7 +14,7 @@ KEYBINDINGS_LIST=(
 "Super + A                      Guía interactiva de Atajos y Comandos (CheatSheet)"
 "Super + B                      Gestor rápido de Bluetooth (Razer, iPhone...)"
 "Super + W                      Abrir WhatsApp (Wasistlos)"
-"Super + Alt + W                Selector visual de fondos con miniaturas (Rofi)"
+"Super + Alt + W                Selector de fondos clásico (rofi, respaldo)"
 "Super + Alt + C                Selector de tema de ratón / cursor (Ice, Classic, Amber)"
 "Super + Alt + P                Selector de Modos del Sistema (Uni 60Hz Silent, Normal, 144Hz Gamer)"
 "Super + Alt + L                Bloquear pantalla con fondo desenfocado (Hyprlock)"
@@ -115,8 +115,7 @@ KEYBINDINGS_LIST=(
 "Alt + Shift + [1 - 9]          Mover ventana activa al escritorio 1 - 9"
 "Alt + Flecha Izq / Der         Cambiar entre escritorios (slidefade 15%)"
 "Alt + Tab / Alt + Shift + Tab  Alternar entre ventanas recientes"
-"Super + Flecha Derecha         Siguiente fondo de pantalla (144 FPS)"
-"Super + Flecha Izquierda       Anterior fondo de pantalla (144 FPS)"
+"Super + Flecha Der/Izq        Abrir selector de fondos en coverflow"
 ""
 "=== AUDIO, BRILLO Y TECLADO ROG (SWAYOSD) ==="
 "Fn + Volumen Arr/Ab            Subir / Bajar volumen con OSD flotante"
@@ -136,7 +135,7 @@ dispatch_keybinding() {
     *"Centro de Control"*)          /home/tara/.local/bin/control-center.py & ;;
     *"Menú de Apagado"*)            /home/tara/.local/bin/power-menu.sh ;;
     *"Gestor rápido de Bluetooth"*|*"bluetooth"*) /home/tara/.local/bin/bluetooth-menu.sh ;;
-    *"Selector visual de fondos"*|*"wallpaper"*|*"fondos"*) /home/tara/.local/bin/wallpaper-picker.sh ;;
+    *"Selector visual de fondos"*|*"wallpaper"*|*"fondos"*) /home/tara/.local/bin/wallpaper-flow ;;
     *"Abrir Cursor"*|*"cursor"*)    cursor & ;;
     *"Selector de tema de ratón"*|*"raton"*|*"cambiar-cursor"*|*"cambiar-curso"*) /home/tara/.local/bin/change-cursor.sh ;;
     *"Selector de Modos del Sistema"*|*"modos"*|*"bateria"*|*"rendimiento"*|*"gamer"*) /home/tara/.local/bin/set-system-mode.sh ;;
@@ -186,8 +185,7 @@ dispatch_keybinding() {
     *"Vaciar y limpiar historial"*) cliphist wipe && notify-send "Portapapeles" "Historial vaciado" -u low & ;;
     *"Recargar configuración de Hyprland"*) hyprctl reload && notify-send "Hyprland" "Configuración recargada" -u low & ;;
     *"Compactar escritorios"*)      /home/tara/.local/bin/compact-workspaces.sh ;;
-    *"Siguiente fondo"*)            /home/tara/.local/bin/wallpaper-cycle.sh next ;;
-    *"Anterior fondo"*)             /home/tara/.local/bin/wallpaper-cycle.sh prev ;;
+    *"selector de fondos en coverflow"*) /home/tara/.local/bin/wallpaper-flow ;;
     *"Alternar ventana flotante"*)  /home/tara/.local/bin/toggle-floating.sh ;;
     *"Alternar división"*|*"togglesplit"*) hyprctl dispatch togglesplit ;;
     *"Ver ventanas ocultas"*)       hyprctl dispatch togglespecialworkspace minimized ;;
