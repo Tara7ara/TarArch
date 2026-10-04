@@ -1,0 +1,23 @@
+#!/bin/bash
+# =============================================================================
+# zen-mode — alterna un modo sin distracciones (Super+Z)
+#   Quita huecos y bordes y esconde Waybar; al repetir, lo restaura todo.
+# En Hyprland 0.56 `hyprctl keyword` no funciona: hay que usar `hyprctl eval` + Lua
+# (ver apuntes). Waybar se oculta/enseña con SIGUSR1.
+# =============================================================================
+
+FLAG="/run/user/$(id -u)/zen-mode"
+ev() { hyprctl eval "$1" >/dev/null 2>&1; }
+
+if [ -f "$FLAG" ]; then
+    # Salir del zen: restaurar los valores de hyprland.lua
+    ev 'hl.config({ general = { gaps_in = 5, gaps_out = 10 } })'
+    pkill -SIGUSR1 waybar
+    rm -f "$FLAG"
+    notify-send "󰂠 Zen desactivado" -u low
+else
+    ev 'hl.config({ general = { gaps_in = 0, gaps_out = 0 } })'
+    pkill -SIGUSR1 waybar
+    touch "$FLAG"
+    notify-send "󰌾 Modo zen" "Sin barra ni huecos · Super+Z para volver" -u low
+fi

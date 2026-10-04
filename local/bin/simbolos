@@ -1,0 +1,53 @@
+#!/bin/bash
+# =============================================================================
+# simbolos — selector de símbolos técnicos en rofi; copia el elegido.
+#   Para informes y apuntes: flechas, marcas, comparadores, unidades...
+# =============================================================================
+THEME="$HOME/.config/rofi/seclists.rasi"
+
+SIMBOLOS=(
+"→  flecha derecha"
+"←  flecha izquierda"
+"↑  flecha arriba"
+"↓  flecha abajo"
+"⇒  implica"
+"↔  bidireccional"
+"✓  correcto / hecho"
+"✗  incorrecto / fallo"
+"●  relleno"
+"○  vacío"
+"★  estrella"
+"·  punto medio"
+"…  puntos suspensivos"
+"—  raya (em dash)"
+"≈  aproximadamente"
+"≤  menor o igual"
+"≥  mayor o igual"
+"≠  distinto"
+"±  más menos"
+"×  por"
+"÷  entre"
+"°  grados"
+"µ  micro"
+"Ω  ohmio"
+"∞  infinito"
+"∴  por tanto"
+"✦  rombo (puntuar)"
+"⚠  aviso"
+"🔒  candado cerrado"
+"🔑  llave"
+"€  euro"
+"©  copyright"
+"®  registrado"
+"™  marca"
+"§  sección"
+"¶  párrafo"
+)
+
+elegido=$(printf "%s\n" "${SIMBOLOS[@]}" | rofi -dmenu -i -p "󰓼 Símbolo" \
+    -mesg "Elige y se copia al portapapeles" -theme "$THEME")
+[ -z "$elegido" ] && exit 0
+
+simbolo="${elegido%% *}"
+printf "%s" "$simbolo" | wl-copy
+notify-send "󰓼 Copiado" "$elegido" -u low

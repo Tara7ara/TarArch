@@ -1,0 +1,105 @@
+#!/usr/bin/env python3
+# =============================================================================
+# identificar-hash — adivina el tipo de un hash y da el modo de hashcat y john.
+#   identificar-hash '<hash>'    identifica ese hash
+#   echo '<hash>' | identificar-hash
+#   identificar-hash --rofi      pide el hash con rofi (Super+H)
+# Sin dependencias: solo patrones de longitud/formato. Pensado para el eJPT, no es
+# exhaustivo; cuando hay varios candidatos los ordena del más probable al menos.
+# =============================================================================
+import re
+import sys
+import subprocess
+
+# (nombre, modo hashcat -m, formato john, test) ordenados por prioridad
+PREFIJO = [
+    ("bcrypt",            "3200", "bcrypt",      re.compile(r"^\$2[aby]\$\d\d\$[./A-Za-z0-9]{53}$")),
+    ("sha512crypt",       "1800", "sha512crypt", re.compile(r"^\$6\$")),
+    ("sha256crypt",       "7400", "sha256crypt", re.compile(r"^\$5\$")),
+    ("md5crypt",           "500", "md5crypt",    re.compile(r"^\$1\$")),
+    ("Apache apr1",       "1600", "md5crypt",    re.compile(r"^\$apr1\$")),
+    ("WordPress/phpass",  "400",  "phpass",      re.compile(r"^\$P\$|^\$H\$")),
+    ("Drupal 7",          "7900", "drupal7",     re.compile(r"^\$S\$")),
+    ("Django PBKDF2-SHA256", "10000", "django",  re.compile(r"^pbkdf2_sha256\$")),
+    ("Cisco IOS type 8",  "9200", "cisco8",      re.compile(r"^\$8\$")),
+    ("Cisco IOS type 9",  "9300", "cisco9",      re.compile(r"^\$9\$")),
+    ("Cisco ASA/PIX MD5", "2400", "pix-md5",     re.compile(r"^\$cisco")),
+    ("MySQL 4.1+/5",      "300",  "mysql-sha1",  re.compile(r"^\*[0-9A-Fa-f]{40}$")),
+    ("Juniper $9$",       None,   None,          re.compile(r"^\$9\$[./A-Za-z0-9]+$")),
+]
+
+# Hashes "crudos" (solo hex) desambiguados por longitud. Varios comparten longitud:
+# se listan todos los candidatos razonables para el eJPT.
+POR_LONGITUD = {
+    32: [("MD5", "0", "raw-md5"), ("NTLM", "1000", "nt"),
+         ("LM (mitad)", "3000", "lm"), ("MD4", "900", "raw-md4")],
+    40: [("SHA1", "100", "raw-sha1"), ("MySQL 3.x", "200", "mysql")],
+    56: [("SHA224", "1300", "raw-sha224")],
+    64: [("SHA256", "1400", "raw-sha256"), ("SHA3-256", "17400", "raw-sha3-256")],
+    96: [("SHA384", "10800", "raw-sha384")],
+    128:[("SHA512", "1700", "raw-sha512"), ("Whirlpool", "6100", "whirlpool")],
+}
+
+LM_NTLM = re.compile(r"^[0-9A-Fa-f]{32}:[0-9A-Fa-f]{32}$")
+
+
+def candidatos(h):
+    h = h.strip()
+    if not h:
+        return []
+    if LM_NTLM.match(h):
+        return [("LM:NTLM (pwdump)", "respuesta: usa -m 1000 para la parte NTLM", "nt")]
+    for nombre, m, j, rx in PREFIJO:
+        if rx.match(h):
+            return [(nombre, m, j)]
+    if re.fullmatch(r"[0-9A-Fa-f]+", h) and len(h) in POR_LONGITUD:
+        return POR_LONGITUD[len(h)]
+    return []
+
+
+def informe(h):
+    cands = candidatos(h)
+    if not cands:
+        n = len(h.strip())
+        return f"No reconocido (longitud {n}). ¿Está completo o lleva sal/formato aparte?"
+    lineas = [f"Hash: {h.strip()}", ""]
+    for nombre, m, j in cands:
+        hc = f"hashcat -m {m}" if m and m.isdigit() else (m or "—")
+        jn = f"--format={j}" if j else "—"
+        lineas.append(f"  {nombre}")
+        lineas.append(f"      hashcat: {hc}")
+        lineas.append(f"      john:    {jn}")
+    if len(cands) > 1:
+        lineas.append("")
+        lineas.append("  (varios tipos comparten este formato; el contexto decide)")
+    return "\n".join(lineas)
+
+
+def main():
+    args = sys.argv[1:]
+    if args and args[0] == "--rofi":
+        try:
+            h = subprocess.run(
+                ["rofi", "-dmenu", "-p", "󰌆 Hash", "-mesg", "Pega el hash a identificar",
+                 "-l", "0", "-theme", f"{__import__('os').path.expanduser('~')}/.config/rofi/seclists.rasi"],
+                input="", capture_output=True, text=True).stdout.strip()
+        except FileNotFoundError:
+            sys.exit("rofi no disponible")
+        if not h:
+            return
+        texto = informe(h)
+        subprocess.run(["notify-send", "󰌆 Hash identificado", texto.split("\n\n", 1)[-1][:400], "-u", "low"])
+        print(texto)
+    elif args:
+        print(informe(args[0]))
+    else:
+        data = sys.stdin.read().strip()
+        if not data:
+            sys.exit("uso: identificar-hash '<hash>'  |  echo hash | identificar-hash  |  identificar-hash --rofi")
+        for linea in data.splitlines():
+            print(informe(linea))
+            print()
+
+
+if __name__ == "__main__":
+    main()

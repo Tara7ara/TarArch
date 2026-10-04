@@ -1,0 +1,50 @@
+#!/bin/bash
+# =============================================================================
+# buscar-vault — busca texto en el vault de Obsidian y abre la nota elegida
+#   buscar-vault           pide el texto con rofi (Super+Shift+O)
+#   buscar-vault <texto>   busca directamente
+# Cada resultado muestra la nota, la línea y el trozo donde aparece. Enter la abre
+# en Obsidian.
+# =============================================================================
+
+VAULT="$HOME/.mounts/TaraNAS/Taratara/Apuntes"
+VAULT_NAME="Apuntes"
+THEME="$HOME/.config/rofi/seclists.rasi"
+MAX=300
+
+if ! mountpoint -q "$HOME/.mounts/TaraNAS" && [ ! -d "$VAULT" ]; then
+    notify-send "Buscar en el vault" "El NAS no está montado" -u normal
+    exit 1
+fi
+
+texto="$*"
+if [ -z "$texto" ]; then
+    texto=$(rofi -dmenu -p "󰍉 Vault" -mesg "Texto a buscar en las notas" -l 0 -theme "$THEME" < /dev/null)
+fi
+[ -z "$texto" ] && exit 0
+
+# fichero<TAB>línea<TAB>trozo
+resultados=$(cd "$VAULT" && rg --no-heading --line-number --ignore-case --fixed-strings \
+    --glob '*.md' --glob '!.obsidian/**' --glob '!.trash/**' --max-columns 200 \
+    --max-count 3 -- "$texto" . 2>/dev/null | head -n "$MAX" \
+    | sed -E 's|^\./||; s|^([^:]+):([0-9]+):[[:space:]]*|\1\t\2\t|')
+
+if [ -z "$resultados" ]; then
+    notify-send "󰍉 Vault" "Nada encontrado para «$texto»" -u low
+    exit 0
+fi
+
+total=$(printf "%s\n" "$resultados" | wc -l)
+filas=$(printf "%s\n" "$resultados" | awk -F'\t' '{
+    nota=$1; sub(/\.md$/, "", nota)
+    trozo=substr($3, 1, 110)
+    gsub(/&/, "\\&amp;", trozo); gsub(/</, "\\&lt;", trozo)
+    print nota "  ·  " $2 "  ·  " trozo }')
+
+idx=$(printf "%s\n" "$filas" | rofi -dmenu -i -format i -p "󰍉 $texto" \
+    -mesg "$total resultados (máx. 3 por nota)" -theme "$THEME")
+[ -z "$idx" ] && exit 0
+
+fichero=$(printf "%s\n" "$resultados" | sed -n "$((idx + 1))p" | cut -f1)
+ruta_url=$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1].removesuffix(".md")))' "$fichero")
+xdg-open "obsidian://open?vault=${VAULT_NAME}&file=${ruta_url}" >/dev/null 2>&1 &

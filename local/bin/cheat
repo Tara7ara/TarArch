@@ -1,0 +1,55 @@
+#!/bin/bash
+# =============================================================================
+# cheat — tus chuletas de comandos en Markdown (~/.local/share/cheats/*.md)
+#   cheat            elige una con rofi y la abre en una terminal
+#   cheat nmap       muestra esa chuleta directamente
+#   cheat -e nmap    la edita (la crea si no existe)
+#   cheat -l         lista las chuletas
+# Los ejemplos usan $T (set-target) y $(seclists -p). Edítalas a mano a tu gusto.
+# =============================================================================
+
+DIR="$HOME/.local/share/cheats"
+THEME="$HOME/.config/rofi/seclists.rasi"
+EDITOR="${EDITOR:-nvim}"
+mkdir -p "$DIR"
+
+mostrar() {
+    local f="$DIR/$1.md"
+    [ -f "$f" ] || { echo "No existe la chuleta «$1». cheat -e $1 para crearla."; return 1; }
+    if command -v bat >/dev/null; then
+        bat --language=md --style=grid --paging=auto "$f"
+    else
+        less "$f"
+    fi
+}
+
+case "$1" in
+    -l|--list)
+        ls "$DIR"/*.md 2>/dev/null | xargs -r -n1 basename | sed 's/\.md$//'
+        ;;
+    -e|--edit)
+        [ -z "$2" ] && { echo "uso: cheat -e <nombre>"; exit 1; }
+        "$EDITOR" "$DIR/$2.md"
+        ;;
+    "")
+        lista=$(ls "$DIR"/*.md 2>/dev/null | xargs -r -n1 basename | sed 's/\.md$//')
+        [ -z "$lista" ] && { echo "No hay chuletas. cheat -e <nombre> para crear una."; exit 0; }
+        if [ -t 1 ] && command -v fzf >/dev/null; then
+            # En la terminal: elegir con fzf (vista previa) y mostrar aquí mismo.
+            nombre=$(printf "%s\n" "$lista" | fzf --prompt "cheat> " \
+                --height=90% --layout=reverse --border --info=inline \
+                --preview "bat --color=always --language=md --style=plain $DIR/{}.md" \
+                --preview-window=right:62%:wrap)
+            [ -z "$nombre" ] && exit 0
+            mostrar "$nombre"
+        else
+            # Desde un atajo (sin terminal): rofi + ventana propia con --hold.
+            nombre=$(printf "%s\n" "$lista" | rofi -dmenu -i -p "󰘥 Cheat" -mesg "Tus chuletas de comandos" -theme "$THEME")
+            [ -z "$nombre" ] && exit 0
+            kitty --hold --title "cheat: $nombre" -e bat --language=md --style=grid --paging=never "$DIR/$nombre.md" &
+        fi
+        ;;
+    *)
+        mostrar "$1"
+        ;;
+esac

@@ -43,6 +43,7 @@ PAIRS=(
     "/etc/systemd/system/alc294-speaker-fix.service:$DOT/systemd-system/alc294-speaker-fix.service"
     "/etc/udev/rules.d/91-alc294-speaker-fix.rules:$DOT/udev-rules/91-alc294-speaker-fix.rules"
     "/etc/pacman.d/hooks/95-luks-header-backup.hook:$DOT/pacman-hooks/95-luks-header-backup.hook"
+    "/etc/pacman.d/hooks/99-paccache.hook:$DOT/pacman-hooks/99-paccache.hook"
     "/etc/systemd/system-sleep/asus-kbd-backlight:$DOT/systemd-sleep/asus-kbd-backlight"
     "/etc/asusd/aura_1866.ron:$DOT/asusd/aura_1866.ron"
     "$HOME/img/wallpapers:$DOT/wallpapers"

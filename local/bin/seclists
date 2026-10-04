@@ -1,0 +1,108 @@
+#!/bin/bash
+# =============================================================================
+# seclists — selector de diccionarios de SecLists
+#   seclists             lo elige con rofi y copia la ruta al portapapeles (Super+L)
+#   seclists -p          igual, pero imprime la ruta (para usarlo dentro de un comando:
+#                        gobuster dir -u http://$T -w $(seclists -p))
+#   seclists <texto>     lista por terminal las rutas que contienen <texto>
+#   seclists --reindex   regenera el índice (se hace solo si SecLists se actualiza)
+# Arriba salen los favoritos típicos del eJPT; debajo, todos los .txt con su tamaño.
+# =============================================================================
+
+BASE="/usr/share/seclists"
+INDEX="$HOME/.cache/seclists-index"
+THEME="$HOME/.config/rofi/seclists.rasi"
+
+# Favoritos: ruta relativa a $BASE · para qué sirve
+FAVORITOS=(
+"Discovery/Web-Content/common.txt|Directorios web (rápido)"
+"Discovery/Web-Content/raft-medium-directories.txt|Directorios web (medio)"
+"Discovery/Web-Content/DirBuster-2007_directory-list-2.3-medium.txt|Directorios web (grande)"
+"Discovery/Web-Content/raft-medium-files.txt|Ficheros web"
+"Discovery/Web-Content/burp-parameter-names.txt|Nombres de parámetros"
+"Discovery/Web-Content/CMS/wordpress.fuzz.txt|Rutas de WordPress"
+"Discovery/DNS/subdomains-top1million-5000.txt|Subdominios / vhosts (rápido)"
+"Discovery/DNS/subdomains-top1million-20000.txt|Subdominios / vhosts (medio)"
+"Usernames/top-usernames-shortlist.txt|Usuarios (corta)"
+"Usernames/Names/names.txt|Usuarios por nombre"
+"Usernames/xato-net-10-million-usernames.txt|Usuarios (enorme)"
+"Passwords/Common-Credentials/top-passwords-shortlist.txt|Contraseñas (corta)"
+"Passwords/Common-Credentials/10k-most-common.txt|Contraseñas (10k)"
+"Passwords/Leaked-Databases/rockyou.txt|rockyou"
+"Fuzzing/LFI/LFI-Jhaddix.txt|LFI"
+"Discovery/SNMP/common-snmp-community-strings.txt|Comunidades SNMP"
+)
+
+if [ ! -d "$BASE" ]; then
+    notify-send "SecLists" "No está instalado en $BASE" -u normal
+    echo "seclists: no existe $BASE" >&2
+    exit 1
+fi
+
+# 4.7k / 1.2M en vez de 4732 / 1203456
+humano() {
+    awk -v n="$1" 'BEGIN{
+        if (n>=1000000) printf "%.1fM", n/1000000;
+        else if (n>=1000) printf "%.1fk", n/1000;
+        else printf "%d", n }'
+}
+
+# Índice "líneas<TAB>ruta relativa" de todos los .txt. Contar las 6000 listas tarda
+# unos segundos, así que se guarda y solo se rehace si el paquete cambia.
+construir_indice() {
+    mkdir -p "$(dirname "$INDEX")"
+    (cd "$BASE" && find . -type f -iname "*.txt" -print0 \
+        | xargs -0 wc -l 2>/dev/null \
+        | awk '$2 != "total" { n=$1; $1=""; sub(/^ \.\//, ""); print n "\t" $0 }' \
+        | sort -t$'\t' -k2) > "$INDEX.tmp" && mv "$INDEX.tmp" "$INDEX"
+}
+
+if [ "$1" = "--reindex" ] || [ ! -s "$INDEX" ] || [ "$BASE" -nt "$INDEX" ]; then
+    [ "$1" = "--reindex" ] && echo "Regenerando índice..."
+    construir_indice
+    [ "$1" = "--reindex" ] && { echo "Hecho: $(wc -l < "$INDEX") diccionarios"; exit 0; }
+fi
+
+lineas_de() {
+    awk -F'\t' -v r="$1" '$2 == r { print $1; exit }' "$INDEX"
+}
+
+# Modo búsqueda por terminal
+if [ -n "$1" ] && [ "$1" != "-p" ]; then
+    grep -i -F -- "$1" "$INDEX" | while IFS=$'\t' read -r n ruta; do
+        printf "%8s  %s\n" "$(humano "$n")" "$BASE/$ruta"
+    done
+    exit 0
+fi
+
+# Menú: favoritos primero, luego todo. Se guarda la ruta de cada fila en el mismo
+# orden para traducir el índice que devuelve rofi.
+rutas=()
+filas=""
+for fav in "${FAVORITOS[@]}"; do
+    ruta="${fav%%|*}"; desc="${fav#*|}"
+    [ -f "$BASE/$ruta" ] || continue
+    n=$(lineas_de "$ruta")
+    rutas+=("$ruta")
+    filas+="★  ${desc}  ·  $(basename "$ruta")  ·  $(humano "${n:-0}")"$'\n'
+done
+mapfile -t -O "${#rutas[@]}" rutas < <(cut -f2 "$INDEX")
+filas+=$(awk -F'\t' '{
+    n=$1
+    if (n>=1000000) h=sprintf("%.1fM", n/1000000)
+    else if (n>=1000) h=sprintf("%.1fk", n/1000)
+    else h=n
+    print $2 "  ·  " h }' "$INDEX")
+
+idx=$(printf "%s" "$filas" | rofi -dmenu -i -format i -p "󰈞 SecLists" \
+    -mesg "★ favoritos del eJPT · escribe para buscar entre $(wc -l < "$INDEX") listas" \
+    -theme "$THEME")
+[ -z "$idx" ] && exit 0
+
+elegida="$BASE/${rutas[$idx]}"
+if [ "$1" = "-p" ]; then
+    echo "$elegida"
+else
+    printf "%s" "$elegida" | wl-copy
+    notify-send "󰈞 Ruta copiada" "$elegida" -u low
+fi

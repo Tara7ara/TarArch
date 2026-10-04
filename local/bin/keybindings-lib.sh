@@ -9,7 +9,7 @@ KEYBINDINGS_LIST=(
 "=== APLICACIONES Y HERRAMIENTAS PRINCIPALES ==="
 "Super + Enter                  Abrir Terminal Kitty (GPU, pestañas Powerline)"
 "Super + Space                  Lanzador de aplicaciones (Rofi Spotlight)"
-"Super + C                      Centro de Control (Toggles, Sliders, Notis, Agenda)"
+"Super + C                      Centro de Control (Toggles, Sliders, Notis, CalDAV)"
 "Super + X                      Menú de Apagado Cinemático (Bloquear, Suspender, Reiniciar, Apagar)"
 "Super + A                      Guía interactiva de Atajos y Comandos (CheatSheet)"
 "Super + B                      Gestor rápido de Bluetooth (Razer, iPhone...)"
@@ -19,6 +19,11 @@ KEYBINDINGS_LIST=(
 "Super + Alt + P                Selector de Modos del Sistema (Uni 60Hz Silent, Normal, 144Hz Gamer)"
 "Super + Alt + L                Bloquear pantalla con fondo desenfocado (Hyprlock)"
 "Super + R                      Lanzador rápido SSH (TaraNAS / Servidor)"
+"Super + L                      Selector de diccionarios SecLists (copia la ruta)"
+"Super + Z                      Modo zen (sin barra ni huecos, repetir para volver)"
+"Super + Shift + O              Buscar texto en el vault de Obsidian y abrir la nota"
+"Super + Shift + G              Lanzador de repos git (rama y cambios sin subir)"
+"Super + H                      Identificar un hash (tipo + modo hashcat/john)"
 "Super + V                      Activar / Desactivar VPN WireGuard (con DNS AdGuard)"
 "Fn + F10                       Conexión VPN + RDP a Windows 11 (Workspace 9)"
 "Super + E                      Abrir gestor de archivos (Thunar)"
@@ -32,7 +37,7 @@ KEYBINDINGS_LIST=(
 "cursor                         Abrir Cursor AI (Editor de código con Inteligencia Artificial)"
 ""
 "=== COMANDOS Y UTILIDADES DE CONSOLA ==="
-"calendario / cal               Abrir agenda y eventos del calendario (GNOME Calendar)"
+"calendario / cal               Abrir agenda y gestor de eventos CalDAV (GNOME Calendar)"
 "taratrack / series            Abrir plataforma de series y rankings ELO (tara.series)"
 "modos / bateria / gamer       Cambiar modo de energía (Uni 60Hz, Normal 144Hz, Gamer Turbo)"
 "cambiar-cursor / raton         Cambiar tema de cursor de ratón (Ice, Classic, Amber)"
@@ -46,11 +51,21 @@ KEYBINDINGS_LIST=(
 "fondos / wallpaper            Abrir galería visual de wallpapers con miniaturas"
 "nobloqueo                      Inhibir bloqueo automático y suspensión (Modo Cafeína)"
 "modo-gamer                    Activar modo juego (CPU 100%, sin blur/sombras)"
-"red-casa                       Perfil de red LAN Casa (DHCP + DNS AdGuard 192.168.1.10)"
+"red-casa                       Perfil de red LAN Casa (DHCP + DNS AdGuard 192.168.1.101)"
 "red-fuera                      Perfil de red LAN Fuera (DHCP y DNS automáticos)"
 "red-auto                       Perfil de red automático según el router (casa / fuera)"
 "set-target <ip> [nombre]       Fijar IP objetivo del lab (\$T en terminales, Waybar la alterna en rojo)"
 "set-target -c                  Borrar IP objetivo (o clic central en la IP de Waybar)"
+"seclists [texto] / -p          Diccionarios SecLists: rofi, búsqueda por terminal o ruta para \$(seclists -p)"
+"buscar-vault [texto]           Buscar en las notas del vault (rofi o terminal)"
+"repos                          Lanzador de repos git (rama, cambios, commits sin subir)"
+"battery-health / --log         Salud de la batería y su histórico semanal"
+"tarascan-lab                   TaraScan contra el laboratorio Docker local (172.30.0.0/24)"
+"nuevo-lab <nombre> [ip]        Esqueleto de máquina CTF (~/labs) + set-target + terminal"
+"cb                             Portapapeles Wayland: una_salida | cb copia, cb a secas pega"
+"cheat [nombre] / -e / -l       Chuletas de comandos propias (nmap, web, smb, shell, privesc)"
+"identificar-hash <hash>        Tipo de hash + modo de hashcat y john"
+"simbolos                       Selector de símbolos técnicos (→ ✓ ≈ ...) que copia"
 "Clic derecho IP Waybar         Copiar la IP que se ve en ese momento (tuya/tun0 u objetivo)"
 "y / yazi                       Explorador de archivos en Rust con preview GPU de fotos/vídeos"
 "btop                           Monitor de recursos del sistema en tiempo real (Warm Dark)"
@@ -138,7 +153,7 @@ dispatch_keybinding() {
     *"Gestor de contraseñas"*|*"KeePassXC"*) keepassxc & ;;
     *"Abrir WhatsApp"*)             wasistlos & ;;
     *"Nota rápida"*)                /home/tara/.local/bin/nota-rapida.sh ;;
-    *"Abrir agenda y eventos"*|*"calendario"*|*"cal"*) /home/tara/.local/bin/calendario.sh ;;
+    *"Abrir agenda y gestor"*|*"calendario"*|*"cal"*) /home/tara/.local/bin/calendario.sh ;;
     *"Abrir plataforma de series"*|*"taratrack"*|*"series"*) /home/tara/.local/bin/taratrack-app.sh ;;
     *"Gestor multicuenta OpenAI"*|*"codex-acc"*|*"codex-auth"*) /home/tara/.local/bin/codex-acc --rofi ;;
     *"xampp-start"*)                /home/tara/.local/bin/xampp-start ;;
@@ -151,6 +166,14 @@ dispatch_keybinding() {
     *"red-casa"*)                   /home/tara/.local/bin/red-casa ;;
     *"red-fuera"*)                  /home/tara/.local/bin/red-fuera ;;
     *"red-auto"*)                   /home/tara/.local/bin/red-auto ;;
+    *"Selector de diccionarios SecLists"*|*"seclists"*) /home/tara/.local/bin/seclists ;;
+    *"Modo zen"*) /home/tara/.local/bin/zen-mode ;;
+    *"Buscar texto en el vault"*|*"buscar-vault"*) /home/tara/.local/bin/buscar-vault ;;
+    *"Lanzador de repos git"*|*"repos"*) /home/tara/.local/bin/repos ;;
+    *"Salud de la batería"*|*"battery-health"*) kitty -e bash -c "battery-health; echo; read -n1 -r -p 'Pulsa una tecla...'" & ;;
+    *"Chuletas de comandos"*|*"cheat "*) /home/tara/.local/bin/cheat ;;
+    *"Identificar un hash"*|*"identificar-hash"*) /home/tara/.local/bin/identificar-hash --rofi ;;
+    *"Selector de símbolos"*|*"simbolos"*) /home/tara/.local/bin/simbolos ;;
     *"set-target -c"*)              /home/tara/.local/bin/set-target -c ;;
     *"set-target"*)                 /home/tara/.local/bin/set-target --rofi ;;
     *"y / yazi"*)                   kitty -e yazi & ;;

@@ -1,0 +1,44 @@
+#!/bin/bash
+# =============================================================================
+# repos — lanzador de repositorios git en rofi (Super+G)
+#   Lista los repos de ~ con su rama y si tienen cambios o commits sin subir.
+#   Enter abre una terminal Kitty en la carpeta elegida.
+#   repos -p   imprime la ruta elegida en vez de abrir la terminal.
+# =============================================================================
+
+THEME="$HOME/.config/rofi/seclists.rasi"
+# Carpetas donde buscar repos (maxdepth 2 desde ~), sin tocar el NAS ni cachés.
+BASES=("$HOME")
+
+mapfile -t repos < <(
+    find "${BASES[@]}" -maxdepth 3 -type d -name .git \
+        -not -path "*/.mounts/*" -not -path "*/.cache/*" -not -path "*/.local/share/*" \
+        2>/dev/null | sed 's|/.git$||' | sort -u
+)
+
+if [ "${#repos[@]}" -eq 0 ]; then
+    notify-send "Repos" "No se encontró ningún repositorio git en ~" -u low
+    exit 0
+fi
+
+filas=""
+for r in "${repos[@]}"; do
+    rama=$(git -C "$r" symbolic-ref --short HEAD 2>/dev/null || echo "?")
+    estado=""
+    [ -n "$(git -C "$r" status --porcelain 2>/dev/null)" ] && estado="●"   # cambios sin guardar
+    # commits locales sin subir al remoto
+    ahead=$(git -C "$r" rev-list --count '@{upstream}..HEAD' 2>/dev/null)
+    [ -n "$ahead" ] && [ "$ahead" != "0" ] && estado="$estado ↑$ahead"
+    filas+="$(basename "$r")  ·  $rama${estado:+  ·  $estado}"$'\n'
+done
+
+idx=$(printf "%s" "$filas" | rofi -dmenu -i -format i -p "󰊢 Repos" \
+    -mesg "● cambios sin guardar · ↑ commits sin subir" -theme "$THEME")
+[ -z "$idx" ] && exit 0
+
+elegido="${repos[$idx]}"
+if [ "$1" = "-p" ]; then
+    echo "$elegido"
+else
+    kitty --directory "$elegido" >/dev/null 2>&1 &
+fi

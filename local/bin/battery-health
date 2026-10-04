@@ -1,0 +1,48 @@
+#!/bin/bash
+# =============================================================================
+# battery-health — registra la salud de la batería y avisa si cae de golpe.
+#   battery-health          muestra el estado actual y lo apunta en el histórico
+#   battery-health --log    imprime todo el histórico
+#   battery-health --quiet   solo registra y avisa (lo usa el timer semanal)
+# Salud = energy_full / energy_full_design. Al principio puede pasar de 100 %
+# (la batería carga algo más que su diseño); lo que importa es la tendencia.
+# =============================================================================
+
+BAT="/sys/class/power_supply/BAT0"
+LOG="$HOME/.local/state/battery-health.log"
+CAIDA_AVISO=3   # puntos porcentuales de bajada entre dos registros que disparan aviso
+
+[ -d "$BAT" ] || { echo "battery-health: no hay BAT0" >&2; exit 1; }
+mkdir -p "$(dirname "$LOG")"
+
+full=$(cat "$BAT/energy_full" 2>/dev/null || cat "$BAT/charge_full")
+design=$(cat "$BAT/energy_full_design" 2>/dev/null || cat "$BAT/charge_full_design")
+ciclos=$(cat "$BAT/cycle_count" 2>/dev/null || echo "?")
+salud=$(awk -v f="$full" -v d="$design" 'BEGIN{ printf "%.1f", f/d*100 }')
+hoy=$(date +%Y-%m-%d)
+
+if [ "$1" = "--log" ]; then
+    [ -s "$LOG" ] && column -t -s$'\t' "$LOG" || echo "Sin histórico todavía."
+    exit 0
+fi
+
+# Comparar con el último registro (de otro día) antes de apuntar el de hoy
+anterior=$(awk -F'\t' 'END{print $2}' "$LOG" 2>/dev/null)
+ultimo_dia=$(awk -F'\t' 'END{print $1}' "$LOG" 2>/dev/null)
+if [ -n "$anterior" ] && [ "$ultimo_dia" != "$hoy" ]; then
+    caida=$(awk -v a="$anterior" -v b="$salud" 'BEGIN{ printf "%.1f", a-b }')
+    if awk -v c="$caida" -v u="$CAIDA_AVISO" 'BEGIN{exit !(c>=u)}'; then
+        notify-send "󰁼 Batería" "La salud bajó $caida puntos ($anterior% → $salud%)" -u normal
+    fi
+fi
+
+# Un registro por día como mucho
+if [ "$ultimo_dia" != "$hoy" ]; then
+    printf "%s\t%s\t%s\n" "$hoy" "$salud" "$ciclos" >> "$LOG"
+fi
+
+if [ "$1" != "--quiet" ]; then
+    echo "Salud actual: $salud%  ·  $ciclos ciclos  ·  $(( full/1000 )) / $(( design/1000 )) mWh"
+    n=$(wc -l < "$LOG" 2>/dev/null)
+    echo "Histórico: $n registros (battery-health --log para verlo)"
+fi

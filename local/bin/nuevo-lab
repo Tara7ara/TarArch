@@ -1,0 +1,62 @@
+#!/bin/bash
+# =============================================================================
+# nuevo-lab — prepara el esqueleto de una máquina CTF / lab.
+#   nuevo-lab <nombre> [ip]
+#   - crea ~/labs/<nombre>/ con carpetas nmap/ loot/ exploits/ y un README plantilla
+#   - si das IP, la fija como objetivo (set-target) y la escribe en el README
+#   - abre una terminal Kitty ya dentro de la carpeta
+# La ruta base se cambia arriba (BASE) si prefieres tenerlo en el vault.
+# =============================================================================
+
+BASE="$HOME/labs"
+
+nombre="$1"
+ip="$2"
+if [ -z "$nombre" ]; then
+    echo "uso: nuevo-lab <nombre> [ip]" >&2
+    exit 1
+fi
+
+dir="$BASE/$nombre"
+if [ -d "$dir" ]; then
+    echo "Ya existe $dir — abriendo."
+else
+    mkdir -p "$dir"/{nmap,loot,exploits}
+    cat > "$dir/README.md" <<EOF
+# $nombre
+
+- Objetivo: ${ip:-<ip>}
+- Fecha: $(date +%Y-%m-%d)
+
+## Recon
+\`\`\`
+nmap -sC -sV -oN nmap/inicial.txt ${ip:-\$T}
+nmap -p- --min-rate 2000 -oN nmap/allports.txt ${ip:-\$T}
+\`\`\`
+
+## Servicios
+| Puerto | Servicio | Notas |
+|--------|----------|-------|
+|        |          |       |
+
+## Enumeración
+
+## Explotación
+
+## Credenciales encontradas
+
+## Escalada
+
+## Flags
+- user:
+- root:
+EOF
+    echo "Creado $dir"
+fi
+
+if [ -n "$ip" ] && command -v set-target >/dev/null; then
+    set-target "$ip" "$nombre" >/dev/null 2>&1
+fi
+
+command -v kitty >/dev/null && kitty --directory "$dir" >/dev/null 2>&1 &
+echo "$dir"

@@ -122,6 +122,18 @@ hl.window_rule({
     float = true,
 })
 
+-- Picture-in-Picture de Firefox: flotante, fijada sobre todo y en la esquina
+-- inferior derecha (para seguir una clase mientras trabajas en otra ventana).
+hl.window_rule({
+    match = {
+        title = "^(Picture-in-Picture)$",
+    },
+    float = true,
+    pin = true,
+    size = "480 270",
+    move = "100%-500 100%-290",
+})
+
 -- Input
 
 hl.config({
@@ -306,6 +318,11 @@ hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("/home/tara/.local/bin/show-keybindin
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("/home/tara/.local/bin/bluetooth-menu.sh"))
 hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("wasistlos"))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("/home/tara/.local/bin/ssh-launcher.sh"))
+hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("/home/tara/.local/bin/seclists"))
+hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd("/home/tara/.local/bin/zen-mode"))
+hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd("/home/tara/.local/bin/buscar-vault"))
+hl.bind(mainMod .. " + SHIFT + G", hl.dsp.exec_cmd("/home/tara/.local/bin/repos"))
+hl.bind(mainMod .. " + H", hl.dsp.exec_cmd("/home/tara/.local/bin/identificar-hash --rofi"))
 hl.bind(mainMod .. " + ALT + W", hl.dsp.exec_cmd("/home/tara/.local/bin/wallpaper-picker.sh"))
 hl.bind(mainMod .. " + ALT + C", hl.dsp.exec_cmd("/home/tara/.local/bin/change-cursor.sh"))
 hl.bind(mainMod .. " + ALT + P", hl.dsp.exec_cmd("/home/tara/.local/bin/set-system-mode.sh"))
