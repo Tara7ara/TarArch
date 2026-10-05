@@ -31,7 +31,7 @@ KEYBINDINGS_LIST=(
 "Super + Tab|Panel de estado del sistema"
 "Super + R|Conexión SSH al NAS o al servidor"
 "Super + V|VPN WireGuard on/off"
-"Fn + F10|VPN + escritorio remoto de Windows"
+"Fn + F10|VPN + escritorio remoto de Windows (RDP)"
 "Super + B|Bluetooth"
 "Super + L|SecLists: elegir diccionario y copiar ruta"
 "Super + H|Identificar un hash"
