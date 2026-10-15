@@ -12,6 +12,9 @@ TEMP_FILE="/tmp/screenshot_latest.png"
 GEOM=$(slurp -b 00000088 -c ff9e64ff -d -w 2 2>/dev/null)
 [ -z "$GEOM" ] && exit 0
 
+# Pausa mínima para que el compositor (Hyprland/NVIDIA) limpie el buffer antes de disparar
+sleep 0.1
+
 # 2. Capturar directamente a archivo
 if ! grim -g "$GEOM" "$FILE"; then
     exit 1
