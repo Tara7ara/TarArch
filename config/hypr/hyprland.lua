@@ -472,6 +472,8 @@ hl.define_submap("rdp", function()
     hl.bind("ALT + 9", hl.dsp.focus({ workspace = 9 }))
     hl.bind("ALT + right", hl.dsp.focus({ workspace = "e+1" }))
     hl.bind("ALT + left", hl.dsp.focus({ workspace = "e-1" }))
+    hl.bind("Print", hl.dsp.exec_cmd("$HOME/.local/bin/screenshot.sh"))
+    hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("$HOME/.local/bin/screenshot.sh"))
 end)
 
 -- Fondos de pantalla
