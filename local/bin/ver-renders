@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Abre los renders en modo galería con mpv
+mpv $HOME/PruebaDeVideo/RENDERS_FINALES/*

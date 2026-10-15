@@ -364,6 +364,7 @@ hl.bind(mainMod .. " + X", hl.dsp.exec_cmd("$HOME/.local/bin/power-menu.sh"))
 
 -- Ventanas
 hl.bind(mainMod .. " + Q", hl.dsp.window.close())
+hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.exec_cmd("sh -c 'kill -9 $(hyprctl activewindow -j | jq -r .pid)'"))
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
 hl.bind(mainMod .. " + SHIFT + Space", hl.dsp.exec_cmd("$HOME/.local/bin/toggle-floating.sh"))
 hl.bind(mainMod .. " + G", hl.dsp.exec_cmd("$HOME/.local/bin/toggle-floating.sh"))
